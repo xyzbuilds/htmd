@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "status-report",
+  "type": "object",
+  "required": ["title"],
+  "properties": {
+    "title": { "type": "string" },
+    "period": { "type": "string", "description": "e.g., 'Week of May 5'" },
+    "owner": { "type": "string" },
+    "sections": {
+      "type": "object",
+      "properties": {
+        "shipped": { "type": "array", "items": { "$ref": "#/definitions/shippedItem" } },
+        "in_progress": { "type": "array", "items": { "$ref": "#/definitions/inProgressItem" } },
+        "blocked": { "type": "array", "items": { "$ref": "#/definitions/blockedItem" } },
+        "next_week": { "type": "array", "items": { "$ref": "#/definitions/nextItem" } }
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": { "type": "string" },
+          "value": {},
+          "delta": { "type": "number", "description": "percent change" }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "shippedItem": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title": { "type": "string" },
+        "link": { "type": "string" },
+        "owner": { "type": "string" }
+      }
+    },
+    "inProgressItem": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title": { "type": "string" },
+        "eta": { "type": "string" },
+        "owner": { "type": "string" }
+      }
+    },
+    "blockedItem": {
+      "type": "object",
+      "required": ["title", "blocker"],
+      "properties": {
+        "title": { "type": "string" },
+        "blocker": { "type": "string" },
+        "owner": { "type": "string" }
+      }
+    },
+    "nextItem": {
+      "type": "object",
+      "required": ["title"],
+      "properties": {
+        "title": { "type": "string" },
+        "owner": { "type": "string" }
+      }
+    }
+  }
+}

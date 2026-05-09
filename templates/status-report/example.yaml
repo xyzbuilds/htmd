@@ -1,0 +1,36 @@
+title: htmd v0.1 ship week
+period: Week of May 5, 2026
+owner: Xuyang Zhang
+metrics:
+  - label: Templates shipped
+    value: 9
+    delta: 12.5
+  - label: Tests passing
+    value: "27/27"
+  - label: Tokens saved per render
+    value: ~1,200
+    delta: 8.2
+sections:
+  shipped:
+    - title: Core render pipeline (data + schema -> HTML)
+      owner: claude
+    - title: Inline-SVG chart helper (sparkline, bar, line, donut)
+      owner: claude
+    - title: All 9 built-in templates with live examples
+      link: https://github.com/htmd/htmd/tree/main/examples
+    - title: SKILL.md + AGENT_USAGE.md docs
+  in_progress:
+    - title: Theme system foundation
+      eta: next week
+      owner: xy
+    - title: Web playground (htmd.dev)
+      eta: end of month
+  blocked:
+    - title: NPM scope reservation
+      blocker: waiting on npm support response
+      owner: xy
+  next_week:
+    - title: Hot-reload dev server
+    - title: Plugin SDK reference template
+    - title: Demo video for HN launch
+      owner: xy
