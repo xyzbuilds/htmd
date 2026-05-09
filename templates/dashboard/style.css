@@ -1,0 +1,97 @@
+.db {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.db-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.db-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.db-subtitle {
+  color: var(--htmd-fg-muted);
+  margin-top: 0.25rem;
+}
+.db-updated {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.db-card {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1.1rem 1.2rem 1.2rem;
+  box-shadow: var(--htmd-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.db-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--htmd-accent), color-mix(in srgb, var(--htmd-accent) 40%, transparent));
+}
+.db-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+.db-label {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-fg-muted);
+  font-weight: 600;
+}
+.db-delta {
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+.db-delta.up { background: var(--htmd-success-soft); color: var(--htmd-success); }
+.db-delta.down { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.db-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.db-target {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.db-spark {
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+.db-spark svg { width: 100%; height: auto; }
+
+@media print {
+  body { background: white; }
+  .db-card { box-shadow: none; break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}

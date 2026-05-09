@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "decision-matrix",
+  "type": "object",
+  "required": ["question", "options", "criteria"],
+  "properties": {
+    "question": { "type": "string" },
+    "context": { "type": "string" },
+    "criteria": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "weight"],
+        "properties": {
+          "name": { "type": "string" },
+          "weight": { "type": "number", "minimum": 0 },
+          "direction": { "type": "string", "enum": ["higher_better", "lower_better"] },
+          "note": { "type": "string" }
+        }
+      }
+    },
+    "options": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["name", "scores"],
+        "properties": {
+          "name": { "type": "string" },
+          "scores": {
+            "type": "object",
+            "additionalProperties": { "type": "number" }
+          }
+        }
+      }
+    },
+    "recommendation": { "type": "string" }
+  }
+}

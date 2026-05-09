@@ -1,0 +1,40 @@
+title: Product Metrics — May 2026
+subtitle: Weekly snapshot, updated every Monday
+updated_at: 2026-05-09
+metrics:
+  - label: Monthly active users
+    value: 48720
+    delta: 8.3
+    trend: [38000, 39200, 41100, 42800, 43900, 46100, 48720]
+  - label: Revenue (MTD)
+    value: 184500
+    format: currency
+    delta: 12.1
+    trend: [120000, 128000, 135000, 142000, 156000, 170000, 184500]
+    target: 250000
+  - label: Conversion rate
+    value: 0.038
+    format: percent
+    delta: -0.4
+    trend: [0.041, 0.040, 0.041, 0.039, 0.038, 0.038, 0.038]
+  - label: Avg session (min)
+    value: 7.2
+    delta: 3.1
+    trend: [6.4, 6.5, 6.7, 6.9, 7.0, 7.1, 7.2]
+  - label: Churn rate
+    value: 0.024
+    format: percent
+    delta: -1.8
+    trend: [0.031, 0.030, 0.028, 0.027, 0.026, 0.025, 0.024]
+  - label: Support tickets
+    value: 87
+    delta: -22.3
+    trend: [142, 130, 118, 110, 102, 94, 87]
+  - label: NPS
+    value: 62
+    delta: 4.5
+    trend: [54, 55, 57, 58, 59, 61, 62]
+  - label: Active deployments
+    value: 1247
+    delta: 6.2
+    trend: [980, 1010, 1075, 1130, 1180, 1210, 1247]

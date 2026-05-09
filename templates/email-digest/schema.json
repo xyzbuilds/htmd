@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "email-digest",
+  "type": "object",
+  "required": ["date"],
+  "properties": {
+    "date": { "type": "string" },
+    "summary": {
+      "type": "object",
+      "properties": {
+        "urgent": { "type": "number" },
+        "useful": { "type": "number" },
+        "noise": { "type": "number" }
+      }
+    },
+    "urgent": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "subject"],
+        "properties": {
+          "from": { "type": "string" },
+          "subject": { "type": "string" },
+          "summary": { "type": "string" },
+          "action": { "type": "string" },
+          "ts": { "type": "string" }
+        }
+      }
+    },
+    "useful": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["from", "subject"],
+        "properties": {
+          "from": { "type": "string" },
+          "subject": { "type": "string" },
+          "summary": { "type": "string" },
+          "ts": { "type": "string" }
+        }
+      }
+    },
+    "noise_summary": { "type": "string" }
+  }
+}
