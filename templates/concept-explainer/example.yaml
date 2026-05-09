@@ -1,0 +1,67 @@
+title: Understanding prompt caching in Claude
+subtitle: How it works, when to use it, and how much you'll save.
+intro_md: |
+  Prompt caching lets you mark portions of your prompt as cacheable. On a cache hit,
+  Anthropic charges 1/10th the price for those tokens. For RAG, agentic workflows,
+  and long system prompts, savings can be dramatic.
+sections:
+  - title: How caching works
+    body_md: |
+      You add `cache_control` markers to message blocks. The system hashes the prefix
+      and stores it for ~5 minutes. Subsequent requests with the same prefix get a
+      cache hit and the cached portion costs ~10% of normal input pricing.
+
+      Cache works on **prefixes**: if your system prompt + first 3 messages match a
+      previous request, all of those will hit the cache. The fourth message can vary.
+    code_samples:
+      - lang: python
+        label: Python
+        code: |
+          response = client.messages.create(
+              model="claude-opus-4-7",
+              system=[
+                  {"type": "text", "text": large_system_prompt,
+                   "cache_control": {"type": "ephemeral"}}
+              ],
+              messages=[{"role": "user", "content": user_query}]
+          )
+      - lang: typescript
+        label: TypeScript
+        code: |
+          const response = await client.messages.create({
+            model: "claude-opus-4-7",
+            system: [{
+              type: "text",
+              text: largeSystemPrompt,
+              cache_control: { type: "ephemeral" }
+            }],
+            messages: [{ role: "user", content: userQuery }]
+          });
+  - title: When to use it
+    body_md: |
+      Cache makes sense when:
+
+      - You have a **large stable prefix** (RAG context, long system prompt, tool definitions).
+      - You make **multiple requests** within a 5-minute window using that prefix.
+      - The cached portion is at least **1024 tokens** (the minimum for caching to apply).
+
+      Don't bother caching one-shot prompts or tiny system messages.
+  - title: Cost analysis
+    body_md: |
+      For a typical agentic loop with a 50k-token system prompt:
+
+      - **Without caching:** every turn pays 50k × $15/M = $0.75 per turn.
+      - **With caching:** first turn pays $0.94 (cache write is 1.25× normal), every
+        subsequent turn pays 50k × $1.50/M = $0.075. After 4 turns you break even,
+        and after 10 turns you've saved ~85%.
+glossary:
+  - term: prompt caching
+    definition: A feature that stores the prefix of your prompt server-side so subsequent requests with the same prefix cost ~10% of the normal input price.
+  - term: cache hit
+    definition: When a new request's prompt prefix matches a previously cached prefix and the cached cost applies.
+  - term: ephemeral
+    definition: The cache type used in this example — content is cached for ~5 minutes after the last access.
+  - term: prefix
+    definition: The leading portion of a prompt — system message + initial messages — that is byte-identical between requests.
+  - term: agentic loop
+    definition: A pattern where an LLM makes a series of related calls, often with tool use, over a short time window.

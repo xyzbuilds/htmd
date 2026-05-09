@@ -1,0 +1,172 @@
+.ce {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.ce-head { margin-bottom: 1.5rem; }
+.ce-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.ce-subtitle {
+  margin-top: 0.5rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-lg);
+}
+
+.ce-intro {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid var(--htmd-accent);
+  border-radius: var(--htmd-radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.ce-prose { line-height: 1.65; }
+.ce-prose > * + * { margin-top: 0.75rem; }
+.ce-prose h2, .ce-prose h3 { letter-spacing: -0.01em; margin-top: 1.25rem; }
+.ce-prose code { background: var(--htmd-surface-2); padding: 0.05em 0.3em; border-radius: 3px; font-size: 0.9em; }
+.ce-prose pre { background: var(--htmd-surface-2); padding: 0.85rem 1rem; border-radius: var(--htmd-radius-sm); overflow-x: auto; font-size: 0.85em; }
+.ce-prose pre code { background: none; padding: 0; }
+.ce-prose ul, .ce-prose ol { padding-left: 1.5rem; }
+.ce-prose li { margin: 0.25rem 0; }
+.ce-prose blockquote { border-left: 3px solid var(--htmd-accent); padding: 0.25rem 0.85rem; color: var(--htmd-fg-muted); }
+
+.ce-sections { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.ce-section {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 0;
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.ce-section > summary {
+  padding: 1rem 1.25rem;
+  font-size: var(--htmd-text-lg);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  letter-spacing: -0.01em;
+}
+.ce-section > summary::-webkit-details-marker { display: none; }
+.ce-section > summary::after {
+  content: "+";
+  margin-left: auto;
+  font-size: 1.4rem;
+  color: var(--htmd-fg-muted);
+  transition: transform 0.15s;
+}
+.ce-section[open] > summary::after { content: "−"; }
+.ce-section-num {
+  font-family: var(--htmd-font-mono);
+  font-size: 0.75rem;
+  color: var(--htmd-accent);
+  background: var(--htmd-accent-soft);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.ce-section-body {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.ce-tabs { padding: 0 1.25rem 1.25rem; }
+.ce-tabs-bar {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--htmd-border);
+  margin-bottom: 0.5rem;
+}
+.ce-tabs-bar button {
+  background: none;
+  border: none;
+  padding: 0.5rem 0.85rem;
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.ce-tabs-bar button[aria-selected="true"] {
+  color: var(--htmd-accent);
+  border-bottom-color: var(--htmd-accent);
+}
+.ce-tab-panel {
+  background: var(--htmd-bg);
+  padding: 0.85rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  border: 1px solid var(--htmd-border);
+  font-size: 0.85rem;
+  overflow-x: auto;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.ce-glossary {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--htmd-border);
+}
+.ce-glossary h2 {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-fg-muted);
+  margin-bottom: 0.75rem;
+}
+.ce-gl-item {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--htmd-border);
+}
+.ce-gl-item:first-child { border-top: none; }
+.ce-gl-item dt {
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  letter-spacing: -0.005em;
+}
+.ce-gl-item dd {
+  margin: 0;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.55;
+}
+
+.ce-glossary-term {
+  border-bottom: 1px dotted var(--htmd-accent);
+  cursor: help;
+  position: relative;
+}
+.ce-glossary-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.5rem 0.7rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  z-index: 50;
+  box-shadow: var(--htmd-shadow-lg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.ce-glossary-term:hover .ce-glossary-tooltip,
+.ce-glossary-term:focus .ce-glossary-tooltip {
+  opacity: 1;
+}
