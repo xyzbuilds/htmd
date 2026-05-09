@@ -1,0 +1,42 @@
+title: Customer support response tuner
+description: Edit the template on the left; tweak any variable on a sample card to see the live output. Click "Copy" to grab the rendered prompt.
+prompt_template: |
+  You are a support agent for {{product}}.
+
+  A customer wrote:
+  > {{customer_message}}
+
+  Reply in {{tone}} tone. Keep it under {{max_words}} words.
+  Sign off as "{{agent_name}}".
+variables:
+  - name: product
+    default: htmd
+  - name: customer_message
+  - name: tone
+    default: friendly
+  - name: max_words
+    default: "80"
+  - name: agent_name
+    default: Sam
+samples:
+  - name: Refund request
+    vars:
+      product: htmd Pro
+      customer_message: I just bought htmd Pro yesterday and it crashes every time I try to render a slide deck. I want a refund.
+      tone: empathetic and professional
+      max_words: "100"
+      agent_name: Sam
+  - name: Feature request
+    vars:
+      product: htmd Pro
+      customer_message: Can you add a Gantt chart template? I'd pay extra for it.
+      tone: enthusiastic but honest about timeline
+      max_words: "70"
+      agent_name: Sam
+  - name: Billing confusion
+    vars:
+      product: htmd Pro
+      customer_message: I was charged twice this month — please look into it.
+      tone: apologetic and action-oriented
+      max_words: "60"
+      agent_name: Sam

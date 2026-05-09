@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>htmd — token-cheap rich HTML for AI agents</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+html, body { height: 100%; }
+body { background: var(--htmd-bg); margin: 0; }
+.sd {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.sd-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--htmd-surface);
+  border-bottom: 1px solid var(--htmd-border);
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.sd-title { font-weight: 600; color: var(--htmd-fg); }
+.sd-counter { font-variant-numeric: tabular-nums; }
+.sd-help { margin-left: auto; }
+.sd-help kbd {
+  background: var(--htmd-surface-2);
+  border: 1px solid var(--htmd-border);
+  border-radius: 3px;
+  padding: 0 0.3em;
+  font-size: 0.7rem;
+}
+
+.sd-stage {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+}
+
+.sd-slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  padding: 2rem;
+  overflow: auto;
+}
+.sd-slide[data-active] { display: flex; align-items: center; justify-content: center; }
+.sd-slide-inner {
+  max-width: 960px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.sd-slide-title {
+  font-size: clamp(1.6rem, 3.5vw, 2.6rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+.sd-slide-body {
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  line-height: 1.55;
+}
+.sd-slide-body h1, .sd-slide-body h2 { margin-top: 0.5rem; }
+.sd-slide-body ul, .sd-slide-body ol { padding-left: 1.5rem; }
+.sd-slide-body li { margin: 0.35rem 0; }
+.sd-slide-body p { margin: 0.5rem 0; }
+.sd-slide-image { max-height: 60vh; margin: 0 auto; border-radius: var(--htmd-radius); }
+.sd-slide-code {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem;
+  font-size: 0.9rem;
+  overflow: auto;
+}
+
+.sd-overview {
+  position: absolute;
+  inset: 0;
+  background: var(--htmd-bg);
+  z-index: 10;
+  padding: 1.5rem;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+.sd-thumb {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-height: 110px;
+  transition: transform 0.1s, border-color 0.1s;
+}
+.sd-thumb:hover { border-color: var(--htmd-accent); transform: translateY(-1px); }
+.sd-thumb-num {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  font-weight: 600;
+}
+.sd-thumb-title {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.sd-dialog {
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1.5rem 1.75rem;
+  background: var(--htmd-surface);
+  color: var(--htmd-fg);
+  max-width: 380px;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.sd-dialog::backdrop { background: rgba(0,0,0,0.4); }
+.sd-dialog h2 { margin-bottom: 0.75rem; font-size: var(--htmd-text-lg); }
+.sd-dialog ul { list-style: none; padding: 0; }
+.sd-dialog li { padding: 0.3rem 0; font-size: var(--htmd-text-sm); }
+.sd-dialog kbd {
+  background: var(--htmd-surface-2);
+  border: 1px solid var(--htmd-border);
+  border-radius: 3px;
+  padding: 0 0.4em;
+  margin: 0 0.1em;
+  font-size: 0.85em;
+}
+.sd-dialog button {
+  margin-top: 1rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-weight: 600;
+}
+
+@media print {
+  .sd-toolbar, .sd-overview, .sd-dialog { display: none !important; }
+  .sd, .sd-stage { height: auto; overflow: visible; }
+  .sd-slide {
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    page-break-after: always;
+    min-height: 100vh;
+    inset: auto;
+    padding: 2cm;
+  }
+  body { background: white; }
+}
+
+</style>
+</head>
+<body data-htmd-template="slide-deck">
+
+    <main class="sd" data-theme="default">
+      <header class="sd-toolbar" aria-hidden="true">
+        <span class="sd-title">htmd — token-cheap rich HTML for AI agents</span>
+        <span class="sd-counter"><span data-sd-current>1</span> / <span data-sd-total>6</span></span>
+        <span class="sd-help">← →  to navigate · <kbd>?</kbd> help · <kbd>o</kbd> overview</span>
+      </header>
+      <div class="sd-stage" tabindex="0">
+        
+    <section class="sd-slide" data-sd-slide="0" data-active>
+      <div class="sd-slide-inner">
+        <h2 class="sd-slide-title">htmd</h2>
+        
+        <div class="sd-slide-body"><h2>Token-cheap structured data → rich self-contained HTML.</h2>
+<p>A library of templates for AI agents.
+<em>v0.1 — May 2026</em></p>
+</div>
+        
+      </div>
+      
+    </section>
+  
+    <section class="sd-slide" data-sd-slide="1" >
+      <div class="sd-slide-inner">
+        <h2 class="sd-slide-title">The problem</h2>
+        
+        <div class="sd-slide-body"><ul>
+<li>Agents writing <strong>HTML directly</strong> burns tokens (~2.5× MD).</li>
+<li>Agents writing <strong>MD</strong> is cheap but visually flat.</li>
+<li>We want <strong>rich</strong> output for the <strong>price of MD</strong>.</li>
+</ul>
+</div>
+        
+      </div>
+      
+    </section>
+  
+    <section class="sd-slide" data-sd-slide="2" >
+      <div class="sd-slide-inner">
+        <h2 class="sd-slide-title">The idea</h2>
+        
+        <div class="sd-slide-body"><ol>
+<li>Agent emits ~150 tokens of YAML.</li>
+<li><code>htmd render</code> produces ~1,500 tokens of beautiful HTML.</li>
+<li>Charts, layout, theming, all on CPU. Zero LLM cost.</li>
+</ol>
+</div>
+        
+      </div>
+      
+    </section>
+  
+    <section class="sd-slide" data-sd-slide="3" >
+      <div class="sd-slide-inner">
+        <h2 class="sd-slide-title">Killer demo</h2>
+        
+        <div class="sd-slide-body"><p><code>htmd render decision-matrix --data db.yaml</code></p>
+<p>Same data, three forms:</p>
+<ul>
+<li><strong>MD</strong>: 1× tokens, flat table</li>
+<li><strong>Direct HTML</strong>: 2.5× tokens, decent</li>
+<li><strong>htmd template</strong>: 0.4× tokens, <em>gorgeous heatmap</em></li>
+</ul>
+</div>
+        
+      </div>
+      
+    </section>
+  
+    <section class="sd-slide" data-sd-slide="4" >
+      <div class="sd-slide-inner">
+        <h2 class="sd-slide-title">9 templates in v0.1</h2>
+        
+        <div class="sd-slide-body"><p><strong>Tier A (static rich):</strong>
+status-report · dashboard · decision-matrix · comparison-3-up · email-digest</p>
+<p><strong>Tier B (interactive):</strong>
+slide-deck · prompt-tuner · kanban-board · concept-explainer</p>
+</div>
+        
+      </div>
+      
+    </section>
+  
+    <section class="sd-slide" data-sd-slide="5" >
+      <div class="sd-slide-inner">
+        <h2 class="sd-slide-title">Try it</h2>
+        
+        <div class="sd-slide-body"><p>MIT licensed. Plugin SDK for community templates.
+→ github.com/htmd/htmd</p>
+</div>
+        <pre class="sd-slide-code"><code>npm install -g htmd
+htmd render dashboard --data metrics.yaml --out dash.html
+htmd templates  # list all
+</code></pre>
+      </div>
+      
+    </section>
+  
+      </div>
+      <div class="sd-overview" hidden>
+        
+          <button class="sd-thumb" data-sd-jump="0">
+            <span class="sd-thumb-num">1</span>
+            <span class="sd-thumb-title">htmd</span>
+          </button>
+        
+          <button class="sd-thumb" data-sd-jump="1">
+            <span class="sd-thumb-num">2</span>
+            <span class="sd-thumb-title">The problem</span>
+          </button>
+        
+          <button class="sd-thumb" data-sd-jump="2">
+            <span class="sd-thumb-num">3</span>
+            <span class="sd-thumb-title">The idea</span>
+          </button>
+        
+          <button class="sd-thumb" data-sd-jump="3">
+            <span class="sd-thumb-num">4</span>
+            <span class="sd-thumb-title">Killer demo</span>
+          </button>
+        
+          <button class="sd-thumb" data-sd-jump="4">
+            <span class="sd-thumb-num">5</span>
+            <span class="sd-thumb-title">9 templates in v0.1</span>
+          </button>
+        
+          <button class="sd-thumb" data-sd-jump="5">
+            <span class="sd-thumb-num">6</span>
+            <span class="sd-thumb-title">Try it</span>
+          </button>
+        
+      </div>
+      <dialog class="sd-dialog" data-sd-help-dialog>
+        <h2>Keyboard shortcuts</h2>
+        <ul>
+          <li><kbd>←</kbd> / <kbd>→</kbd> previous / next slide</li>
+          <li><kbd>Home</kbd> / <kbd>End</kbd> jump to first / last</li>
+          <li><kbd>o</kbd> toggle overview</li>
+          <li><kbd>?</kbd> this help</li>
+          <li><kbd>Esc</kbd> exit overview / close help</li>
+          <li><kbd>p</kbd> print (one slide per page)</li>
+        </ul>
+        <button data-sd-close-help>Close</button>
+      </dialog>
+    </main>
+  
+<script>
+(function () {
+  const root = document.querySelector('.sd');
+  if (!root) return;
+  const slides = Array.from(root.querySelectorAll('.sd-slide'));
+  const stage = root.querySelector('.sd-stage');
+  const overview = root.querySelector('.sd-overview');
+  const help = root.querySelector('[data-sd-help-dialog]');
+  const closeBtn = root.querySelector('[data-sd-close-help]');
+  const cur = root.querySelector('[data-sd-current]');
+  const tot = root.querySelector('[data-sd-total]');
+  let i = 0;
+  function show(n) {
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    slides.forEach((s, idx) => {
+      if (idx === i) s.setAttribute('data-active', '');
+      else s.removeAttribute('data-active');
+    });
+    if (cur) cur.textContent = i + 1;
+    location.hash = String(i + 1);
+  }
+  function toggleOverview(force) {
+    const show = force != null ? force : overview.hasAttribute('hidden');
+    if (show) overview.removeAttribute('hidden');
+    else overview.setAttribute('hidden', '');
+  }
+  document.addEventListener('keydown', (e) => {
+    if (help.open) {
+      if (e.key === 'Escape') help.close();
+      return;
+    }
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { show(i + 1); e.preventDefault(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { show(i - 1); e.preventDefault(); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key === 'o' || e.key === 'O') toggleOverview();
+    else if (e.key === '?') help.showModal();
+    else if (e.key === 'Escape') toggleOverview(false);
+    else if (e.key === 'p' || e.key === 'P') window.print();
+  });
+  if (overview) {
+    overview.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-sd-jump]');
+      if (!t) return;
+      show(parseInt(t.dataset.sdJump, 10));
+      toggleOverview(false);
+    });
+  }
+  if (closeBtn) closeBtn.addEventListener('click', () => help.close());
+  // Click navigation: left half = prev, right half = next.
+  stage.addEventListener('click', (e) => {
+    const w = stage.clientWidth;
+    if (e.clientX < w / 2) show(i - 1);
+    else show(i + 1);
+  });
+  // Initial slide from hash
+  const initial = parseInt(location.hash.replace('#', ''), 10);
+  if (!isNaN(initial) && initial > 0) show(initial - 1);
+  if (tot) tot.textContent = slides.length;
+})();
+
+</script>
+</body>
+</html>

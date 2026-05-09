@@ -1,0 +1,421 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>decision-matrix</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.dm {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.dm-head {
+  margin-bottom: 1.5rem;
+}
+.dm-eyebrow {
+  display: inline-block;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--htmd-accent);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.dm-question {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.dm-context {
+  margin-top: 0.5rem;
+  color: var(--htmd-fg-muted);
+  max-width: 70ch;
+}
+
+.dm-table-wrap {
+  overflow-x: auto;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+}
+.dm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--htmd-text-sm);
+}
+.dm-table th, .dm-table td {
+  padding: 0.7rem 0.85rem;
+  text-align: center;
+  border-bottom: 1px solid var(--htmd-border);
+  vertical-align: middle;
+}
+.dm-table thead th {
+  background: var(--htmd-surface-2);
+  font-weight: 600;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--htmd-fg-muted);
+}
+.dm-table thead .dm-winner {
+  background: var(--htmd-accent-soft);
+  color: var(--htmd-accent);
+}
+.dm-criteria-col, .dm-crit { text-align: left; min-width: 160px; }
+.dm-weight-col, .dm-weight { width: 70px; }
+
+.dm-crit-note {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--htmd-muted);
+  font-weight: normal;
+  margin-top: 0.15rem;
+}
+.dm-weight {
+  font-variant-numeric: tabular-nums;
+  color: var(--htmd-fg-muted);
+}
+
+.dm-cell {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  position: relative;
+  background: color-mix(in srgb, var(--htmd-accent) calc(var(--heat, 0) * 28%), var(--htmd-surface));
+}
+.dm-cell-low { color: var(--htmd-fg); }
+.dm-cell-mid { color: var(--htmd-fg); }
+.dm-cell-good { color: var(--htmd-fg); }
+.dm-cell-val { position: relative; z-index: 1; }
+.dm-empty { color: var(--htmd-muted); }
+
+.dm-total-row td { background: var(--htmd-surface-2); border-top: 2px solid var(--htmd-border); padding-top: 0.9rem; padding-bottom: 0.9rem; }
+.dm-total-label { text-align: right; text-transform: uppercase; font-size: var(--htmd-text-xs); letter-spacing: 0.06em; color: var(--htmd-fg-muted); font-weight: 600; }
+.dm-total {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dm-total strong { font-size: 1.05rem; }
+.dm-total-bar {
+  height: 6px;
+  background: var(--htmd-border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.35rem;
+}
+.dm-total-bar span {
+  display: block;
+  height: 100%;
+  background: var(--htmd-accent);
+  border-radius: 3px;
+}
+.dm-total.dm-winner { background: var(--htmd-accent-soft); color: var(--htmd-accent); }
+.dm-total.dm-winner .dm-total-bar { background: rgba(0,0,0,0.06); }
+
+.dm-rec {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border-radius: var(--htmd-radius);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  box-shadow: var(--htmd-shadow);
+}
+.dm-rec-pill {
+  background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.dm-rec strong { font-size: var(--htmd-text-lg); }
+.dm-rec-score {
+  margin-left: auto;
+  font-size: var(--htmd-text-sm);
+  opacity: 0.85;
+}
+
+@media print {
+  body { background: white; }
+  .dm-table-wrap, .dm-rec { box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+
+</style>
+</head>
+<body data-htmd-template="decision-matrix">
+
+    <main class="dm">
+      <header class="dm-head">
+        <span class="dm-eyebrow">Decision Matrix</span>
+        <h1 class="dm-question">Which database should we use for the v2 backend?</h1>
+        <p class="dm-context">We need to support 100k+ concurrent connections, complex aggregations, and a small ops team. Decision needed by end of sprint.</p>
+      </header>
+
+      <div class="dm-table-wrap">
+        <table class="dm-table">
+          <thead>
+            <tr>
+              <th class="dm-criteria-col">Criterion</th>
+              <th class="dm-weight-col">Weight</th>
+              
+                <th class="dm-option dm-winner">PostgreSQL (managed)</th>
+              
+                <th class="dm-option ">ClickHouse Cloud</th>
+              
+                <th class="dm-option ">DynamoDB</th>
+              
+                <th class="dm-option ">Self-hosted Cassandra</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            
+    <tr>
+      <td class="dm-crit">
+        Query performance
+        <small class="dm-crit-note">at our 95p workload</small>
+      </td>
+      <td class="dm-weight">5</td>
+      <td class="dm-cell dm-cell-good" style="--heat: 0.80">
+          <span class="dm-cell-val">8</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 1.00">
+          <span class="dm-cell-val">10</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 0.70">
+          <span class="dm-cell-val">7</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 0.80">
+          <span class="dm-cell-val">8</span>
+        </td>
+    </tr>
+  
+    <tr>
+      <td class="dm-crit">
+        Operational simplicity
+        
+      </td>
+      <td class="dm-weight">4</td>
+      <td class="dm-cell dm-cell-good" style="--heat: 1.00">
+          <span class="dm-cell-val">9</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 0.78">
+          <span class="dm-cell-val">7</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 1.00">
+          <span class="dm-cell-val">9</span>
+        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.33">
+          <span class="dm-cell-val">3</span>
+        </td>
+    </tr>
+  
+    <tr>
+      <td class="dm-crit">
+        Cost (monthly $/k req)
+        
+      </td>
+      <td class="dm-weight">3 <small>↓</small></td>
+      <td class="dm-cell dm-cell-mid" style="--heat: 0.50">
+          <span class="dm-cell-val">4</span>
+        </td><td class="dm-cell dm-cell-low" style="--heat: 0.25">
+          <span class="dm-cell-val">6</span>
+        </td><td class="dm-cell dm-cell-low" style="--heat: 0.00">
+          <span class="dm-cell-val">8</span>
+        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.63">
+          <span class="dm-cell-val">3</span>
+        </td>
+    </tr>
+  
+    <tr>
+      <td class="dm-crit">
+        Team familiarity
+        
+      </td>
+      <td class="dm-weight">3</td>
+      <td class="dm-cell dm-cell-good" style="--heat: 1.00">
+          <span class="dm-cell-val">9</span>
+        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.44">
+          <span class="dm-cell-val">4</span>
+        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.56">
+          <span class="dm-cell-val">5</span>
+        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.33">
+          <span class="dm-cell-val">3</span>
+        </td>
+    </tr>
+  
+    <tr>
+      <td class="dm-crit">
+        Ecosystem &amp; tooling
+        
+      </td>
+      <td class="dm-weight">2</td>
+      <td class="dm-cell dm-cell-good" style="--heat: 1.00">
+          <span class="dm-cell-val">9</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 0.78">
+          <span class="dm-cell-val">7</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 0.67">
+          <span class="dm-cell-val">6</span>
+        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.56">
+          <span class="dm-cell-val">5</span>
+        </td>
+    </tr>
+  
+    <tr>
+      <td class="dm-crit">
+        Vendor lock-in risk
+        
+      </td>
+      <td class="dm-weight">2 <small>↓</small></td>
+      <td class="dm-cell dm-cell-good" style="--heat: 0.78">
+          <span class="dm-cell-val">2</span>
+        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.44">
+          <span class="dm-cell-val">5</span>
+        </td><td class="dm-cell dm-cell-low" style="--heat: 0.00">
+          <span class="dm-cell-val">9</span>
+        </td><td class="dm-cell dm-cell-good" style="--heat: 0.89">
+          <span class="dm-cell-val">1</span>
+        </td>
+    </tr>
+  
+            <tr class="dm-total-row">
+              <td colspan="2" class="dm-total-label">Weighted total</td>
+              
+                <td class="dm-total dm-winner">
+                  <div class="dm-total-bar">
+                    <span style="width: 84.5%"></span>
+                  </div>
+                  <strong>84.5</strong>
+                </td>
+              
+                <td class="dm-total ">
+                  <div class="dm-total-bar">
+                    <span style="width: 66.5%"></span>
+                  </div>
+                  <strong>66.5</strong>
+                </td>
+              
+                <td class="dm-total ">
+                  <div class="dm-total-bar">
+                    <span style="width: 55.3%"></span>
+                  </div>
+                  <strong>55.3</strong>
+                </td>
+              
+                <td class="dm-total ">
+                  <div class="dm-total-bar">
+                    <span style="width: 58.4%"></span>
+                  </div>
+                  <strong>58.4</strong>
+                </td>
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      
+        <aside class="dm-rec">
+          <span class="dm-rec-pill">Recommendation</span>
+          <strong>PostgreSQL (managed)</strong>
+          <span class="dm-rec-score">score 84.5/100</span>
+        </aside>
+      
+    </main>
+  
+</body>
+</html>

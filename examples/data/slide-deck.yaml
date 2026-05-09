@@ -1,0 +1,40 @@
+title: htmd — token-cheap rich HTML for AI agents
+slides:
+  - title: htmd
+    body_md: |
+      ## Token-cheap structured data → rich self-contained HTML.
+      A library of templates for AI agents.
+      *v0.1 — May 2026*
+  - title: The problem
+    body_md: |
+      - Agents writing **HTML directly** burns tokens (~2.5× MD).
+      - Agents writing **MD** is cheap but visually flat.
+      - We want **rich** output for the **price of MD**.
+  - title: The idea
+    body_md: |
+      1. Agent emits ~150 tokens of YAML.
+      2. `htmd render` produces ~1,500 tokens of beautiful HTML.
+      3. Charts, layout, theming, all on CPU. Zero LLM cost.
+  - title: Killer demo
+    body_md: |
+      `htmd render decision-matrix --data db.yaml`
+
+      Same data, three forms:
+      - **MD**: 1× tokens, flat table
+      - **Direct HTML**: 2.5× tokens, decent
+      - **htmd template**: 0.4× tokens, *gorgeous heatmap*
+  - title: 9 templates in v0.1
+    body_md: |
+      **Tier A (static rich):**
+      status-report · dashboard · decision-matrix · comparison-3-up · email-digest
+
+      **Tier B (interactive):**
+      slide-deck · prompt-tuner · kanban-board · concept-explainer
+  - title: Try it
+    code: |
+      npm install -g htmd
+      htmd render dashboard --data metrics.yaml --out dash.html
+      htmd templates  # list all
+    body_md: |
+      MIT licensed. Plugin SDK for community templates.
+      → github.com/htmd/htmd

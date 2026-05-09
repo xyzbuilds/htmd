@@ -1,0 +1,39 @@
+date: 2026-05-09
+summary:
+  urgent: 3
+  useful: 4
+  noise: 78
+urgent:
+  - from: Stripe
+    subject: Action required — verify business address by May 12
+    summary: Stripe needs business address re-verified within 3 days or payouts pause. Has form link.
+    action: Verify address
+    ts: 9:14 AM
+  - from: Sarah Chen (Acme Co)
+    subject: "Re: Q3 contract — needs your signature today"
+    summary: Contract redlines accepted; Sarah is waiting on your signature before EOD to lock the rate.
+    action: Sign DocuSign
+    ts: 8:02 AM
+  - from: GitHub
+    subject: "[security] Critical CVE in turndown — update available"
+    summary: turndown@7.1.x has an XSS vector via crafted HTML input. 7.2.0 patches it. Affects 2 of your repos.
+    action: Update dependency
+    ts: 6:44 AM
+useful:
+  - from: Anthropic
+    subject: Claude 4.7 release notes
+    summary: New extended thinking mode, 50% lower batch pricing, MCP improvements. Worth a 5-min read.
+    ts: 7:30 AM
+  - from: Lenny's Newsletter
+    subject: How great PMs interview their candidates
+    summary: Long-form post; the 4-question framework (signal, scope, speed, sticking) is the takeaway.
+    ts: 6:00 AM
+  - from: Hacker News
+    subject: Daily digest — top 5 (May 9)
+    summary: Linear's CEO on writing as a thinking tool, postgres LISTEN/NOTIFY tricks, new SQLite WAL2 mode.
+    ts: 6:00 AM
+  - from: AWS
+    subject: Your Lambda costs dropped 18% MoM
+    summary: Memory tuning recommendations active; estimated $340 saved this month.
+    ts: 5:55 AM
+noise_summary: 78 promotional / list emails. Top senders to consider unsubscribing from this week — Substack digest (12), Medium daily (9), LinkedIn news (8), random SaaS newsletters (40+).

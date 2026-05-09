@@ -1,0 +1,329 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>Product Metrics — May 2026</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.db {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.db-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.db-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.db-subtitle {
+  color: var(--htmd-fg-muted);
+  margin-top: 0.25rem;
+}
+.db-updated {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.db-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.85rem;
+}
+
+.db-card {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1.1rem 1.2rem 1.2rem;
+  box-shadow: var(--htmd-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.db-card::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--htmd-accent), color-mix(in srgb, var(--htmd-accent) 40%, transparent));
+}
+.db-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+}
+.db-label {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-fg-muted);
+  font-weight: 600;
+}
+.db-delta {
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+}
+.db-delta.up { background: var(--htmd-success-soft); color: var(--htmd-success); }
+.db-delta.down { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.db-value {
+  font-size: 2.1rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+.db-target {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.db-spark {
+  margin-top: auto;
+  padding-top: 0.25rem;
+}
+.db-spark svg { width: 100%; height: auto; }
+
+@media print {
+  body { background: white; }
+  .db-card { box-shadow: none; break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+
+</style>
+</head>
+<body data-htmd-template="dashboard">
+
+    <main class="db">
+      <header class="db-head">
+        <div>
+          <h1 class="db-title">Product Metrics — May 2026</h1>
+          <p class="db-subtitle">Weekly snapshot, updated every Monday</p>
+        </div>
+        <div class="db-updated">Updated May 8, 2026</div>
+      </header>
+      <section class="db-grid">
+        
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">Monthly active users</span>
+        
+          <span class="db-delta up">
+            ▲ +8.3%
+          </span>
+        
+      </header>
+      <div class="db-value">48,720</div>
+      
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,34.00 L24.67,30.42 L47.33,24.75 L70.00,19.67 L92.67,16.39 L115.33,9.82 L138.00,2.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,34.00 L24.67,30.42 L47.33,24.75 L70.00,19.67 L92.67,16.39 L115.33,9.82 L138.00,2.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">Revenue (MTD)</span>
+        
+          <span class="db-delta up">
+            ▲ +12.1%
+          </span>
+        
+      </header>
+      <div class="db-value">$184,500</div>
+      <div class="db-target">target $250,000</div>
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,34.00 L24.67,30.03 L47.33,26.56 L70.00,23.09 L92.67,16.14 L115.33,9.19 L138.00,2.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,34.00 L24.67,30.03 L47.33,26.56 L70.00,23.09 L92.67,16.14 L115.33,9.19 L138.00,2.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">Conversion rate</span>
+        
+          <span class="db-delta down">
+            ▼ +0.4%
+          </span>
+        
+      </header>
+      <div class="db-value">3.8%</div>
+      
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,2.00 L24.67,12.67 L47.33,2.00 L70.00,23.33 L92.67,34.00 L115.33,34.00 L138.00,34.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,2.00 L24.67,12.67 L47.33,2.00 L70.00,23.33 L92.67,34.00 L115.33,34.00 L138.00,34.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">Avg session (min)</span>
+        
+          <span class="db-delta up">
+            ▲ +3.1%
+          </span>
+        
+      </header>
+      <div class="db-value">7.2</div>
+      
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,34.00 L24.67,30.00 L47.33,22.00 L70.00,14.00 L92.67,10.00 L115.33,6.00 L138.00,2.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,34.00 L24.67,30.00 L47.33,22.00 L70.00,14.00 L92.67,10.00 L115.33,6.00 L138.00,2.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">Churn rate</span>
+        
+          <span class="db-delta down">
+            ▼ +1.8%
+          </span>
+        
+      </header>
+      <div class="db-value">2.4%</div>
+      
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,2.00 L24.67,6.57 L47.33,15.71 L70.00,20.29 L92.67,24.86 L115.33,29.43 L138.00,34.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,2.00 L24.67,6.57 L47.33,15.71 L70.00,20.29 L92.67,24.86 L115.33,29.43 L138.00,34.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">Support tickets</span>
+        
+          <span class="db-delta down">
+            ▼ +22.3%
+          </span>
+        
+      </header>
+      <div class="db-value">87</div>
+      
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,2.00 L24.67,8.98 L47.33,15.96 L70.00,20.62 L92.67,25.27 L115.33,29.93 L138.00,34.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,2.00 L24.67,8.98 L47.33,15.96 L70.00,20.62 L92.67,25.27 L115.33,29.93 L138.00,34.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">NPS</span>
+        
+          <span class="db-delta up">
+            ▲ +4.5%
+          </span>
+        
+      </header>
+      <div class="db-value">62</div>
+      
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,34.00 L24.67,30.00 L47.33,22.00 L70.00,18.00 L92.67,14.00 L115.33,6.00 L138.00,2.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,34.00 L24.67,30.00 L47.33,22.00 L70.00,18.00 L92.67,14.00 L115.33,6.00 L138.00,2.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+    <article class="db-card">
+      <header class="db-card-head">
+        <span class="db-label">Active deployments</span>
+        
+          <span class="db-delta up">
+            ▲ +6.2%
+          </span>
+        
+      </header>
+      <div class="db-value">1,247</div>
+      
+      <div class="db-spark"><svg class="htmd-spark" viewBox="0 0 140 36" width="140" height="36" preserveAspectRatio="none" aria-hidden="true"><path d="M2.00,34.00 L24.67,30.40 L47.33,22.61 L70.00,16.02 L92.67,10.03 L115.33,6.43 L138.00,2.00 L138.00,34 L2.00,34 Z" fill="var(--htmd-accent-soft, rgba(79,70,229,0.15))" stroke="none"/><path d="M2.00,34.00 L24.67,30.40 L47.33,22.61 L70.00,16.02 L92.67,10.03 L115.33,6.43 L138.00,2.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/></svg></div>
+    </article>
+  
+      </section>
+    </main>
+  
+</body>
+</html>
