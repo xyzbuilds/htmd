@@ -1,0 +1,48 @@
+title: htmd v0.2 roadmap
+subtitle: Drag tickets between columns to reorganize. Click "Export Markdown" to grab the new plan.
+columns:
+  - key: now
+    name: Now
+  - key: next
+    name: Next
+  - key: later
+    name: Later
+  - key: cut
+    name: Cut
+tickets:
+  - id: HMD-12
+    title: Theme system (light/dark/custom)
+    body: CSS custom property override mechanism + 3 starter themes.
+    owner: xy
+    tags: [foundation]
+    column: now
+  - id: HMD-15
+    title: Hot-reload dev server
+    body: Watch templates/ and re-render on save in browser.
+    owner: claude
+    tags: [DX]
+    column: now
+  - id: HMD-18
+    title: Plugin SDK reference template
+    body: Full example npm package showing how to publish htmd-template-*
+    tags: [docs]
+    column: next
+  - id: HMD-22
+    title: Web playground (htmd.dev)
+    body: Browser-based template editor with live render.
+    owner: xy
+    tags: [marketing]
+    column: next
+  - id: HMD-25
+    title: Gantt chart template
+    tags: [template]
+    column: later
+  - id: HMD-26
+    title: Org chart template
+    tags: [template]
+    column: later
+  - id: HMD-30
+    title: Server-side React renderer
+    body: Considered, but adds dependency weight without clear value over JS modules.
+    tags: [arch]
+    column: cut
