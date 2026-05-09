@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>htmd v0.1 ship week</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.sr {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.sr-hero {
+  background: linear-gradient(135deg, var(--htmd-accent) 0%, color-mix(in srgb, var(--htmd-accent) 70%, #000) 100%);
+  color: var(--htmd-accent-fg);
+  padding: 2.25rem 2rem;
+  border-radius: var(--htmd-radius);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--htmd-shadow);
+}
+.sr-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--htmd-text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 0.75rem;
+}
+.sr-eyebrow {
+  font-weight: 600;
+}
+.sr-period {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+.sr-title {
+  font-size: var(--htmd-text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+}
+.sr-meta {
+  font-size: var(--htmd-text-sm);
+  opacity: 0.9;
+}
+.sr-meta-owner::before { content: "by "; opacity: 0.7; }
+
+.sr-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.sr-metric {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--htmd-shadow);
+}
+.sr-metric-label {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-fg-muted);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+.sr-metric-value {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.sr-metric-delta {
+  margin-top: 0.4rem;
+  font-size: var(--htmd-text-xs);
+  font-weight: 600;
+}
+.sr-metric-delta.up { color: var(--htmd-success); }
+.sr-metric-delta.down { color: var(--htmd-danger); }
+
+.sr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 720px) {
+  .sr-grid { grid-template-columns: 1fr; }
+}
+
+.sr-section {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem 1.1rem;
+  box-shadow: var(--htmd-shadow);
+}
+.sr-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.sr-pill {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+.sr-pill-success { background: var(--htmd-success-soft); color: var(--htmd-success); }
+.sr-pill-info { background: var(--htmd-info-soft); color: var(--htmd-info); }
+.sr-pill-danger { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.sr-pill-muted { background: var(--htmd-surface-2); color: var(--htmd-fg-muted); }
+
+.sr-count {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.sr-list { list-style: none; padding: 0; margin: 0; }
+.sr-item {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--htmd-border);
+}
+.sr-item:first-child { border-top: none; padding-top: 0.25rem; }
+
+.sr-item-title {
+  font-weight: 500;
+  line-height: 1.35;
+}
+.sr-item-title a { color: var(--htmd-fg); border-bottom: 1px dotted var(--htmd-muted); }
+.sr-item-title a:hover { color: var(--htmd-accent); border-color: var(--htmd-accent); text-decoration: none; }
+
+.sr-item-meta {
+  margin-top: 0.4rem;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.sr-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg-muted);
+  font-weight: 500;
+}
+.sr-tag-eta { background: var(--htmd-info-soft); color: var(--htmd-info); }
+.sr-tag-blocker { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.sr-tag-owner::before { content: "@"; opacity: 0.6; margin-right: 1px; }
+
+.sr-empty {
+  color: var(--htmd-muted);
+  font-style: italic;
+  font-size: var(--htmd-text-sm);
+  padding: 0.5rem 0;
+}
+
+@media print {
+  body { background: white; }
+  .sr-hero { box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .sr-section, .sr-metric { box-shadow: none; break-inside: avoid; }
+  .sr-grid { gap: 0.5rem; }
+}
+
+</style>
+</head>
+<body data-htmd-template="status-report">
+
+    <main class="sr">
+      <header class="sr-hero">
+        <div class="sr-hero-top">
+          <span class="sr-eyebrow">Status Report</span>
+          <span class="sr-period">Week of May 5, 2026</span>
+        </div>
+        <h1 class="sr-title">htmd v0.1 ship week</h1>
+        <div class="sr-meta">
+          <span class="sr-meta-owner">Xuyang Zhang</span>
+        </div>
+      </header>
+
+      
+        <section class="sr-metrics" aria-label="Key metrics">
+          
+            <div class="sr-metric">
+              <div class="sr-metric-label">Templates shipped</div>
+              <div class="sr-metric-value">9</div>
+              
+                <div class="sr-metric-delta up">
+                  ▲ +12.5%
+                </div>
+              
+            </div>
+          
+            <div class="sr-metric">
+              <div class="sr-metric-label">Tests passing</div>
+              <div class="sr-metric-value">27/27</div>
+              
+            </div>
+          
+            <div class="sr-metric">
+              <div class="sr-metric-label">Tokens saved per render</div>
+              <div class="sr-metric-value">~1,200</div>
+              
+                <div class="sr-metric-delta up">
+                  ▲ +8.2%
+                </div>
+              
+            </div>
+          
+        </section>
+      
+
+      <section class="sr-grid">
+        
+    <section class="sr-section sr-shipped">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-success">Shipped</span>
+        <span class="sr-count">4</span>
+      </header>
+      
+        <ul class="sr-list">
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Core render pipeline (data + schema -&gt; HTML)
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                <span class="sr-tag sr-tag-owner">claude</span>
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Inline-SVG chart helper (sparkline, bar, line, donut)
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                <span class="sr-tag sr-tag-owner">claude</span>
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                <a href="https://github.com/htmd/htmd/tree/main/examples">All 9 built-in templates with live examples</a>
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                SKILL.md + AGENT_USAGE.md docs
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                
+              </div>
+            </li>
+          
+        </ul>
+      
+    </section>
+  
+        
+    <section class="sr-section sr-in-progress">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-info">In progress</span>
+        <span class="sr-count">2</span>
+      </header>
+      
+        <ul class="sr-list">
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Theme system foundation
+              </div>
+              <div class="sr-item-meta">
+                <span class="sr-tag sr-tag-eta">ETA next week</span>
+                
+                <span class="sr-tag sr-tag-owner">xy</span>
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Web playground (htmd.dev)
+              </div>
+              <div class="sr-item-meta">
+                <span class="sr-tag sr-tag-eta">ETA end of month</span>
+                
+                
+              </div>
+            </li>
+          
+        </ul>
+      
+    </section>
+  
+        
+    <section class="sr-section sr-blocked">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-danger">Blocked</span>
+        <span class="sr-count">1</span>
+      </header>
+      
+        <ul class="sr-list">
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                NPM scope reservation
+              </div>
+              <div class="sr-item-meta">
+                
+                <span class="sr-tag sr-tag-blocker">waiting on npm support response</span>
+                <span class="sr-tag sr-tag-owner">xy</span>
+              </div>
+            </li>
+          
+        </ul>
+      
+    </section>
+  
+        
+    <section class="sr-section sr-next-week">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-muted">Next week</span>
+        <span class="sr-count">3</span>
+      </header>
+      
+        <ul class="sr-list">
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Hot-reload dev server
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Plugin SDK reference template
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Demo video for HN launch
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                <span class="sr-tag sr-tag-owner">xy</span>
+              </div>
+            </li>
+          
+        </ul>
+      
+    </section>
+  
+      </section>
+    </main>
+  
+</body>
+</html>

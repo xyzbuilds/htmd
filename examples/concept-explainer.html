@@ -1,0 +1,474 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>Understanding prompt caching in Claude</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.ce {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+.ce-head { margin-bottom: 1.5rem; }
+.ce-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.ce-subtitle {
+  margin-top: 0.5rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-lg);
+}
+
+.ce-intro {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid var(--htmd-accent);
+  border-radius: var(--htmd-radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.ce-prose { line-height: 1.65; }
+.ce-prose > * + * { margin-top: 0.75rem; }
+.ce-prose h2, .ce-prose h3 { letter-spacing: -0.01em; margin-top: 1.25rem; }
+.ce-prose code { background: var(--htmd-surface-2); padding: 0.05em 0.3em; border-radius: 3px; font-size: 0.9em; }
+.ce-prose pre { background: var(--htmd-surface-2); padding: 0.85rem 1rem; border-radius: var(--htmd-radius-sm); overflow-x: auto; font-size: 0.85em; }
+.ce-prose pre code { background: none; padding: 0; }
+.ce-prose ul, .ce-prose ol { padding-left: 1.5rem; }
+.ce-prose li { margin: 0.25rem 0; }
+.ce-prose blockquote { border-left: 3px solid var(--htmd-accent); padding: 0.25rem 0.85rem; color: var(--htmd-fg-muted); }
+
+.ce-sections { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.ce-section {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 0;
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.ce-section > summary {
+  padding: 1rem 1.25rem;
+  font-size: var(--htmd-text-lg);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  letter-spacing: -0.01em;
+}
+.ce-section > summary::-webkit-details-marker { display: none; }
+.ce-section > summary::after {
+  content: "+";
+  margin-left: auto;
+  font-size: 1.4rem;
+  color: var(--htmd-fg-muted);
+  transition: transform 0.15s;
+}
+.ce-section[open] > summary::after { content: "−"; }
+.ce-section-num {
+  font-family: var(--htmd-font-mono);
+  font-size: 0.75rem;
+  color: var(--htmd-accent);
+  background: var(--htmd-accent-soft);
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.ce-section-body {
+  padding: 0 1.25rem 1.25rem;
+}
+
+.ce-tabs { padding: 0 1.25rem 1.25rem; }
+.ce-tabs-bar {
+  display: flex;
+  gap: 0.25rem;
+  border-bottom: 1px solid var(--htmd-border);
+  margin-bottom: 0.5rem;
+}
+.ce-tabs-bar button {
+  background: none;
+  border: none;
+  padding: 0.5rem 0.85rem;
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.ce-tabs-bar button[aria-selected="true"] {
+  color: var(--htmd-accent);
+  border-bottom-color: var(--htmd-accent);
+}
+.ce-tab-panel {
+  background: var(--htmd-bg);
+  padding: 0.85rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  border: 1px solid var(--htmd-border);
+  font-size: 0.85rem;
+  overflow-x: auto;
+  max-height: 360px;
+  overflow-y: auto;
+}
+
+.ce-glossary {
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--htmd-border);
+}
+.ce-glossary h2 {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-fg-muted);
+  margin-bottom: 0.75rem;
+}
+.ce-gl-item {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--htmd-border);
+}
+.ce-gl-item:first-child { border-top: none; }
+.ce-gl-item dt {
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+  letter-spacing: -0.005em;
+}
+.ce-gl-item dd {
+  margin: 0;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.55;
+}
+
+.ce-glossary-term {
+  border-bottom: 1px dotted var(--htmd-accent);
+  cursor: help;
+  position: relative;
+}
+.ce-glossary-tooltip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.5rem 0.7rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: 0.8rem;
+  line-height: 1.4;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  z-index: 50;
+  box-shadow: var(--htmd-shadow-lg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+.ce-glossary-term:hover .ce-glossary-tooltip,
+.ce-glossary-term:focus .ce-glossary-tooltip {
+  opacity: 1;
+}
+
+</style>
+</head>
+<body data-htmd-template="concept-explainer">
+
+    <main class="ce">
+      <header class="ce-head">
+        <h1 class="ce-title">Understanding prompt caching in Claude</h1>
+        <p class="ce-subtitle">How it works, when to use it, and how much you&#39;ll save.</p>
+      </header>
+      <section class="ce-intro ce-prose"><p>Prompt caching lets you mark portions of your prompt as cacheable. On a cache hit,
+Anthropic charges 1/10th the price for those tokens. For RAG, agentic workflows,
+and long system prompts, savings can be dramatic.</p>
+</section>
+
+      <section class="ce-sections">
+        
+    <details class="ce-section" open>
+      <summary>
+        <span class="ce-section-num">01</span>
+        <span>How caching works</span>
+      </summary>
+      <div class="ce-section-body ce-prose">
+        <p>You add <code>cache_control</code> markers to message blocks. The system hashes the prefix
+and stores it for ~5 minutes. Subsequent requests with the same prefix get a
+cache hit and the cached portion costs ~10% of normal input pricing.</p>
+<p>Cache works on <strong>prefixes</strong>: if your system prompt + first 3 messages match a
+previous request, all of those will hit the cache. The fourth message can vary.</p>
+
+      </div>
+      
+        <div class="ce-tabs" data-ce-tabs>
+          <div class="ce-tabs-bar" role="tablist">
+            
+              <button role="tab" data-ce-tab="0" aria-selected="true">Python</button>
+            
+              <button role="tab" data-ce-tab="1" aria-selected="false">TypeScript</button>
+            
+          </div>
+          
+            <pre class="ce-tab-panel" role="tabpanel" data-ce-panel="0" ><code>response = client.messages.create(
+    model=&quot;claude-opus-4-7&quot;,
+    system=[
+        {&quot;type&quot;: &quot;text&quot;, &quot;text&quot;: large_system_prompt,
+         &quot;cache_control&quot;: {&quot;type&quot;: &quot;ephemeral&quot;}}
+    ],
+    messages=[{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: user_query}]
+)
+</code></pre>
+          
+            <pre class="ce-tab-panel" role="tabpanel" data-ce-panel="1" hidden><code>const response = await client.messages.create({
+  model: &quot;claude-opus-4-7&quot;,
+  system: [{
+    type: &quot;text&quot;,
+    text: largeSystemPrompt,
+    cache_control: { type: &quot;ephemeral&quot; }
+  }],
+  messages: [{ role: &quot;user&quot;, content: userQuery }]
+});
+</code></pre>
+          
+        </div>
+      
+    </details>
+  
+    <details class="ce-section" >
+      <summary>
+        <span class="ce-section-num">02</span>
+        <span>When to use it</span>
+      </summary>
+      <div class="ce-section-body ce-prose">
+        <p>Cache makes sense when:</p>
+<ul>
+<li>You have a <strong>large stable prefix</strong> (RAG context, long system prompt, tool definitions).</li>
+<li>You make <strong>multiple requests</strong> within a 5-minute window using that prefix.</li>
+<li>The cached portion is at least <strong>1024 tokens</strong> (the minimum for caching to apply).</li>
+</ul>
+<p>Don&#39;t bother caching one-shot prompts or tiny system messages.</p>
+
+      </div>
+      
+    </details>
+  
+    <details class="ce-section" >
+      <summary>
+        <span class="ce-section-num">03</span>
+        <span>Cost analysis</span>
+      </summary>
+      <div class="ce-section-body ce-prose">
+        <p>For a typical agentic loop with a 50k-token system prompt:</p>
+<ul>
+<li><strong>Without caching:</strong> every turn pays 50k × $15/M = $0.75 per turn.</li>
+<li><strong>With caching:</strong> first turn pays $0.94 (cache write is 1.25× normal), every
+subsequent turn pays 50k × $1.50/M = $0.075. After 4 turns you break even,
+and after 10 turns you&#39;ve saved ~85%.</li>
+</ul>
+
+      </div>
+      
+    </details>
+  
+      </section>
+
+      
+        <section class="ce-glossary">
+          <h2>Glossary</h2>
+          <dl>
+            
+              <div class="ce-gl-item">
+                <dt id="gl-prompt-caching">prompt caching</dt>
+                <dd>A feature that stores the prefix of your prompt server-side so subsequent requests with the same prefix cost ~10% of the normal input price.</dd>
+              </div>
+            
+              <div class="ce-gl-item">
+                <dt id="gl-cache-hit">cache hit</dt>
+                <dd>When a new request&#39;s prompt prefix matches a previously cached prefix and the cached cost applies.</dd>
+              </div>
+            
+              <div class="ce-gl-item">
+                <dt id="gl-ephemeral">ephemeral</dt>
+                <dd>The cache type used in this example — content is cached for ~5 minutes after the last access.</dd>
+              </div>
+            
+              <div class="ce-gl-item">
+                <dt id="gl-prefix">prefix</dt>
+                <dd>The leading portion of a prompt — system message + initial messages — that is byte-identical between requests.</dd>
+              </div>
+            
+              <div class="ce-gl-item">
+                <dt id="gl-agentic-loop">agentic loop</dt>
+                <dd>A pattern where an LLM makes a series of related calls, often with tool use, over a short time window.</dd>
+              </div>
+            
+          </dl>
+        </section>
+      
+      <script type="application/json" data-ce-glossary>{&quot;prompt caching&quot;:&quot;A feature that stores the prefix of your prompt server-side so subsequent requests with the same prefix cost ~10% of the normal input price.&quot;,&quot;cache hit&quot;:&quot;When a new request&#39;s prompt prefix matches a previously cached prefix and the cached cost applies.&quot;,&quot;ephemeral&quot;:&quot;The cache type used in this example — content is cached for ~5 minutes after the last access.&quot;,&quot;prefix&quot;:&quot;The leading portion of a prompt — system message + initial messages — that is byte-identical between requests.&quot;,&quot;agentic loop&quot;:&quot;A pattern where an LLM makes a series of related calls, often with tool use, over a short time window.&quot;}</script>
+    </main>
+  
+<script>
+(function () {
+  const node = document.querySelector('[data-ce-glossary]');
+  if (!node) return;
+  let glossary = {};
+  try { glossary = JSON.parse(node.textContent); } catch { return; }
+  const terms = Object.keys(glossary).sort((a, b) => b.length - a.length);
+  if (terms.length === 0) return;
+
+  // Walk text nodes inside .ce-prose, wrap glossary terms.
+  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const pattern = new RegExp(`\\b(${terms.map(escapeRe).join('|')})\\b`, 'g');
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  }
+
+  function processNode(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.nodeValue;
+      if (!pattern.test(text)) { pattern.lastIndex = 0; return; }
+      pattern.lastIndex = 0;
+      const frag = document.createDocumentFragment();
+      let lastIdx = 0;
+      let m;
+      while ((m = pattern.exec(text)) !== null) {
+        if (m.index > lastIdx) frag.appendChild(document.createTextNode(text.slice(lastIdx, m.index)));
+        const span = document.createElement('span');
+        span.className = 'ce-glossary-term';
+        span.tabIndex = 0;
+        span.innerHTML = escapeHtml(m[0]) + `<span class="ce-glossary-tooltip">${escapeHtml(glossary[m[0]])}</span>`;
+        frag.appendChild(span);
+        lastIdx = m.index + m[0].length;
+      }
+      if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+      node.parentNode.replaceChild(frag, node);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      if (['SCRIPT', 'STYLE', 'CODE', 'PRE', 'A', 'DT', 'DD'].includes(node.tagName)) return;
+      if (node.classList && node.classList.contains('ce-glossary-term')) return;
+      Array.from(node.childNodes).forEach(processNode);
+    }
+  }
+
+  document.querySelectorAll('.ce-prose').forEach(processNode);
+
+  // Tabs
+  document.querySelectorAll('[data-ce-tabs]').forEach((tabs) => {
+    tabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-ce-tab]');
+      if (!btn) return;
+      const idx = btn.dataset.ceTab;
+      tabs.querySelectorAll('[data-ce-tab]').forEach((b) => b.setAttribute('aria-selected', b === btn ? 'true' : 'false'));
+      tabs.querySelectorAll('[data-ce-panel]').forEach((p) => {
+        if (p.dataset.cePanel === idx) p.removeAttribute('hidden');
+        else p.setAttribute('hidden', '');
+      });
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

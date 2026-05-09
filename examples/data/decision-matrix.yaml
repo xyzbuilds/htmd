@@ -1,0 +1,51 @@
+question: Which database should we use for the v2 backend?
+context: We need to support 100k+ concurrent connections, complex aggregations, and a small ops team. Decision needed by end of sprint.
+criteria:
+  - name: Query performance
+    weight: 5
+    note: at our 95p workload
+  - name: Operational simplicity
+    weight: 4
+  - name: Cost (monthly $/k req)
+    weight: 3
+    direction: lower_better
+  - name: Team familiarity
+    weight: 3
+  - name: Ecosystem & tooling
+    weight: 2
+  - name: Vendor lock-in risk
+    weight: 2
+    direction: lower_better
+options:
+  - name: PostgreSQL (managed)
+    scores:
+      Query performance: 8
+      Operational simplicity: 9
+      Cost (monthly $/k req): 4
+      Team familiarity: 9
+      Ecosystem & tooling: 9
+      Vendor lock-in risk: 2
+  - name: ClickHouse Cloud
+    scores:
+      Query performance: 10
+      Operational simplicity: 7
+      Cost (monthly $/k req): 6
+      Team familiarity: 4
+      Ecosystem & tooling: 7
+      Vendor lock-in risk: 5
+  - name: DynamoDB
+    scores:
+      Query performance: 7
+      Operational simplicity: 9
+      Cost (monthly $/k req): 8
+      Team familiarity: 5
+      Ecosystem & tooling: 6
+      Vendor lock-in risk: 9
+  - name: Self-hosted Cassandra
+    scores:
+      Query performance: 8
+      Operational simplicity: 3
+      Cost (monthly $/k req): 3
+      Team familiarity: 3
+      Ecosystem & tooling: 5
+      Vendor lock-in risk: 1

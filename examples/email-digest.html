@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>email-digest</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.ed {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+.ed-head {
+  margin-bottom: 1.5rem;
+}
+.ed-eyebrow {
+  display: inline-block;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--htmd-accent);
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+.ed-date {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.ed-summary {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.ed-chip {
+  font-size: var(--htmd-text-xs);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.ed-chip-urgent { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.ed-chip-useful { background: var(--htmd-warn-soft); color: var(--htmd-warn); }
+.ed-chip-noise { background: var(--htmd-surface-2); color: var(--htmd-fg-muted); }
+
+.ed-section {
+  margin-bottom: 1.25rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.ed-urgent { border-left: 4px solid var(--htmd-danger); }
+.ed-useful { border-left: 4px solid var(--htmd-warn); }
+.ed-noise { border-left: 4px solid var(--htmd-muted); }
+
+.ed-sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1.1rem;
+  border-bottom: 1px solid var(--htmd-border);
+  background: var(--htmd-surface-2);
+}
+.ed-band {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+.ed-band-urgent { color: var(--htmd-danger); }
+.ed-band-useful { color: var(--htmd-warn); }
+.ed-band-noise { color: var(--htmd-fg-muted); }
+.ed-sec-count {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  font-weight: 600;
+}
+
+.ed-list { list-style: none; margin: 0; padding: 0; }
+.ed-item {
+  padding: 0.85rem 1.1rem 0.95rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.ed-item:last-child { border-bottom: none; }
+
+.ed-item-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  margin-bottom: 0.2rem;
+}
+.ed-from { font-weight: 600; color: var(--htmd-fg); }
+.ed-ts { font-variant-numeric: tabular-nums; }
+
+.ed-subject {
+  font-weight: 600;
+  font-size: var(--htmd-text-md);
+  line-height: 1.35;
+  margin-bottom: 0.3rem;
+}
+.ed-snippet {
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.5;
+}
+.ed-action {
+  margin-top: 0.55rem;
+}
+.ed-action-pill {
+  display: inline-block;
+  background: var(--htmd-danger);
+  color: white;
+  font-size: var(--htmd-text-xs);
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--htmd-radius-sm);
+}
+
+.ed-noise-text {
+  padding: 0.85rem 1.1rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.55;
+}
+
+</style>
+</head>
+<body data-htmd-template="email-digest">
+
+    <main class="ed">
+      <header class="ed-head">
+        <span class="ed-eyebrow">Email Digest</span>
+        <h1 class="ed-date">May 8, 2026</h1>
+        <div class="ed-summary">
+          <span class="ed-chip ed-chip-urgent">3 urgent</span>
+          <span class="ed-chip ed-chip-useful">4 useful</span>
+          <span class="ed-chip ed-chip-noise">78 noise</span>
+        </div>
+      </header>
+
+      
+    <section class="ed-section ed-urgent">
+      <header class="ed-sec-head">
+        <span class="ed-band ed-band-urgent">Urgent — needs you</span>
+        <span class="ed-sec-count">3</span>
+      </header>
+      <ul class="ed-list">
+        
+          <li class="ed-item">
+            <div class="ed-item-meta">
+              <span class="ed-from">Stripe</span>
+              <time class="ed-ts">9:14 AM</time>
+            </div>
+            <div class="ed-subject">Action required — verify business address by May 12</div>
+            <p class="ed-snippet">Stripe needs business address re-verified within 3 days or payouts pause. Has form link.</p>
+            <div class="ed-action"><span class="ed-action-pill">Verify address</span></div>
+          </li>
+        
+          <li class="ed-item">
+            <div class="ed-item-meta">
+              <span class="ed-from">Sarah Chen (Acme Co)</span>
+              <time class="ed-ts">8:02 AM</time>
+            </div>
+            <div class="ed-subject">Re: Q3 contract — needs your signature today</div>
+            <p class="ed-snippet">Contract redlines accepted; Sarah is waiting on your signature before EOD to lock the rate.</p>
+            <div class="ed-action"><span class="ed-action-pill">Sign DocuSign</span></div>
+          </li>
+        
+          <li class="ed-item">
+            <div class="ed-item-meta">
+              <span class="ed-from">GitHub</span>
+              <time class="ed-ts">6:44 AM</time>
+            </div>
+            <div class="ed-subject">[security] Critical CVE in turndown — update available</div>
+            <p class="ed-snippet">turndown@7.1.x has an XSS vector via crafted HTML input. 7.2.0 patches it. Affects 2 of your repos.</p>
+            <div class="ed-action"><span class="ed-action-pill">Update dependency</span></div>
+          </li>
+        
+      </ul>
+    </section>
+  
+      
+    <section class="ed-section ed-useful">
+      <header class="ed-sec-head">
+        <span class="ed-band ed-band-useful">Useful — read when you can</span>
+        <span class="ed-sec-count">4</span>
+      </header>
+      <ul class="ed-list">
+        
+          <li class="ed-item">
+            <div class="ed-item-meta">
+              <span class="ed-from">Anthropic</span>
+              <time class="ed-ts">7:30 AM</time>
+            </div>
+            <div class="ed-subject">Claude 4.7 release notes</div>
+            <p class="ed-snippet">New extended thinking mode, 50% lower batch pricing, MCP improvements. Worth a 5-min read.</p>
+            
+          </li>
+        
+          <li class="ed-item">
+            <div class="ed-item-meta">
+              <span class="ed-from">Lenny&#39;s Newsletter</span>
+              <time class="ed-ts">6:00 AM</time>
+            </div>
+            <div class="ed-subject">How great PMs interview their candidates</div>
+            <p class="ed-snippet">Long-form post; the 4-question framework (signal, scope, speed, sticking) is the takeaway.</p>
+            
+          </li>
+        
+          <li class="ed-item">
+            <div class="ed-item-meta">
+              <span class="ed-from">Hacker News</span>
+              <time class="ed-ts">6:00 AM</time>
+            </div>
+            <div class="ed-subject">Daily digest — top 5 (May 9)</div>
+            <p class="ed-snippet">Linear&#39;s CEO on writing as a thinking tool, postgres LISTEN/NOTIFY tricks, new SQLite WAL2 mode.</p>
+            
+          </li>
+        
+          <li class="ed-item">
+            <div class="ed-item-meta">
+              <span class="ed-from">AWS</span>
+              <time class="ed-ts">5:55 AM</time>
+            </div>
+            <div class="ed-subject">Your Lambda costs dropped 18% MoM</div>
+            <p class="ed-snippet">Memory tuning recommendations active; estimated $340 saved this month.</p>
+            
+          </li>
+        
+      </ul>
+    </section>
+  
+
+      
+        <section class="ed-section ed-noise">
+          <header class="ed-sec-head">
+            <span class="ed-band ed-band-noise">Noise</span>
+            <span class="ed-sec-count">filtered</span>
+          </header>
+          <p class="ed-noise-text">78 promotional / list emails. Top senders to consider unsubscribing from this week — Substack digest (12), Medium daily (9), LinkedIn news (8), random SaaS newsletters (40+).</p>
+        </section>
+      
+    </main>
+  
+</body>
+</html>

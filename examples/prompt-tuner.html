@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>Customer support response tuner</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.pt {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+.pt-head {
+  margin-bottom: 1rem;
+}
+.pt-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.pt-desc {
+  margin-top: 0.5rem;
+  color: var(--htmd-fg-muted);
+  max-width: 70ch;
+}
+
+.pt-section-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.5rem;
+}
+.pt-section-head h2 {
+  font-size: var(--htmd-text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-fg-muted);
+}
+.pt-hint {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-muted);
+}
+.pt-hint code {
+  background: var(--htmd-surface-2);
+  padding: 0.05em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+.pt-template-input {
+  width: 100%;
+  min-height: 140px;
+  font-family: var(--htmd-font-mono);
+  font-size: 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--htmd-radius);
+  border: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+  color: var(--htmd-fg);
+  resize: vertical;
+  line-height: 1.55;
+}
+.pt-template-input:focus {
+  outline: 2px solid var(--htmd-accent);
+  outline-offset: 1px;
+}
+
+.pt-samples {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.pt-sample {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--htmd-shadow);
+}
+.pt-sample-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.pt-sample-head h3 {
+  font-size: var(--htmd-text-md);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.pt-copy {
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  padding: 0.3rem 0.7rem;
+  font-size: var(--htmd-text-xs);
+  font-weight: 600;
+}
+.pt-copy:hover { background: var(--htmd-accent); color: var(--htmd-accent-fg); border-color: var(--htmd-accent); }
+.pt-copy.copied { background: var(--htmd-success); color: white; border-color: var(--htmd-success); }
+
+.pt-vars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.pt-var {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.pt-var-name {
+  font-family: var(--htmd-font-mono);
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-accent);
+}
+.pt-var input {
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  padding: 0.4rem 0.6rem;
+  font-size: var(--htmd-text-sm);
+}
+.pt-var input:focus { outline: 2px solid var(--htmd-accent); outline-offset: 1px; }
+
+.pt-output-wrap {
+  margin-top: 0.25rem;
+}
+.pt-output-head {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+.pt-output {
+  background: var(--htmd-bg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  padding: 0.75rem;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  font-family: var(--htmd-font-mono);
+  min-height: 80px;
+  max-height: 320px;
+  overflow: auto;
+}
+.pt-output mark {
+  background: var(--htmd-accent-soft);
+  color: var(--htmd-accent);
+  padding: 0 0.15em;
+  border-radius: 2px;
+  font-weight: 600;
+}
+.pt-output .pt-missing {
+  background: var(--htmd-danger-soft);
+  color: var(--htmd-danger);
+  padding: 0 0.15em;
+  border-radius: 2px;
+  font-style: italic;
+}
+
+</style>
+</head>
+<body data-htmd-template="prompt-tuner">
+
+    <main class="pt">
+      <header class="pt-head">
+        <h1 class="pt-title">Customer support response tuner</h1>
+        <p class="pt-desc">Edit the template on the left; tweak any variable on a sample card to see the live output. Click &quot;Copy&quot; to grab the rendered prompt.</p>
+      </header>
+      <section class="pt-template">
+        <header class="pt-section-head">
+          <h2>Template</h2>
+          <span class="pt-hint">use <code>{{var_name}}</code> for placeholders</span>
+        </header>
+        <textarea class="pt-template-input" data-pt-template spellcheck="false"></textarea>
+      </section>
+      <section class="pt-samples">
+        
+          <article class="pt-sample" data-pt-sample="0">
+            <header class="pt-sample-head">
+              <h3>Refund request</h3>
+              <button type="button" class="pt-copy" data-pt-copy="0">Copy</button>
+            </header>
+            <div class="pt-vars">
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">product</span>
+                  <input type="text" data-pt-var="0:product" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">customer_message</span>
+                  <input type="text" data-pt-var="0:customer_message" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">tone</span>
+                  <input type="text" data-pt-var="0:tone" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">max_words</span>
+                  <input type="text" data-pt-var="0:max_words" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">agent_name</span>
+                  <input type="text" data-pt-var="0:agent_name" value="">
+                </label>
+              
+            </div>
+            <div class="pt-output-wrap">
+              <header class="pt-output-head">Output</header>
+              <pre class="pt-output" data-pt-output="0"></pre>
+            </div>
+          </article>
+        
+          <article class="pt-sample" data-pt-sample="1">
+            <header class="pt-sample-head">
+              <h3>Feature request</h3>
+              <button type="button" class="pt-copy" data-pt-copy="1">Copy</button>
+            </header>
+            <div class="pt-vars">
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">product</span>
+                  <input type="text" data-pt-var="1:product" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">customer_message</span>
+                  <input type="text" data-pt-var="1:customer_message" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">tone</span>
+                  <input type="text" data-pt-var="1:tone" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">max_words</span>
+                  <input type="text" data-pt-var="1:max_words" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">agent_name</span>
+                  <input type="text" data-pt-var="1:agent_name" value="">
+                </label>
+              
+            </div>
+            <div class="pt-output-wrap">
+              <header class="pt-output-head">Output</header>
+              <pre class="pt-output" data-pt-output="1"></pre>
+            </div>
+          </article>
+        
+          <article class="pt-sample" data-pt-sample="2">
+            <header class="pt-sample-head">
+              <h3>Billing confusion</h3>
+              <button type="button" class="pt-copy" data-pt-copy="2">Copy</button>
+            </header>
+            <div class="pt-vars">
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">product</span>
+                  <input type="text" data-pt-var="2:product" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">customer_message</span>
+                  <input type="text" data-pt-var="2:customer_message" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">tone</span>
+                  <input type="text" data-pt-var="2:tone" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">max_words</span>
+                  <input type="text" data-pt-var="2:max_words" value="">
+                </label>
+              
+                <label class="pt-var">
+                  <span class="pt-var-name">agent_name</span>
+                  <input type="text" data-pt-var="2:agent_name" value="">
+                </label>
+              
+            </div>
+            <div class="pt-output-wrap">
+              <header class="pt-output-head">Output</header>
+              <pre class="pt-output" data-pt-output="2"></pre>
+            </div>
+          </article>
+        
+      </section>
+      <script type="application/json" data-pt-state>{&quot;template&quot;:&quot;You are a support agent for {{product}}.\n\nA customer wrote:\n&gt; {{customer_message}}\n\nReply in {{tone}} tone. Keep it under {{max_words}} words.\nSign off as \&quot;{{agent_name}}\&quot;.\n&quot;,&quot;variables&quot;:[{&quot;name&quot;:&quot;product&quot;,&quot;default&quot;:&quot;htmd&quot;},{&quot;name&quot;:&quot;customer_message&quot;,&quot;default&quot;:&quot;&quot;},{&quot;name&quot;:&quot;tone&quot;,&quot;default&quot;:&quot;friendly&quot;},{&quot;name&quot;:&quot;max_words&quot;,&quot;default&quot;:&quot;80&quot;},{&quot;name&quot;:&quot;agent_name&quot;,&quot;default&quot;:&quot;Sam&quot;}],&quot;samples&quot;:[{&quot;name&quot;:&quot;Refund request&quot;,&quot;vars&quot;:{&quot;product&quot;:&quot;htmd Pro&quot;,&quot;customer_message&quot;:&quot;I just bought htmd Pro yesterday and it crashes every time I try to render a slide deck. I want a refund.&quot;,&quot;tone&quot;:&quot;empathetic and professional&quot;,&quot;max_words&quot;:&quot;100&quot;,&quot;agent_name&quot;:&quot;Sam&quot;}},{&quot;name&quot;:&quot;Feature request&quot;,&quot;vars&quot;:{&quot;product&quot;:&quot;htmd Pro&quot;,&quot;customer_message&quot;:&quot;Can you add a Gantt chart template? I&#39;d pay extra for it.&quot;,&quot;tone&quot;:&quot;enthusiastic but honest about timeline&quot;,&quot;max_words&quot;:&quot;70&quot;,&quot;agent_name&quot;:&quot;Sam&quot;}},{&quot;name&quot;:&quot;Billing confusion&quot;,&quot;vars&quot;:{&quot;product&quot;:&quot;htmd Pro&quot;,&quot;customer_message&quot;:&quot;I was charged twice this month — please look into it.&quot;,&quot;tone&quot;:&quot;apologetic and action-oriented&quot;,&quot;max_words&quot;:&quot;60&quot;,&quot;agent_name&quot;:&quot;Sam&quot;}}]}</script>
+    </main>
+  
+<script>
+(function () {
+  const stateNode = document.querySelector('[data-pt-state]');
+  if (!stateNode) return;
+  const state = JSON.parse(stateNode.textContent);
+  const tplInput = document.querySelector('[data-pt-template]');
+  tplInput.value = state.template;
+
+  // Initialize variable inputs from sample defaults.
+  state.samples.forEach((s, i) => {
+    state.variables.forEach((v) => {
+      const value = (s.vars && s.vars[v.name]) ?? v.default ?? '';
+      const inp = document.querySelector(`[data-pt-var="${i}:${v.name}"]`);
+      if (inp) inp.value = value;
+    });
+  });
+
+  function escape(s) {
+    return String(s).replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+  }
+
+  function render(i) {
+    const tpl = tplInput.value;
+    const out = document.querySelector(`[data-pt-output="${i}"]`);
+    if (!out) return;
+    let html = escape(tpl);
+    html = html.replace(/\{\{\s*([\w.-]+)\s*\}\}/g, (m, name) => {
+      const inp = document.querySelector(`[data-pt-var="${i}:${name}"]`);
+      const v = inp ? inp.value : '';
+      if (v === '' || v == null) return `<span class="pt-missing">{{${escape(name)}}}</span>`;
+      return `<mark>${escape(v)}</mark>`;
+    });
+    out.innerHTML = html;
+  }
+  function rawOutput(i) {
+    const tpl = tplInput.value;
+    return tpl.replace(/\{\{\s*([\w.-]+)\s*\}\}/g, (m, name) => {
+      const inp = document.querySelector(`[data-pt-var="${i}:${name}"]`);
+      return inp ? inp.value : '';
+    });
+  }
+
+  function renderAll() {
+    state.samples.forEach((_, i) => render(i));
+  }
+  renderAll();
+
+  tplInput.addEventListener('input', renderAll);
+  document.querySelectorAll('[data-pt-var]').forEach((inp) => {
+    inp.addEventListener('input', () => {
+      const [i] = inp.dataset.ptVar.split(':');
+      render(parseInt(i, 10));
+    });
+  });
+  document.querySelectorAll('[data-pt-copy]').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const i = parseInt(btn.dataset.ptCopy, 10);
+      const text = rawOutput(i);
+      try {
+        await navigator.clipboard.writeText(text);
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 1200);
+      } catch {
+        btn.textContent = 'Press Ctrl+C';
+      }
+    });
+  });
+})();
+
+</script>
+</body>
+</html>

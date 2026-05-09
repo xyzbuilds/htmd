@@ -1,0 +1,53 @@
+title: How should we deploy our LLM service?
+subtitle: Three approaches for serving Claude in production at our scale (~50 RPS, mostly bursty)
+approaches:
+  - name: Direct API calls
+    summary: Each request hits Anthropic's API directly. Zero infrastructure on our side.
+    pros:
+      - Zero ops burden — no servers to manage
+      - Always on the latest model version
+      - Built-in safety, abuse prevention
+    cons:
+      - Per-token cost adds up at scale
+      - Latency floor set by network round-trip
+      - Rate limits apply across the org
+    when_to_use: Prototypes, low-volume products, anything < 1M tokens/day.
+    code: |
+      const r = await client.messages.create({
+        model: "claude-opus-4-7",
+        messages: [{role: "user", content: prompt}]
+      });
+  - name: Self-hosted proxy + cache
+    summary: Thin proxy in front of Anthropic API with prompt caching, retries, and a local request cache.
+    pros:
+      - Cache hits eliminate cost for repeated prompts
+      - Centralized observability and rate limiting
+      - Can swap models per route without app changes
+    cons:
+      - Adds a hop and a service to maintain
+      - Cache invalidation is hard
+      - Still beholden to upstream availability
+    when_to_use: Mid-scale apps where you have repeated structured prompts and want centralized control.
+    code: |
+      app.post('/llm', async (req, res) => {
+        const cached = await cache.get(hash(req.body));
+        if (cached) return res.json(cached);
+        // ...
+      });
+  - name: Batch + scheduled offline
+    summary: Queue requests, send them through Anthropic's batch API at off-peak times for 50% discount.
+    pros:
+      - 50% cheaper per token via batch pricing
+      - Naturally rate-limit friendly
+      - Easy to retry whole batches on failure
+    cons:
+      - Not viable for interactive UX (>1min latency)
+      - Requires job queue infrastructure
+      - Complex to mix with realtime requests
+    when_to_use: Background processing — summarization, classification, content generation pipelines.
+    code: |
+      const batch = await client.messages.batches.create({
+        requests: items.map(toBatchReq)
+      });
+verdict: |
+  Start with **Direct API calls** while you're prototyping. As soon as you cross ~$1k/mo in API spend or need observability, move to a **self-hosted proxy with caching**. Use **batch** for any non-interactive workload — it's free 50% off.
