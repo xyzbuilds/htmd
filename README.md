@@ -95,6 +95,7 @@ All examples are committed in [`examples/`](./examples). Open any HTML file dire
 | **prompt-tuner** | Editable prompt template + N sample variable sets with live previews. Stakeholders can fiddle. | [`examples/prompt-tuner.html`](./examples/prompt-tuner.html) |
 | **kanban-board** | Drag-and-drop kanban with Markdown export and shareable URL hash state. | [`examples/kanban-board.html`](./examples/kanban-board.html) |
 | **concept-explainer** | Doc with collapsibles, code-sample tabs, and hover-glossary tooltips. | [`examples/concept-explainer.html`](./examples/concept-explainer.html) |
+| **feedback-corrector** | Human-in-the-loop classification corrector: pill labels, clarification notes, copy-ready correction prompt. Mobile-first. | [`examples/feedback-corrector.html`](./examples/feedback-corrector.html) |
 
 ---
 

@@ -1,0 +1,30 @@
+title: Email triage corrections
+subtitle: Mark any classification you disagree with. Add clarification where helpful. Click "Copy Correction Prompt" when done.
+context_id: gmail-triage
+prompt_intro: I reviewed the recent email triage classifications and have corrections to share.
+labels:
+  - { value: URGENT, label: Urgent, color: "#dc2626", emoji: "🔴" }
+  - { value: USEFUL, label: Useful, color: "#d97706", emoji: "🟡" }
+  - { value: NOISE,  label: Noise,  color: "#94a3b8", emoji: "⚪" }
+items:
+  - id: e1
+    title: "Updates to the Instacart Terms of Service"
+    subtitle: "Instacart <no-reply@instacart.com>"
+    current_label: NOISE
+    metadata:
+      received: "2026-05-09 12:53"
+    verdict_reason: "Terms of Service update"
+  - id: e2
+    title: "We processed your payment"
+    subtitle: "American Express <AmericanExpress@welcome.americanexpress.com>"
+    current_label: USEFUL
+    metadata:
+      received: "2026-05-09 15:51"
+    verdict_reason: "Transaction confirmation from American Express"
+  - id: e3
+    title: "ACTION REQUIRED TO MAINTAIN CURRENT MARKET DATA"
+    subtitle: "Interactive Brokers <donotreply@interactivebrokers.com>"
+    current_label: USEFUL
+    metadata:
+      received: "2026-05-10 00:04"
+    verdict_reason: "Action required to maintain market data access"

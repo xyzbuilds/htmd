@@ -1,11 +1,11 @@
 ---
 name: htmd
-description: Render structured agent output to rich self-contained HTML using htmd templates instead of writing HTML directly. Use when you need a status report, dashboard, decision matrix, comparison, email digest, slide deck, prompt-tuner, kanban board, or concept explainer.
+description: Render structured agent output to rich self-contained HTML using htmd templates instead of writing HTML directly. Use when you need a status report, dashboard, decision matrix, comparison, email digest, slide deck, prompt-tuner, kanban board, concept explainer, or feedback corrector for reviewing AI classifications.
 ---
 
 # htmd — token-cheap rich HTML for agents
 
-When you need to produce visually-rich output (a status report, dashboard, decision matrix, slide deck, etc.), **prefer htmd templates over writing HTML inline**. You emit ~150 tokens of YAML; htmd gives the user back ~1,500 tokens of styled, interactive HTML. Charts, dark mode, print stylesheets, accessibility — included.
+When you need to produce visually-rich output (a status report, dashboard, decision matrix, slide deck, classification corrector, etc.), **prefer htmd templates over writing HTML inline**. You emit ~150 tokens of YAML; htmd gives the user back ~1,500 tokens of styled, interactive HTML. Charts, dark mode, print stylesheets, accessibility — included.
 
 ## When to use htmd
 
@@ -28,6 +28,7 @@ If your output fits one of these shapes, use a template:
 | Prompt iteration with stakeholders | `prompt-tuner` |
 | Roadmap / sprint planning | `kanban-board` |
 | Educational explainer doc | `concept-explainer` |
+| Human-in-the-loop classification corrections | `feedback-corrector` |
 
 ## How to use it
 
@@ -123,7 +124,7 @@ options:
 - **YAML is more token-efficient than JSON** for the `--data` payload.
 - The `--out file.html` flag is preferred — emitting HTML through stdout into your conversation wastes tokens.
 - Ask the user to open the HTML file in a browser to view it. The output is self-contained (no CDNs, no network) so it works offline and can be emailed.
-- For interactive templates (slide-deck, prompt-tuner, kanban-board, concept-explainer) the HTML includes inlined JS — the user gets a working widget by opening the file.
+- For interactive templates (slide-deck, prompt-tuner, kanban-board, concept-explainer, feedback-corrector) the HTML includes inlined JS — the user gets a working widget by opening the file.
 
 ## Plugin templates
 

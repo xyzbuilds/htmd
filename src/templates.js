@@ -18,7 +18,8 @@ const BUILTIN_NAMES = [
   'slide-deck',
   'prompt-tuner',
   'kanban-board',
-  'concept-explainer'
+  'concept-explainer',
+  'feedback-corrector'
 ];
 
 const _cache = new Map();
