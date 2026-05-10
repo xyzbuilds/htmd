@@ -10,7 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 
 describe('templates registry', () => {
-  it('lists all 9 built-in templates', async () => {
+  it('lists all 10 built-in templates', async () => {
     const list = await listTemplates();
     const names = list.map((t) => t.name);
     [
@@ -22,7 +22,8 @@ describe('templates registry', () => {
       'slide-deck',
       'prompt-tuner',
       'kanban-board',
-      'concept-explainer'
+      'concept-explainer',
+      'feedback-corrector'
     ].forEach((n) => expect(names).toContain(n));
   });
 });
@@ -37,7 +38,8 @@ describe('each template renders its example', () => {
     'slide-deck',
     'prompt-tuner',
     'kanban-board',
-    'concept-explainer'
+    'concept-explainer',
+    'feedback-corrector'
   ];
 
   for (const name of templates) {
@@ -53,7 +55,7 @@ describe('each template renders its example', () => {
       // Has the template attribute in body
       expect(html).toContain(`data-htmd-template="${name}"`);
       // Tier B templates ship inline JS
-      const hasJs = ['slide-deck', 'prompt-tuner', 'kanban-board', 'concept-explainer'].includes(name);
+      const hasJs = ['slide-deck', 'prompt-tuner', 'kanban-board', 'concept-explainer', 'feedback-corrector'].includes(name);
       if (hasJs) expect(html).toMatch(/<script>[\s\S]*<\/script>/);
     });
   }

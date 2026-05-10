@@ -1,0 +1,30 @@
+title: Email triage corrections
+subtitle: Mark any classification you disagree with. Add clarification where helpful. Click "Copy Correction Prompt" when done.
+context_id: gmail-triage
+prompt_intro: I reviewed the recent email triage classifications and have corrections to share.
+labels:
+  - { value: URGENT, label: Urgent, color: "#dc2626", emoji: "🔴" }
+  - { value: USEFUL, label: Useful, color: "#d97706", emoji: "🟡" }
+  - { value: NOISE,  label: Noise,  color: "#94a3b8", emoji: "⚪" }
+items:
+  - id: e1
+    title: "Updates to our Terms of Service"
+    subtitle: "Northwind Grocery <no-reply@northwind.example>"
+    current_label: NOISE
+    metadata:
+      received: "2026-05-09 12:53"
+    verdict_reason: "Terms of Service update"
+  - id: e2
+    title: "We received your payment"
+    subtitle: "Contoso Card Services <alerts@contoso-card.example>"
+    current_label: USEFUL
+    metadata:
+      received: "2026-05-09 15:51"
+    verdict_reason: "Payment confirmation from the card issuer"
+  - id: e3
+    title: "Action required to keep your market data"
+    subtitle: "Fabrikam Brokerage <donotreply@fabrikam.example>"
+    current_label: USEFUL
+    metadata:
+      received: "2026-05-10 00:04"
+    verdict_reason: "Action required to maintain market data access"
