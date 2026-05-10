@@ -148,3 +148,27 @@
   box-shadow: var(--htmd-shadow-lg);
   z-index: 100;
 }
+
+/* SortableJS state classes (touch + mouse drag) */
+.kb-ticket.kb-chosen {
+  border-color: var(--htmd-accent);
+  box-shadow: 0 0 0 3px var(--htmd-accent-soft), var(--htmd-shadow-lg);
+}
+.kb-ticket.kb-drag {
+  opacity: 0.95;
+  transform: rotate(0.5deg);
+}
+.kb-col-body.kb-over { /* already defined; reaffirmed for Sortable group hover */ }
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .kb { padding: 1rem 0.75rem 4rem; }
+  .kb-board { grid-template-columns: 1fr; }
+  .kb-col { min-height: 180px; }
+  .kb-ticket { padding: 0.85rem 0.95rem; touch-action: manipulation; }
+}
+
+@media print {
+  .kb-tools, .kb-toast { display: none !important; }
+  .kb-ticket { box-shadow: none; break-inside: avoid; }
+}
