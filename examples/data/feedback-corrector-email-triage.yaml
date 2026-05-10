@@ -1,0 +1,149 @@
+title: Email triage — recent corrections
+subtitle: Mark any classification you disagree with. Add clarification where helpful. Click "Copy Correction Prompt" when done.
+context_id: gmail-triage
+prompt_intro: I reviewed the recent email triage classifications and have corrections to share. Use these to update the classifier prompt.
+labels:
+  - { value: URGENT, label: Urgent, color: "#dc2626", emoji: "🔴" }
+  - { value: USEFUL, label: Useful, color: "#d97706", emoji: "🟡" }
+  - { value: NOISE,  label: Noise,  color: "#94a3b8", emoji: "⚪" }
+items:
+  - id: e01
+    title: "Weekend deal: 8% cash back at Fabrikam Home"
+    subtitle: "CashTrail <offers@cashtrail.example>"
+    current_label: NOISE
+    verdict_reason: "Retail promotion/cashback offer"
+    metadata:
+      received: "2026-05-09T16:38:59.824Z"
+  - id: e02
+    title: "Senior Product Manager at Northwind Labs"
+    subtitle: "JobBoard Alerts <alerts@jobboard.example>"
+    current_label: NOISE
+    verdict_reason: "Job alert digest"
+    metadata:
+      received: "2026-05-09T17:17:03.966Z"
+  - id: e03
+    title: "20% off your next three orders"
+    subtitle: "QuickBite Delivery <deals@quickbite.example>"
+    current_label: NOISE
+    verdict_reason: "Promotional email about delivery discounts"
+    metadata:
+      received: "2026-05-09T17:33:06.958Z"
+  - id: e04
+    title: "Spring photo prints, 50% off"
+    subtitle: "Corner Pharmacy <news@cornerpharmacy.example>"
+    current_label: NOISE
+    verdict_reason: "Retail promotion email"
+    metadata:
+      received: "2026-05-09T18:16:41.165Z"
+  - id: e05
+    title: "Trending near you: the community garden opens Saturday"
+    subtitle: "Neighborly Digest <digest@neighborly.example>"
+    current_label: NOISE
+    verdict_reason: "Local news digest"
+    metadata:
+      received: "2026-05-09T18:20:26.613Z"
+  - id: e06
+    title: "Three new noodle shops now deliver near you"
+    subtitle: "QuickBite Delivery <deals@quickbite.example>"
+    current_label: NOISE
+    verdict_reason: "Promotional email about new restaurants"
+    metadata:
+      received: "2026-05-09T18:41:59.496Z"
+  - id: e07
+    title: "The skills hiring managers ask about most"
+    subtitle: "Career Weekly <editors@careerweekly.example>"
+    current_label: NOISE
+    verdict_reason: "Newsletter digest"
+    metadata:
+      received: "2026-05-09T18:57:21.855Z"
+  - id: e08
+    title: "Market wrap: the week's 25 biggest movers"
+    subtitle: "The Closing Bell <newsletter@closingbell.example>"
+    current_label: NOISE
+    verdict_reason: "Stock market newsletter"
+    metadata:
+      received: "2026-05-09T19:06:22.786Z"
+  - id: e09
+    title: "Alex, add Jordan Lee to your network"
+    subtitle: "ProNet <messages@pronet.example>"
+    current_label: NOISE
+    verdict_reason: "Connection suggestion"
+    metadata:
+      received: "2026-05-09T19:16:59.697Z"
+  - id: e10
+    title: "Two medium pizzas for $12. That's it."
+    subtitle: "Slice Street <offers@slicestreet.example>"
+    current_label: NOISE
+    verdict_reason: "Promotional email offering a discount"
+    metadata:
+      received: "2026-05-09T19:20:40.523Z"
+  - id: e11
+    title: "Your receipt from Contoso Cloud #1000-2000-3000"
+    subtitle: "Contoso Cloud <billing@contoso.example>"
+    current_label: USEFUL
+    verdict_reason: ""
+    metadata:
+      received: "2026-05-09T19:48:03.185Z"
+  - id: e12
+    title: "Your receipt from Contoso Cloud #1000-2000-3000"
+    subtitle: "Contoso Cloud <billing@contoso.example>"
+    current_label: USEFUL
+    verdict_reason: "Receipt for payment"
+    metadata:
+      received: "2026-05-09T19:48:03.214Z"
+  - id: e13
+    title: "Blind box restock this Friday"
+    subtitle: "ShopFeed <newsletter@shopfeed.example>"
+    current_label: NOISE
+    verdict_reason: "Retail newsletter"
+    metadata:
+      received: "2026-05-09T20:37:35.866Z"
+  - id: e14
+    title: "Brunch spots near you this weekend"
+    subtitle: "TableFinder <hello@tablefinder.example>"
+    current_label: NOISE
+    verdict_reason: "Promotional email about brunch ideas"
+    metadata:
+      received: "2026-05-09T21:07:16.089Z"
+  - id: e15
+    title: "Alex, check in on your savings goals"
+    subtitle: "BudgetWise <notifications@budgetwise.example>"
+    current_label: USEFUL
+    verdict_reason: "Account nudge from a budgeting app"
+    metadata:
+      received: "2026-05-09T21:45:21.865Z"
+  - id: e16
+    title: "Track night, league standings and more"
+    subtitle: "Kart Club <members@kartclub.example>"
+    current_label: NOISE
+    verdict_reason: "Club newsletter"
+    metadata:
+      received: "2026-05-09T23:04:38.300Z"
+  - id: e17
+    title: "Alex, add Sam Rivera to your network"
+    subtitle: "ProNet <messages@pronet.example>"
+    current_label: NOISE
+    verdict_reason: "Connection suggestion"
+    metadata:
+      received: "2026-05-09T23:16:59.667Z"
+  - id: e18
+    title: "Action required to keep your market data"
+    subtitle: "Fabrikam Brokerage <donotreply@fabrikam.example>"
+    current_label: USEFUL
+    verdict_reason: "Action required to maintain market data access"
+    metadata:
+      received: "2026-05-10T00:04:47.882Z"
+  - id: e19
+    title: "School district reviews security after software breach"
+    subtitle: "Neighborly Local News <news@neighborly.example>"
+    current_label: NOISE
+    verdict_reason: "Local news"
+    metadata:
+      received: "2026-05-10T01:13:55.279Z"
+  - id: e20
+    title: "New jobs that match your search"
+    subtitle: "ProNet <messages@pronet.example>"
+    current_label: NOISE
+    verdict_reason: "Job alert digest"
+    metadata:
+      received: "2026-05-10T01:17:01.707Z"
