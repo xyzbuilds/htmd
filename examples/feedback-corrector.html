@@ -1,0 +1,2462 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.1.0">
+<title>Email triage — recent corrections</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.fc {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 6rem;
+}
+
+.fc-head {
+  margin-bottom: 1.25rem;
+}
+.fc-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.fc-subtitle {
+  margin-top: 0.4rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+}
+
+/* List */
+.fc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Item card */
+.fc-item {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius);
+  padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.08s;
+}
+.fc-item.fc-modified {
+  border-left-color: var(--htmd-accent);
+  box-shadow: var(--htmd-shadow-lg);
+}
+
+.fc-item-head {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.fc-item-meta {
+  flex: 1 1 60%;
+  min-width: 0;
+}
+.fc-item-title {
+  font-weight: 600;
+  font-size: var(--htmd-text-md);
+  line-height: 1.35;
+  word-break: break-word;
+}
+.fc-item-subtitle {
+  margin-top: 0.15rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-sm);
+  word-break: break-word;
+}
+
+.fc-kv {
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+}
+.fc-kv-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.fc-kv dt {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--htmd-muted);
+}
+.fc-kv dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Current label badge */
+.fc-current-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+.fc-mini-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+
+.fc-badge {
+  --fc-label-color: var(--htmd-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fc-label-color) 14%, transparent);
+  color: var(--fc-label-color);
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.fc-badge-emoji { font-size: 0.85rem; line-height: 1; }
+
+.fc-item-body {
+  margin-top: 0.6rem;
+  font-size: var(--htmd-text-sm);
+  line-height: 1.55;
+  color: var(--htmd-fg);
+}
+.fc-verdict {
+  margin-top: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--htmd-surface-2);
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.5;
+}
+.fc-verdict-label {
+  font-weight: 700;
+  color: var(--htmd-fg);
+  margin-right: 0.25rem;
+}
+
+/* Pills (radio-style label chooser) */
+.fc-pills {
+  margin-top: 0.85rem;
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.fc-pill {
+  --fc-label-color: var(--htmd-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0.45rem 0.95rem;
+  background: var(--htmd-surface);
+  color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border);
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+}
+.fc-pill:hover {
+  border-color: var(--fc-label-color);
+}
+.fc-pill:active { transform: scale(0.97); }
+.fc-pill-selected {
+  background: var(--fc-label-color);
+  color: #fff;
+  border-color: var(--fc-label-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-label-color) 22%, transparent);
+}
+.fc-pill-emoji { font-size: 1rem; line-height: 1; }
+
+/* Clarification */
+.fc-clar {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.fc-clar-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+.fc-clar-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--htmd-text-sm);
+  line-height: 1.5;
+  padding: 0.55rem 0.7rem;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  resize: vertical;
+  min-height: 44px;
+  transition: border-color 0.12s, background 0.12s;
+}
+.fc-clar-input:focus {
+  outline: none;
+  border-color: var(--htmd-accent);
+  background: var(--htmd-surface);
+}
+
+.fc-modified-tag {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.85rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+/* Floating action button */
+.fc-bottom-spacer {
+  height: 4rem;
+}
+.fc-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  right: 1.1rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.7rem 1.2rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
+}
+.fc-fab:hover { transform: translateY(-1px); }
+.fc-fab:active { transform: translateY(0); }
+.fc-fab:disabled, .fc-fab[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.fc-fab-icon { font-size: 1rem; line-height: 1; }
+.fc-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  color: inherit;
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Modal */
+.fc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.fc-modal[hidden] { display: none; }
+.fc-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.fc-modal-panel {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow-lg);
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.fc-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.fc-modal-head h2 {
+  font-size: var(--htmd-text-lg);
+  font-weight: 700;
+}
+.fc-modal-x {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+.fc-modal-x:hover { background: var(--htmd-surface-2); }
+.fc-modal-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--htmd-fg);
+}
+.fc-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+}
+.fc-btn {
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.fc-btn-ghost {
+  background: transparent;
+  color: var(--htmd-fg-muted);
+  border-color: var(--htmd-border);
+}
+.fc-btn-ghost:hover { background: var(--htmd-surface-2); }
+.fc-btn-primary {
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+}
+.fc-btn-primary:hover { filter: brightness(1.05); }
+
+/* Toast */
+.fc-toast {
+  position: fixed;
+  bottom: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  box-shadow: var(--htmd-shadow-lg);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.18s, transform 0.18s;
+  pointer-events: none;
+}
+.fc-toast[hidden] { display: none; }
+.fc-toast.fc-toast-show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .fc { padding: 1rem 0.85rem 7rem; }
+  .fc-title { font-size: 1.5rem; }
+  .fc-item { padding: 0.85rem 0.85rem 0.95rem; }
+  .fc-item-head { gap: 0.5rem; }
+  .fc-current-wrap { align-items: flex-start; flex-direction: row; gap: 0.45rem; }
+  .fc-fab {
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.9rem;
+    justify-content: center;
+    border-radius: var(--htmd-radius);
+  }
+  .fc-modal { padding: 0; align-items: stretch; }
+  .fc-modal-panel {
+    max-width: none;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+  .fc-modal-pre { font-size: 0.8rem; }
+}
+
+/* Print: hide buttons, show clean list */
+@media print {
+  .fc-fab, .fc-modal, .fc-toast, .fc-pills, .fc-clar { display: none !important; }
+  .fc-item { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+  body { background: white; color: black; }
+}
+
+</style>
+</head>
+<body data-htmd-template="feedback-corrector">
+
+    <main class="fc">
+      <header class="fc-head">
+        <h1 class="fc-title">Email triage — recent corrections</h1>
+        <p class="fc-subtitle">Mark any classification you disagree with. Add clarification where helpful. Click &quot;Copy Correction Prompt&quot; when done.</p>
+      </header>
+
+      <style>[data-fc-color="URGENT"]{--fc-label-color:#dc2626;}[data-fc-color="USEFUL"]{--fc-label-color:#d97706;}[data-fc-color="NOISE"]{--fc-label-color:#94a3b8;}</style>
+
+      <ol class="fc-list">
+        
+    <li class="fc-item" data-fc-item="e01" data-fc-idx="0">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Trending Today: Kohl&#39;s Cash Back!</div>
+          <div class="fc-item-subtitle">TopCashback &lt;offers@topcashback.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T16:38:59.824Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Retail promotion/cashback offer</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e01"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e01"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e01"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e01" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e02" data-fc-idx="1">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Principal Product Manager at Bonterra</div>
+          <div class="fc-item-subtitle">LinkedIn Job Alerts &lt;jobalerts-noreply@linkedin.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T17:17:03.966Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> LinkedIn job alert digest</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e02"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e02"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e02"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e02" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e03" data-fc-idx="2">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">30% off flowers + 20% off Ulta Beauty for Mom</div>
+          <div class="fc-item-subtitle">Uber Eats &lt;ubereats@uber.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T17:33:06.958Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Promotional email regarding discounts on flowers and Ulta Beauty</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e03"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e03"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e03"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e03" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e04" data-fc-idx="3">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Mother’s Day Memories, 50% Off</div>
+          <div class="fc-item-subtitle">Walgreens &lt;walgreens@eml.walgreens.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T18:16:41.165Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Retail promotion email</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e04"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e04"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e04"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e04" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e05" data-fc-idx="4">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Trending in your area today 👀: I was so excited to hear that a Tricolored...</div>
+          <div class="fc-item-subtitle">Trending on Nextdoor &lt;no-reply@rs.email.nextdoor.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T18:20:26.613Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Trending digest from Nextdoor</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e05"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e05"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e05"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e05" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e06" data-fc-idx="5">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Hokkaido Ramen House and more, now available on Grubhub!</div>
+          <div class="fc-item-subtitle">Grubhub &lt;email@a.grubhub.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T18:41:59.496Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Promotional email about a new restaurant availability on Grubhub</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e06"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e06"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e06"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e06" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e07" data-fc-idx="6">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">The managers most at risk</div>
+          <div class="fc-item-subtitle">LinkedIn News &lt;editors-noreply@linkedin.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T18:57:21.855Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> LinkedIn Suggested Top Conversations digest</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e07"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e07"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e07"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e07" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e08" data-fc-idx="7">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Stocktwits Top 25 Week 18</div>
+          <div class="fc-item-subtitle">The Daily Rip by Stocktwits &lt;newsletter@thedailyrip.stocktwits.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T19:06:22.786Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Stock market newsletter</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e08"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e08"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e08"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e08" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e09" data-fc-idx="8">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Xuyang, add Brandon Baker 💼</div>
+          <div class="fc-item-subtitle">LinkedIn &lt;messages-noreply@linkedin.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T19:16:59.697Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> LinkedIn connection suggestion</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e09"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e09"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e09"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e09" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e10" data-fc-idx="9">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">50% OFF pizza! That’s it. That’s the email.</div>
+          <div class="fc-item-subtitle">&quot;Domino&#39;s Pizza&quot; &lt;offers@e-offers.dominos.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T19:20:40.523Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Promotional email offering a discount</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e10"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e10"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e10"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e10" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e11" data-fc-idx="10">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Your receipt from Anthropic, PBC #2424-8212-3343</div>
+          <div class="fc-item-subtitle">&quot;Anthropic, PBC&quot; &lt;invoice+statements@mail.anthropic.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T19:48:03.185Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e11"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e11"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e11"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e11" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e12" data-fc-idx="11">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Your receipt from Anthropic, PBC #2424-8212-3343</div>
+          <div class="fc-item-subtitle">&quot;Anthropic, PBC&quot; &lt;invoice+statements@mail.anthropic.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T19:48:03.214Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Receipt for payment</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e12"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e12"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e12"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e12" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e13" data-fc-idx="12">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">POP MART US SHOP posted: In an ocean flooded with emotional clutter, b...</div>
+          <div class="fc-item-subtitle">TikTok &lt;newsletter@service.tiktok.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T20:37:35.866Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Promotional newsletter from TikTok regarding POP MART US SHOP</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e13"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e13"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e13"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e13" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e14" data-fc-idx="13">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Brunch spots near Dunwoody for Mom</div>
+          <div class="fc-item-subtitle">OpenTable &lt;OpenTable@mgs.opentable.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T21:07:16.089Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Promotional email from OpenTable about Mother&#39;s Day brunch ideas</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e14"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e14"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e14"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e14" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e15" data-fc-idx="14">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Check in with your investment allocations, Xuyang.</div>
+          <div class="fc-item-subtitle">Credit Karma &lt;notifications@notifications.creditkarma.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T21:45:21.865Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Investment account details/check-in from a linked service</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e15"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e15"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e15"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e15" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e16" data-fc-idx="15">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">K1 Newsletter: World Championship, Drift Night &amp; More</div>
+          <div class="fc-item-subtitle">K1 Speed &lt;member@from.k1speed.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T23:04:38.300Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> K1 Newsletter with championship results and promotions</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e16"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e16"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e16"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e16" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e17" data-fc-idx="16">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Xuyang, add Steve Shimizu 💼</div>
+          <div class="fc-item-subtitle">LinkedIn &lt;messages-noreply@linkedin.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-09T23:16:59.667Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> LinkedIn connection suggestion/networking digest</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e17"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e17"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e17"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e17" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e18" data-fc-idx="17">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">ACTION REQUIRED TO MAINTAIN CURRENT MARKET DATA</div>
+          <div class="fc-item-subtitle">Interactive Brokers Client Services &lt;donotreply@interactivebrokers.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-10T00:04:47.882Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Action required to maintain market data access</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e18"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e18"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e18"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e18" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e19" data-fc-idx="18">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Georgia schools caught in nationwide Canvas hack as extortion threat emerges</div>
+          <div class="fc-item-subtitle">Nextdoor Local News &lt;reply@rs.email.nextdoor.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-10T01:13:55.279Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> News aggregation/local news digest from Nextdoor</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e19"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e19"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e19"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e19" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e20" data-fc-idx="19">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">View Facebook App jobs and your next steps</div>
+          <div class="fc-item-subtitle">LinkedIn &lt;messages-noreply@linkedin.com&gt;</div>
+          
+    <dl class="fc-kv">
+      
+        <div class="fc-kv-row">
+          <dt>received</dt>
+          <dd>2026-05-10T01:17:01.707Z</dd>
+        </div>
+      
+    </dl>
+  
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> LinkedIn job alert digest</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e20"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e20"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e20"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e20" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+      </ol>
+
+      <div class="fc-bottom-spacer" aria-hidden="true"></div>
+
+      <button type="button" class="fc-fab" data-fc-copy aria-label="Copy correction prompt">
+        <span class="fc-fab-icon" aria-hidden="true">&#x270E;</span>
+        <span class="fc-fab-label">Copy Correction Prompt</span>
+        <span class="fc-fab-badge" data-fc-modified-count>0</span>
+      </button>
+
+      <div class="fc-modal" data-fc-modal hidden role="dialog" aria-modal="true" aria-labelledby="fc-modal-title">
+        <div class="fc-modal-backdrop" data-fc-modal-close></div>
+        <div class="fc-modal-panel">
+          <header class="fc-modal-head">
+            <h2 id="fc-modal-title">Correction prompt</h2>
+            <button type="button" class="fc-modal-x" data-fc-modal-close aria-label="Close">&#x2715;</button>
+          </header>
+          <pre class="fc-modal-pre" data-fc-modal-text></pre>
+          <footer class="fc-modal-foot">
+            <button type="button" class="fc-btn fc-btn-ghost" data-fc-modal-close>Cancel</button>
+            <button type="button" class="fc-btn fc-btn-primary" data-fc-confirm-copy>Copy</button>
+          </footer>
+        </div>
+      </div>
+
+      <div class="fc-toast" data-fc-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-fc-state>{"items":[{"id":"e01","original_label":"NOISE","current_label":"NOISE","title":"Trending Today: Kohl's Cash Back!","subtitle":"TopCashback <offers@topcashback.com>","clarification":""},{"id":"e02","original_label":"NOISE","current_label":"NOISE","title":"Principal Product Manager at Bonterra","subtitle":"LinkedIn Job Alerts <jobalerts-noreply@linkedin.com>","clarification":""},{"id":"e03","original_label":"NOISE","current_label":"NOISE","title":"30% off flowers + 20% off Ulta Beauty for Mom","subtitle":"Uber Eats <ubereats@uber.com>","clarification":""},{"id":"e04","original_label":"NOISE","current_label":"NOISE","title":"Mother’s Day Memories, 50% Off","subtitle":"Walgreens <walgreens@eml.walgreens.com>","clarification":""},{"id":"e05","original_label":"NOISE","current_label":"NOISE","title":"Trending in your area today 👀: I was so excited to hear that a Tricolored...","subtitle":"Trending on Nextdoor <no-reply@rs.email.nextdoor.com>","clarification":""},{"id":"e06","original_label":"NOISE","current_label":"NOISE","title":"Hokkaido Ramen House and more, now available on Grubhub!","subtitle":"Grubhub <email@a.grubhub.com>","clarification":""},{"id":"e07","original_label":"NOISE","current_label":"NOISE","title":"The managers most at risk","subtitle":"LinkedIn News <editors-noreply@linkedin.com>","clarification":""},{"id":"e08","original_label":"NOISE","current_label":"NOISE","title":"Stocktwits Top 25 Week 18","subtitle":"The Daily Rip by Stocktwits <newsletter@thedailyrip.stocktwits.com>","clarification":""},{"id":"e09","original_label":"NOISE","current_label":"NOISE","title":"Xuyang, add Brandon Baker 💼","subtitle":"LinkedIn <messages-noreply@linkedin.com>","clarification":""},{"id":"e10","original_label":"NOISE","current_label":"NOISE","title":"50% OFF pizza! That’s it. That’s the email.","subtitle":"\"Domino's Pizza\" <offers@e-offers.dominos.com>","clarification":""},{"id":"e11","original_label":"USEFUL","current_label":"USEFUL","title":"Your receipt from Anthropic, PBC #2424-8212-3343","subtitle":"\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>","clarification":""},{"id":"e12","original_label":"USEFUL","current_label":"USEFUL","title":"Your receipt from Anthropic, PBC #2424-8212-3343","subtitle":"\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>","clarification":""},{"id":"e13","original_label":"NOISE","current_label":"NOISE","title":"POP MART US SHOP posted: In an ocean flooded with emotional clutter, b...","subtitle":"TikTok <newsletter@service.tiktok.com>","clarification":""},{"id":"e14","original_label":"NOISE","current_label":"NOISE","title":"Brunch spots near Dunwoody for Mom","subtitle":"OpenTable <OpenTable@mgs.opentable.com>","clarification":""},{"id":"e15","original_label":"USEFUL","current_label":"USEFUL","title":"Check in with your investment allocations, Xuyang.","subtitle":"Credit Karma <notifications@notifications.creditkarma.com>","clarification":""},{"id":"e16","original_label":"NOISE","current_label":"NOISE","title":"K1 Newsletter: World Championship, Drift Night & More","subtitle":"K1 Speed <member@from.k1speed.com>","clarification":""},{"id":"e17","original_label":"NOISE","current_label":"NOISE","title":"Xuyang, add Steve Shimizu 💼","subtitle":"LinkedIn <messages-noreply@linkedin.com>","clarification":""},{"id":"e18","original_label":"USEFUL","current_label":"USEFUL","title":"ACTION REQUIRED TO MAINTAIN CURRENT MARKET DATA","subtitle":"Interactive Brokers Client Services <donotreply@interactivebrokers.com>","clarification":""},{"id":"e19","original_label":"NOISE","current_label":"NOISE","title":"Georgia schools caught in nationwide Canvas hack as extortion threat emerges","subtitle":"Nextdoor Local News <reply@rs.email.nextdoor.com>","clarification":""},{"id":"e20","original_label":"NOISE","current_label":"NOISE","title":"View Facebook App jobs and your next steps","subtitle":"LinkedIn <messages-noreply@linkedin.com>","clarification":""}],"labels":[{"value":"URGENT","label":"Urgent","color":"#dc2626","emoji":"🔴","_color":"#dc2626"},{"value":"USEFUL","label":"Useful","color":"#d97706","emoji":"🟡","_color":"#d97706"},{"value":"NOISE","label":"Noise","color":"#94a3b8","emoji":"⚪","_color":"#94a3b8"}],"context_id":"gmail-triage","prompt_intro":"I reviewed the recent email triage classifications and have corrections to share. Use these to update the classifier prompt.","prompt_template":""}</script>
+    </main>
+  
+<script>
+(function () {
+  const stateNode = document.querySelector('[data-fc-state]');
+  if (!stateNode) return;
+
+  let state;
+  try {
+    state = JSON.parse(stateNode.textContent);
+  } catch (e) {
+    console.error('feedback-corrector: failed to parse state', e);
+    return;
+  }
+
+  // Index items by id for fast lookup.
+  const itemIndex = new Map();
+  state.items.forEach((it) => itemIndex.set(it.id, it));
+
+  const labelByValue = new Map();
+  state.labels.forEach((l) => labelByValue.set(l.value, l));
+
+  const fab = document.querySelector('[data-fc-copy]');
+  const counterEl = document.querySelector('[data-fc-modified-count]');
+  const modal = document.querySelector('[data-fc-modal]');
+  const modalText = document.querySelector('[data-fc-modal-text]');
+  const toast = document.querySelector('[data-fc-toast]');
+
+  // -------- helpers --------
+  function isModified(item) {
+    return item.current_label !== item.original_label || (item.clarification && item.clarification.trim() !== '');
+  }
+
+  function modifiedCount() {
+    let n = 0;
+    for (const it of state.items) if (isModified(it)) n++;
+    return n;
+  }
+
+  function updateCounter() {
+    const n = modifiedCount();
+    if (counterEl) counterEl.textContent = n;
+    if (fab) {
+      fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+      fab.disabled = n === 0;
+    }
+  }
+
+  function updateItemUi(itemId) {
+    const item = itemIndex.get(itemId);
+    if (!item) return;
+    const card = document.querySelector(`[data-fc-item="${cssEscape(itemId)}"]`);
+    if (!card) return;
+
+    // Toggle modified styling + tag
+    const modified = isModified(item);
+    card.classList.toggle('fc-modified', modified);
+    const tag = card.querySelector('[data-fc-modified-tag]');
+    if (tag) {
+      if (modified) tag.removeAttribute('hidden');
+      else tag.setAttribute('hidden', '');
+    }
+
+    // Refresh pill selection state
+    card.querySelectorAll('[data-fc-pill]').forEach((btn) => {
+      const selected = btn.dataset.fcPill === item.current_label;
+      btn.classList.toggle('fc-pill-selected', selected);
+      btn.setAttribute('aria-checked', selected ? 'true' : 'false');
+    });
+  }
+
+  function debounce(fn, ms) {
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  function showToast(msg, ms) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    // force reflow then add show class
+    void toast.offsetWidth;
+    toast.classList.add('fc-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.classList.remove('fc-toast-show');
+      setTimeout(() => toast.setAttribute('hidden', ''), 220);
+    }, ms || 1800);
+  }
+
+  // -------- prompt assembly --------
+  function buildPrompt() {
+    const lines = [];
+    const intro = state.prompt_intro || 'I reviewed the following classifications and have corrections to share.';
+    lines.push(intro.trim());
+    lines.push('');
+    if (state.context_id) lines.push(`Context: ${state.context_id}`);
+    lines.push(`Date: ${new Date().toISOString()}`);
+    lines.push('');
+    lines.push('The following classifications need to be corrected:');
+    lines.push('');
+
+    let n = 0;
+    for (const it of state.items) {
+      if (!isModified(it)) continue;
+      n++;
+      const wasLbl = labelByValue.get(it.original_label);
+      const newLbl = labelByValue.get(it.current_label);
+      const wasName = wasLbl ? wasLbl.label : it.original_label;
+      const newName = newLbl ? newLbl.label : it.current_label;
+      const titleStr = it.title || `(item ${it.id})`;
+      lines.push(`${n}. Item: "${titleStr}"`);
+      if (it.subtitle) lines.push(`   Subtitle: ${it.subtitle}`);
+      lines.push(`   Was classified as: ${wasName}`);
+      lines.push(`   Should be: ${newName}`);
+      const clar = (it.clarification || '').trim();
+      lines.push(`   Clarification: ${clar || '(none)'}`);
+      lines.push('');
+    }
+
+    lines.push('Please update the classifier accordingly.');
+    return lines.join('\n');
+  }
+
+  // Optional template substitution if user provided one.
+  function buildPromptWithTemplate() {
+    if (!state.prompt_template) return buildPrompt();
+    const itemsBlock = state.items.filter(isModified).map((it, idx) => {
+      const wasLbl = labelByValue.get(it.original_label);
+      const newLbl = labelByValue.get(it.current_label);
+      const wasName = wasLbl ? wasLbl.label : it.original_label;
+      const newName = newLbl ? newLbl.label : it.current_label;
+      const clar = (it.clarification || '').trim() || '(none)';
+      return `${idx + 1}. Item: "${it.title || it.id}"\n   Was: ${wasName}\n   Should be: ${newName}\n   Clarification: ${clar}`;
+    }).join('\n\n');
+    return state.prompt_template
+      .replace(/\{intro\}/g, state.prompt_intro || '')
+      .replace(/\{context_id\}/g, state.context_id || '')
+      .replace(/\{date\}/g, new Date().toISOString())
+      .replace(/\{items\}/g, itemsBlock);
+  }
+
+  function assemble() {
+    return state.prompt_template ? buildPromptWithTemplate() : buildPrompt();
+  }
+
+  // -------- copy --------
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (e) {
+        // fall through to fallback
+      }
+    }
+    // Fallback for older Safari: hidden textarea + execCommand
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  // -------- modal --------
+  function openModal() {
+    if (modifiedCount() === 0) {
+      showToast('No changes to copy yet');
+      return;
+    }
+    if (!modal) return;
+    const text = assemble();
+    if (modalText) modalText.textContent = text;
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  // -------- event wiring --------
+  // Pills: clicking one selects it as the new label for that item.
+  document.querySelectorAll('[data-fc-pill]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.fcPillItem;
+      const value = btn.dataset.fcPill;
+      const item = itemIndex.get(itemId);
+      if (!item) return;
+      item.current_label = value;
+      updateItemUi(itemId);
+      updateCounter();
+    });
+  });
+
+  // Clarifications
+  const debouncedCounter = debounce(updateCounter, 150);
+  document.querySelectorAll('[data-fc-clar]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const itemId = ta.dataset.fcClar;
+      const item = itemIndex.get(itemId);
+      if (!item) return;
+      item.clarification = ta.value;
+      // Auto-grow rows up to a cap
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 280) + 'px';
+      // Modified state may have flipped if clarification went 0 ↔ non-empty
+      const card = document.querySelector(`[data-fc-item="${cssEscape(itemId)}"]`);
+      if (card) {
+        const mod = isModified(item);
+        card.classList.toggle('fc-modified', mod);
+        const tag = card.querySelector('[data-fc-modified-tag]');
+        if (tag) {
+          if (mod) tag.removeAttribute('hidden');
+          else tag.setAttribute('hidden', '');
+        }
+      }
+      debouncedCounter();
+    });
+  });
+
+  // FAB
+  if (fab) fab.addEventListener('click', openModal);
+
+  // Modal close
+  document.querySelectorAll('[data-fc-modal-close]').forEach((el) => {
+    el.addEventListener('click', closeModal);
+  });
+  // Esc to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) closeModal();
+  });
+
+  // Confirm copy
+  const confirmBtn = document.querySelector('[data-fc-confirm-copy]');
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', async () => {
+      const text = modalText ? modalText.textContent : assemble();
+      const ok = await copyText(text);
+      closeModal();
+      showToast(ok ? 'Copied!' : 'Copy failed — see console');
+      if (!ok) console.log(text);
+    });
+  }
+
+  updateCounter();
+})();
+
+</script>
+</body>
+</html>

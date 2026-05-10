@@ -1,0 +1,149 @@
+title: Email triage — recent corrections
+subtitle: Mark any classification you disagree with. Add clarification where helpful. Click "Copy Correction Prompt" when done.
+context_id: gmail-triage
+prompt_intro: I reviewed the recent email triage classifications and have corrections to share. Use these to update the classifier prompt.
+labels:
+  - { value: URGENT, label: Urgent, color: "#dc2626", emoji: "🔴" }
+  - { value: USEFUL, label: Useful, color: "#d97706", emoji: "🟡" }
+  - { value: NOISE,  label: Noise,  color: "#94a3b8", emoji: "⚪" }
+items:
+  - id: e01
+    title: "Trending Today: Kohl's Cash Back!"
+    subtitle: "TopCashback <offers@topcashback.com>"
+    current_label: NOISE
+    verdict_reason: "Retail promotion/cashback offer"
+    metadata:
+      received: "2026-05-09T16:38:59.824Z"
+  - id: e02
+    title: "Principal Product Manager at Bonterra"
+    subtitle: "LinkedIn Job Alerts <jobalerts-noreply@linkedin.com>"
+    current_label: NOISE
+    verdict_reason: "LinkedIn job alert digest"
+    metadata:
+      received: "2026-05-09T17:17:03.966Z"
+  - id: e03
+    title: "30% off flowers + 20% off Ulta Beauty for Mom"
+    subtitle: "Uber Eats <ubereats@uber.com>"
+    current_label: NOISE
+    verdict_reason: "Promotional email regarding discounts on flowers and Ulta Beauty"
+    metadata:
+      received: "2026-05-09T17:33:06.958Z"
+  - id: e04
+    title: "Mother’s Day Memories, 50% Off"
+    subtitle: "Walgreens <walgreens@eml.walgreens.com>"
+    current_label: NOISE
+    verdict_reason: "Retail promotion email"
+    metadata:
+      received: "2026-05-09T18:16:41.165Z"
+  - id: e05
+    title: "Trending in your area today 👀: I was so excited to hear that a Tricolored..."
+    subtitle: "Trending on Nextdoor <no-reply@rs.email.nextdoor.com>"
+    current_label: NOISE
+    verdict_reason: "Trending digest from Nextdoor"
+    metadata:
+      received: "2026-05-09T18:20:26.613Z"
+  - id: e06
+    title: "Hokkaido Ramen House and more, now available on Grubhub!"
+    subtitle: "Grubhub <email@a.grubhub.com>"
+    current_label: NOISE
+    verdict_reason: "Promotional email about a new restaurant availability on Grubhub"
+    metadata:
+      received: "2026-05-09T18:41:59.496Z"
+  - id: e07
+    title: "The managers most at risk"
+    subtitle: "LinkedIn News <editors-noreply@linkedin.com>"
+    current_label: NOISE
+    verdict_reason: "LinkedIn Suggested Top Conversations digest"
+    metadata:
+      received: "2026-05-09T18:57:21.855Z"
+  - id: e08
+    title: "Stocktwits Top 25 Week 18"
+    subtitle: "The Daily Rip by Stocktwits <newsletter@thedailyrip.stocktwits.com>"
+    current_label: NOISE
+    verdict_reason: "Stock market newsletter"
+    metadata:
+      received: "2026-05-09T19:06:22.786Z"
+  - id: e09
+    title: "Xuyang, add Brandon Baker 💼"
+    subtitle: "LinkedIn <messages-noreply@linkedin.com>"
+    current_label: NOISE
+    verdict_reason: "LinkedIn connection suggestion"
+    metadata:
+      received: "2026-05-09T19:16:59.697Z"
+  - id: e10
+    title: "50% OFF pizza! That’s it. That’s the email."
+    subtitle: "\"Domino's Pizza\" <offers@e-offers.dominos.com>"
+    current_label: NOISE
+    verdict_reason: "Promotional email offering a discount"
+    metadata:
+      received: "2026-05-09T19:20:40.523Z"
+  - id: e11
+    title: "Your receipt from Anthropic, PBC #2424-8212-3343"
+    subtitle: "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>"
+    current_label: USEFUL
+    verdict_reason: ""
+    metadata:
+      received: "2026-05-09T19:48:03.185Z"
+  - id: e12
+    title: "Your receipt from Anthropic, PBC #2424-8212-3343"
+    subtitle: "\"Anthropic, PBC\" <invoice+statements@mail.anthropic.com>"
+    current_label: USEFUL
+    verdict_reason: "Receipt for payment"
+    metadata:
+      received: "2026-05-09T19:48:03.214Z"
+  - id: e13
+    title: "POP MART US SHOP posted: In an ocean flooded with emotional clutter, b..."
+    subtitle: "TikTok <newsletter@service.tiktok.com>"
+    current_label: NOISE
+    verdict_reason: "Promotional newsletter from TikTok regarding POP MART US SHOP"
+    metadata:
+      received: "2026-05-09T20:37:35.866Z"
+  - id: e14
+    title: "Brunch spots near Dunwoody for Mom"
+    subtitle: "OpenTable <OpenTable@mgs.opentable.com>"
+    current_label: NOISE
+    verdict_reason: "Promotional email from OpenTable about Mother's Day brunch ideas"
+    metadata:
+      received: "2026-05-09T21:07:16.089Z"
+  - id: e15
+    title: "Check in with your investment allocations, Xuyang."
+    subtitle: "Credit Karma <notifications@notifications.creditkarma.com>"
+    current_label: USEFUL
+    verdict_reason: "Investment account details/check-in from a linked service"
+    metadata:
+      received: "2026-05-09T21:45:21.865Z"
+  - id: e16
+    title: "K1 Newsletter: World Championship, Drift Night & More"
+    subtitle: "K1 Speed <member@from.k1speed.com>"
+    current_label: NOISE
+    verdict_reason: "K1 Newsletter with championship results and promotions"
+    metadata:
+      received: "2026-05-09T23:04:38.300Z"
+  - id: e17
+    title: "Xuyang, add Steve Shimizu 💼"
+    subtitle: "LinkedIn <messages-noreply@linkedin.com>"
+    current_label: NOISE
+    verdict_reason: "LinkedIn connection suggestion/networking digest"
+    metadata:
+      received: "2026-05-09T23:16:59.667Z"
+  - id: e18
+    title: "ACTION REQUIRED TO MAINTAIN CURRENT MARKET DATA"
+    subtitle: "Interactive Brokers Client Services <donotreply@interactivebrokers.com>"
+    current_label: USEFUL
+    verdict_reason: "Action required to maintain market data access"
+    metadata:
+      received: "2026-05-10T00:04:47.882Z"
+  - id: e19
+    title: "Georgia schools caught in nationwide Canvas hack as extortion threat emerges"
+    subtitle: "Nextdoor Local News <reply@rs.email.nextdoor.com>"
+    current_label: NOISE
+    verdict_reason: "News aggregation/local news digest from Nextdoor"
+    metadata:
+      received: "2026-05-10T01:13:55.279Z"
+  - id: e20
+    title: "View Facebook App jobs and your next steps"
+    subtitle: "LinkedIn <messages-noreply@linkedin.com>"
+    current_label: NOISE
+    verdict_reason: "LinkedIn job alert digest"
+    metadata:
+      received: "2026-05-10T01:17:01.707Z"
