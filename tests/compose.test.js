@@ -69,6 +69,21 @@ describe('compose: end-to-end', () => {
     expect(html).not.toContain('data-htmd-cx-export');
   });
 
+  it('includes the Telegram WebApp SDK script in compose output (Mini App support)', async () => {
+    const md = `\`\`\`htmd:checklist\ntitle: T\nitems: [{title: A}]\n\`\`\`\n`;
+    const { html } = await composeFromMarkdown(md);
+    expect(html).toContain('telegram.org/js/telegram-web-app.js');
+  });
+
+  it('wires Mini App detection + MainButton path in the compose bridge JS', async () => {
+    const md = `\`\`\`htmd:checklist\ntitle: T\nitems: [{title: A}]\n\`\`\`\n`;
+    const { html } = await composeFromMarkdown(md);
+    expect(html).toContain('isMiniApp');
+    expect(html).toContain('sendViaTelegram');
+    expect(html).toContain('tg.MainButton');
+    expect(html).toContain('tg.sendData');
+  });
+
   it('inlines a per-block error card for an invalid block instead of failing the whole page', async () => {
     const md = `# Title\n\n\`\`\`htmd:status-report\nthis: is: invalid: yaml: : :\n\`\`\`\n\n\`\`\`htmd:dashboard\ntitle: ok\nmetrics: [{label: x, value: 1}]\n\`\`\`\n`;
     const { html, errors } = await composeFromMarkdown(md);
