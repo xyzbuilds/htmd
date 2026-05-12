@@ -232,6 +232,59 @@ export async function deliverSubmission({ id, body, mode, env = process.env, log
     }
   }
 
+  if (m === 'openclaw-local') {
+    // Co-located mode: htmd serve and the OpenClaw CLI live on the same host,
+    // so we just invoke the CLI directly without SSH overhead. This is the
+    // intended deployment when htmd serve runs on the OpenClaw gateway host.
+    const bin = env.HTMD_OPENCLAW_BIN || '/home/xuyang-zhang/.npm-global/bin/openclaw';
+    const channel = env.HTMD_OPENCLAW_CHANNEL || 'telegram';
+    const replyTo = env.HTMD_OPENCLAW_REPLY_TO || env.HTMD_TELEGRAM_CHAT_ID || '';
+    const agent = env.HTMD_OPENCLAW_AGENT || 'main';
+    if (!replyTo) {
+      return { ok: false, status: 500, error: 'openclaw-local mode requires HTMD_OPENCLAW_REPLY_TO or HTMD_TELEGRAM_CHAT_ID' };
+    }
+    try {
+      const { spawn } = await import('node:child_process');
+      const args = ['agent', '--agent', agent, '--message', prompt, '--deliver'];
+      if (channel) args.push('--reply-channel', channel);
+      if (replyTo) args.push('--reply-to', replyTo);
+      // Fire-and-forget: openclaw agent turns can take 1-3 minutes (model thinking,
+      // tool calls, delivery). Blocking the HTTP request that long is bad UX and
+      // most clients (curl, fetch) will time out anyway. Spawn detached, return 200
+      // immediately, and log the outcome when the child eventually exits.
+      const timeoutMs = Number(env.HTMD_OPENCLAW_TIMEOUT_MS) || 300_000;
+      const child = spawn(bin, args, { timeout: timeoutMs, detached: false });
+      let stdout = '';
+      let stderr = '';
+      child.stdout.on('data', (d) => { stdout += d.toString(); });
+      child.stderr.on('data', (d) => { stderr += d.toString(); });
+      child.on('error', (err) => {
+        logLine(logPath, { event: 'submit-error', mode: 'openclaw-local', id, phase: 'spawn', error: err.message });
+      });
+      child.on('close', (code, signal) => {
+        if (code === 0) {
+          logLine(logPath, { event: 'submit-delivered', mode: 'openclaw-local', id, stdoutLen: stdout.length });
+        } else {
+          logLine(logPath, {
+            event: 'submit-error',
+            mode: 'openclaw-local',
+            id,
+            phase: 'exit',
+            code,
+            signal,
+            stderr: stderr.slice(0, 500),
+            stdout: stdout.slice(0, 500),
+          });
+        }
+      });
+      logLine(logPath, { event: 'submit-accepted', mode: 'openclaw-local', id, pid: child.pid });
+      return { ok: true, status: 202, mode: 'openclaw-local', accepted: true, pid: child.pid };
+    } catch (e) {
+      logLine(logPath, { event: 'submit-error', mode: 'openclaw-local', id, phase: 'precheck', error: e.message });
+      return { ok: false, status: 502, error: 'openclaw-local delivery failed: ' + e.message };
+    }
+  }
+
   if (m === 'openclaw') {
     const gw = env.HTMD_OPENCLAW_GATEWAY;
     const tok = env.HTMD_OPENCLAW_TOKEN;
