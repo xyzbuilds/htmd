@@ -5,18 +5,63 @@
   "required": ["title", "slides"],
   "properties": {
     "title": { "type": "string" },
-    "theme": { "type": "string" },
+    "theme": {
+      "type": "string",
+      "enum": ["indigo", "purple", "green", "warn", "ink", "slate"],
+      "description": "Default gradient accent for slides that don't set their own."
+    },
     "slides": {
       "type": "array",
       "minItems": 1,
       "items": {
         "type": "object",
         "properties": {
+          "layout": {
+            "type": "string",
+            "enum": ["title", "section", "bullets", "two-col", "kpis", "quote", "image", "code", "chart"],
+            "description": "One of: title (hero), section (divider), bullets (default), two-col, kpis, quote, image, code, chart. If omitted, htmd picks based on which content fields are present."
+          },
+          "accent": { "type": "string", "enum": ["indigo", "purple", "green", "warn", "ink", "slate"] },
           "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "eyebrow": { "type": "string", "description": "Pill above the title." },
+          "section": { "type": "string", "description": "For layout=section: the divider label." },
+          "footer": { "type": "string" },
           "body_md": { "type": "string" },
+          "left_md": { "type": "string", "description": "For layout=two-col." },
+          "right_md": { "type": "string", "description": "For layout=two-col." },
+          "kpis": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["label", "value"],
+              "properties": {
+                "label": { "type": "string" },
+                "value": {},
+                "delta": { "type": "number" },
+                "trend": { "type": "array", "items": { "type": "number" } }
+              }
+            }
+          },
+          "quote": { "type": "string" },
+          "attribution": { "type": "string" },
           "image": { "type": "string" },
+          "image_caption": { "type": "string" },
           "code": { "type": "string" },
-          "notes": { "type": "string" }
+          "code_language": { "type": "string" },
+          "chart": {
+            "type": "object",
+            "description": "For layout=chart: { kind: line|bar|sparkline|donut, ... }",
+            "properties": {
+              "kind": { "type": "string", "enum": ["line", "bar", "sparkline", "donut"] },
+              "caption": { "type": "string" },
+              "series": { "type": "array" },
+              "values": { "type": "array" },
+              "items": { "type": "array" },
+              "slices": { "type": "array" }
+            }
+          },
+          "notes": { "type": "string", "description": "Speaker notes — visible only when the human presses 'n'." }
         }
       }
     }

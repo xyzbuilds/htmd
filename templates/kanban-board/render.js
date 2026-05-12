@@ -3,7 +3,7 @@ import { html } from '../../src/html-tag.js';
 export default function render(data, h) {
   const cols = data.columns || [];
   const tickets = data.tickets || [];
-  const initial = { columns: cols, tickets };
+  const initial = { title: data.title || 'Kanban', columns: cols, tickets };
   return html`
     <main class="kb">
       <header class="kb-head">
@@ -30,9 +30,13 @@ export default function render(data, h) {
         `)}
       </div>
       <div class="kb-toast" data-kb-toast hidden></div>
-      <script type="application/json" data-kb-state>${JSON.stringify(initial)}</script>
+      <script type="application/json" data-kb-state data-htmd-state="kanban-board">${h.raw(safeJson(initial))}</script>
     </main>
   `;
+}
+
+function safeJson(obj) {
+  return JSON.stringify(obj).replace(/<\/(script)/gi, '<\\/$1');
 }
 
 function ticket(t) {

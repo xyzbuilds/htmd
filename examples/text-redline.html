@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Draft launch announcement — please redline</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.tr { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.tr-head { margin-bottom: 1rem; }
+.tr-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.tr-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.tr-hint { margin-top: 0.5rem; font-size: var(--htmd-text-xs); color: var(--htmd-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+.tr-doc {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 1.25rem 1.4rem;
+  box-shadow: var(--htmd-shadow); line-height: 1.7;
+  font-size: var(--htmd-text-md);
+}
+.tr-seg {
+  position: relative;
+  margin: 0.85rem 0;
+  padding: 0.4rem 0.5rem 0.4rem 0.6rem;
+  border-radius: var(--htmd-radius-sm);
+  transition: background 0.12s;
+}
+.tr-seg:hover { background: var(--htmd-surface-2); }
+.tr-seg.tr-edited { border-left: 3px solid var(--htmd-warn); padding-left: 0.55rem; background: var(--htmd-warn-soft); }
+.tr-seg.tr-rejected { border-left: 3px solid var(--htmd-danger); padding-left: 0.55rem; background: var(--htmd-danger-soft); }
+.tr-seg.tr-rejected .tr-seg-text { text-decoration: line-through; color: var(--htmd-fg-muted); }
+
+.tr-seg-actions {
+  position: absolute; top: 0.3rem; right: 0.4rem;
+  display: flex; gap: 0.2rem; opacity: 0; transition: opacity 0.12s;
+}
+.tr-seg:hover .tr-seg-actions, .tr-seg:focus-within .tr-seg-actions { opacity: 1; }
+.tr-seg-btn {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--htmd-surface); color: var(--htmd-fg-muted);
+  border: 1px solid var(--htmd-border); border-radius: 4px;
+  font-size: 0.75rem; cursor: pointer;
+}
+.tr-seg-btn:hover { background: var(--htmd-surface-2); color: var(--htmd-fg); }
+.tr-seg-btn-reject:hover { color: var(--htmd-danger); border-color: var(--htmd-danger); }
+
+.tr-seg-text { outline: none; word-wrap: break-word; }
+.tr-seg-text:focus { background: rgba(255,255,255,0.04); }
+.tr-seg[contenteditable="false"] .tr-seg-text { color: var(--htmd-fg-muted); }
+.tr-seg-comment {
+  display: block; margin-top: 0.4rem; width: 100%;
+  padding: 0.4rem 0.55rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 32px;
+}
+
+.tr-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.tr-fab:disabled, .tr-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.tr-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.tr-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.tr-modal[hidden] { display: none; }
+.tr-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.tr-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 720px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.tr-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.tr-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.tr-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.tr-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.tr-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.tr-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.tr-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.tr-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.tr-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.tr-toast[hidden] { display: none; }
+.tr-toast.tr-toast-show { opacity: 1; }
+
+@media print {
+  .tr-fab, .tr-modal, .tr-toast, .tr-seg-actions, .tr-seg-comment { display: none !important; }
+  .tr-doc { box-shadow: none; }
+}
+
+</style>
+</head>
+<body data-htmd-template="text-redline">
+
+    <main class="tr">
+      <header class="tr-head">
+        <h1 class="tr-title">Draft launch announcement — please redline</h1>
+        <p class="tr-subtitle">Click any paragraph to edit. Use the &amp;times; button to reject a paragraph; the pencil to add a comment.</p>
+        <p class="tr-hint">Click any paragraph to edit. The "&times;" button rejects a paragraph; the &#x270E; reveals a comment field.</p>
+      </header>
+
+      <article class="tr-doc">
+        
+    <div class="tr-seg" data-tr-seg="s1">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s1" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s1" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s1" spellcheck="true">We&#39;re thrilled to announce htmd 0.2 — a major step in how AI agents and humans collaborate on rich, structured output.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s1" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s2">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s2" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s2" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s2" spellcheck="true">htmd 0.2 introduces compose, a new command that lets a single markdown file mix prose with multiple interactive widgets — status reports, kanban boards, feedback correctors, and more — into one shareable HTML page.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s2" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s3">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s3" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s3" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s3" spellcheck="true">Every interactive widget exposes the same export contract: a button that copies the human&#39;s interactions back to the agent as a clean prompt. The loop is: agent generates, human reviews, agent continues.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s3" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s4">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s4" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s4" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s4" spellcheck="true">We also added 7 new templates: checklist, q-and-a, data-table, approval-list, rank-order, text-redline, and priority-matrix. Each is mobile-first, dark-mode-aware, and self-contained.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s4" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s5">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s5" aria-label="Comment" title="Comment">&#x270E;</button>
+        
+      </div>
+      <div class="tr-seg-text" contenteditable="false" data-tr-text="s5" spellcheck="true">Available now on npm: &#96;npm install -g htmd&#96;. Inspired by Thariq Shihipar&#39;s essay on the unreasonable effectiveness of HTML for AI agents.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s5" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+      </article>
+
+      <button type="button" class="tr-fab" data-tr-copy aria-label="Send redlined draft back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send redlined draft</span>
+        <span class="tr-fab-badge" data-tr-changed>0</span>
+      </button>
+
+      <div class="tr-modal" data-tr-modal hidden role="dialog" aria-modal="true">
+        <div class="tr-backdrop" data-tr-close></div>
+        <div class="tr-panel">
+          <header><h2>Redlined draft</h2><button type="button" class="tr-x" data-tr-close aria-label="Close">&#x2715;</button></header>
+          <pre class="tr-pre" data-tr-text></pre>
+          <footer>
+            <button type="button" class="tr-btn tr-btn-ghost" data-tr-close>Cancel</button>
+            <button type="button" class="tr-btn tr-btn-primary" data-tr-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="tr-toast" data-tr-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-tr-state data-htmd-state="text-redline">{"block_id":"","title":"Draft launch announcement — please redline","prompt_intro":"I redlined the launch announcement draft. Final text and change log below.","segments":[{"id":"s1","original":"We're thrilled to announce htmd 0.2 — a major step in how AI agents and humans collaborate on rich, structured output.","edited":"We're thrilled to announce htmd 0.2 — a major step in how AI agents and humans collaborate on rich, structured output.","comment":"","accepted":true,"locked":false},{"id":"s2","original":"htmd 0.2 introduces compose, a new command that lets a single markdown file mix prose with multiple interactive widgets — status reports, kanban boards, feedback correctors, and more — into one shareable HTML page.","edited":"htmd 0.2 introduces compose, a new command that lets a single markdown file mix prose with multiple interactive widgets — status reports, kanban boards, feedback correctors, and more — into one shareable HTML page.","comment":"","accepted":true,"locked":false},{"id":"s3","original":"Every interactive widget exposes the same export contract: a button that copies the human's interactions back to the agent as a clean prompt. The loop is: agent generates, human reviews, agent continues.","edited":"Every interactive widget exposes the same export contract: a button that copies the human's interactions back to the agent as a clean prompt. The loop is: agent generates, human reviews, agent continues.","comment":"","accepted":true,"locked":false},{"id":"s4","original":"We also added 7 new templates: checklist, q-and-a, data-table, approval-list, rank-order, text-redline, and priority-matrix. Each is mobile-first, dark-mode-aware, and self-contained.","edited":"We also added 7 new templates: checklist, q-and-a, data-table, approval-list, rank-order, text-redline, and priority-matrix. Each is mobile-first, dark-mode-aware, and self-contained.","comment":"","accepted":true,"locked":false},{"id":"s5","original":"Available now on npm: `npm install -g htmd`. Inspired by Thariq Shihipar's essay on the unreasonable effectiveness of HTML for AI agents.","edited":"Available now on npm: `npm install -g htmd`. Inspired by Thariq Shihipar's essay on the unreasonable effectiveness of HTML for AI agents.","comment":"","accepted":false,"locked":true}]}</script>
+    </main>
+  
+<script>
+(function () {
+  const root = document.querySelector('main.tr');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-tr-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.segments.forEach((s) => idx.set(s.id, s));
+
+  const fab = root.querySelector('[data-tr-copy]');
+  const changedEl = root.querySelector('[data-tr-changed]');
+  const modal = root.querySelector('[data-tr-modal]');
+  const modalText = root.querySelector('[data-tr-text]');
+  const toast = root.querySelector('[data-tr-toast]');
+
+  function isChanged(s) {
+    return s.edited.trim() !== s.original.trim() || (s.comment || '').trim() !== '' || s.accepted === false;
+  }
+  function changedCount() { return state.segments.filter(isChanged).length; }
+  function refresh() {
+    const n = changedCount();
+    if (changedEl) changedEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+  function updateUi(id) {
+    const s = idx.get(id); if (!s) return;
+    const seg = root.querySelector(`[data-tr-seg="${cssEscape(id)}"]`);
+    if (!seg) return;
+    seg.classList.toggle('tr-rejected', s.accepted === false);
+    seg.classList.toggle('tr-edited', s.accepted !== false && s.edited.trim() !== s.original.trim());
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `I redlined the draft "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    lines.push('Final text (with rejections removed and edits applied):'); lines.push('');
+    for (const s of state.segments) {
+      if (s.accepted === false) continue;
+      lines.push(s.edited.trim());
+      lines.push('');
+    }
+    const ch = state.segments.filter(isChanged);
+    if (ch.length) {
+      lines.push('---'); lines.push(''); lines.push('Change log:'); lines.push('');
+      let n = 0;
+      for (const s of ch) {
+        n++;
+        if (s.accepted === false) {
+          lines.push(`${n}. REJECTED — "${s.original.trim().slice(0, 100)}…"`);
+        } else if (s.edited.trim() !== s.original.trim()) {
+          lines.push(`${n}. EDITED`);
+          lines.push(`   Was: ${s.original.trim()}`);
+          lines.push(`   Now: ${s.edited.trim()}`);
+        } else {
+          lines.push(`${n}. COMMENT on: "${s.original.trim().slice(0, 100)}…"`);
+        }
+        const c = (s.comment || '').trim();
+        if (c) lines.push(`   Comment: ${c}`);
+        lines.push('');
+      }
+    }
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('tr-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('tr-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (changedCount() === 0) { showToast('No edits yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  root.querySelectorAll('[data-tr-text]').forEach((el) => {
+    el.addEventListener('input', () => {
+      const s = idx.get(el.dataset.trText); if (!s) return;
+      s.edited = el.innerText.replace(/ /g, ' ');
+      updateUi(s.id); refresh();
+    });
+  });
+  root.querySelectorAll('[data-tr-reject]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.trReject;
+      const s = idx.get(id); if (!s) return;
+      s.accepted = !(s.accepted === false) ? false : true;
+      updateUi(id); refresh();
+    });
+  });
+  root.querySelectorAll('[data-tr-comment]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.trComment;
+      const ta = root.querySelector(`[data-tr-comment-input="${cssEscape(id)}"]`);
+      if (!ta) return;
+      ta.toggleAttribute('hidden');
+      if (!ta.hasAttribute('hidden')) ta.focus();
+    });
+  });
+  root.querySelectorAll('[data-tr-comment-input]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const s = idx.get(ta.dataset.trCommentInput); if (!s) return;
+      s.comment = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+      refresh();
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-tr-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-tr-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'text-redline',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changedCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
+</body>
+</html>

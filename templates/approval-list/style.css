@@ -1,0 +1,111 @@
+.al { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.al-head { margin-bottom: 1rem; }
+.al-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.al-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.al-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.al-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+.al-item {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius); padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.al-item.al-decided { border-left-color: var(--al-color, var(--htmd-accent)); }
+.al-item-head { display: flex; gap: 0.75rem; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.al-item-meta { flex: 1 1 60%; min-width: 0; }
+.al-item-title { font-weight: 600; line-height: 1.35; word-break: break-word; }
+.al-item-subtitle { margin-top: 0.15rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); word-break: break-word; }
+.al-mini { font-size: 0.7rem; color: var(--htmd-muted); }
+.al-mini strong { color: var(--htmd-fg); }
+.al-kv { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.85rem; }
+.al-kv-row { display: inline-flex; gap: 0.3rem; font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); }
+.al-kv dt { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--htmd-muted); }
+.al-kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.al-body { margin-top: 0.55rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg); line-height: 1.55; }
+
+.al-actions {
+  margin-top: 0.85rem;
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+}
+.al-btn-action {
+  --al-color: var(--htmd-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 0.4rem 0.95rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border); border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.al-btn-action:hover { border-color: var(--al-color); }
+.al-btn-action[aria-checked="true"] {
+  background: var(--al-color);
+  color: #fff;
+  border-color: var(--al-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--al-color) 22%, transparent);
+}
+
+.al-reason {
+  margin-top: 0.65rem; width: 100%;
+  padding: 0.5rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 38px;
+}
+.al-reason:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.al-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.al-fab:disabled, .al-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.al-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.al-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.al-modal[hidden] { display: none; }
+.al-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.al-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.al-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.al-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.al-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.al-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.al-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.al-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.al-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.al-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.al-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.al-toast[hidden] { display: none; }
+.al-toast.al-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .al { padding: 1rem 0.85rem 6rem; }
+  .al-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .al-fab, .al-modal, .al-toast { display: none !important; }
+  .al-item { box-shadow: none; break-inside: avoid; }
+  .al-actions { display: none; }
+}

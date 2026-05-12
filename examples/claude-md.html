@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>CLAUDE.md — htmd project memory</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+
+.htmd-md { max-width: 760px; margin: 2rem auto; padding: 0 1.25rem; }
+.htmd-md > :first-child { margin-top: 0; }
+.htmd-md h1, .htmd-md h2, .htmd-md h3 { letter-spacing: -0.01em; }
+.htmd-md h1 { font-size: 2rem; margin-top: 2rem; }
+.htmd-md h2 { font-size: 1.5rem; margin-top: 2rem; }
+.htmd-md h3 { font-size: 1.2rem; margin-top: 1.5rem; }
+.htmd-md p, .htmd-md ul, .htmd-md ol { line-height: 1.65; }
+.htmd-md pre { background: var(--htmd-surface-2); padding: 1rem; border-radius: 8px; overflow-x: auto; font-size: 0.9em; }
+.htmd-md code { background: var(--htmd-surface-2); padding: 0.1em 0.35em; border-radius: 4px; font-size: 0.9em; }
+.htmd-md pre code { background: none; padding: 0; }
+.htmd-md blockquote { border-left: 3px solid var(--htmd-accent); margin: 1rem 0; padding: 0.25rem 1rem; color: var(--htmd-fg-muted); }
+.htmd-md table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+.htmd-md th, .htmd-md td { border: 1px solid var(--htmd-border); padding: 0.5rem 0.75rem; text-align: left; }
+.htmd-md th { background: var(--htmd-surface-2); }
+.htmd-md hr { border: none; border-top: 1px solid var(--htmd-border); margin: 2rem 0; }
+
+</style>
+</head>
+<body data-htmd-template="markdown">
+<article class="htmd-md"><h1>CLAUDE.md</h1>
+<p>Project memory for future Claude sessions. Read this first.</p>
+<h2>What htmd is</h2>
+<p>A Node.js CLI + library that converts <strong>structured agent output</strong> (YAML/JSON) into <strong>rich, self-contained, interactive HTML</strong>. The agent emits ~150 tokens of data; htmd produces ~1,500 tokens of styled HTML with charts, dark mode, accessibility, print stylesheets, and (for some templates) interactive widgets. Zero LLM calls during render. No CDN. No build step.</p>
+<p>The vision in one line: <strong>agents speak Markdown; humans want HTML; htmd is the bridge.</strong></p>
+<h2>The bigger idea (the &quot;compose&quot; thesis)</h2>
+<p>A single agent-authored Markdown file should be able to mix <strong>prose</strong> (which the agent is good at writing cheaply) with multiple <strong>interactive widgets</strong> (status report, kanban, feedback-corrector, etc.) — without the agent having to author HTML or call the renderer per-widget.</p>
+<p>Surface area:</p>
+<ul>
+<li><code>htmd compose &lt;file.md&gt; --out page.html</code> — render a Markdown file with embedded <code>```htmd:&lt;template&gt;</code> fenced blocks into a single HTML page. Prose becomes prose; each fence becomes the rendered template, all sharing one shell.</li>
+<li><code>htmd detect &lt;file.md&gt;</code> — scan a plain Markdown file and emit JSON suggesting which sections would benefit from which template, with sample YAML conversions. Helps an agent decide <em>whether</em> to use a template.</li>
+<li><code>htmd extract &lt;file.html&gt;</code> — pull state JSON back out of an interacted-with HTML file (closes the bi-directional loop for templates like kanban-board where users mutate state in the browser).</li>
+<li><code>htmd render &lt;template&gt; --data file.yaml</code> — single-template render (the original API, unchanged).</li>
+<li><code>htmd templates</code> / <code>htmd schema &lt;template&gt;</code> — discovery + validation aids for agents.</li>
+<li><code>htmd md2html</code> / <code>htmd html2md</code> — plain bidirectional MD↔HTML.</li>
+</ul>
+<h2>Inspiration</h2>
+<ul>
+<li>Thariq Shihipar — <em>The Unreasonable Effectiveness of HTML</em> (<a href="https://thariqs.github.io/html-effectiveness/">https://thariqs.github.io/html-effectiveness/</a>) — the &quot;agents emit HTML, humans love HTML&quot; insight that started this.</li>
+<li>The <code>feedback-corrector</code> template is the canonical &quot;human-in-the-loop returns a prompt to the agent&quot; pattern. New templates should aim to be that valuable.</li>
+</ul>
+<h2>Architecture (one paragraph)</h2>
+<p>ESM Node 20+, no transpilation. CLI in <code>bin/htmd.js</code> → <code>src/cli.js</code> (commander). Templates live in <code>templates/&lt;name&gt;/</code> (<code>render.js</code>, <code>schema.json</code>, <code>style.css</code>, optional <code>script.js</code>, <code>description.md</code>, <code>example.yaml</code>). Render path: load template → ajv-validate against schema → call <code>render(data, helpers)</code> (a tagged-template-literal <code>html\</code>`<code>that auto-escapes) → wrap in shell that inlines</code>tokens.css<code>+</code>reset.css<code>+ template CSS + optional template JS. Charts are inline SVG via</code>src/chart.js<code>(zero deps). Plugins are auto-discovered npm packages named</code>htmd-template-*`.</p>
+<h2>Entry points worth knowing</h2>
+<ul>
+<li><code>src/render.js</code> — <code>renderTemplate(name, data, opts)</code> and <code>renderTemplateParts(...)</code> (the latter returns <code>{body, css, js, title}</code> for composition); <code>wrapShell(...)</code>; <code>renderMarkdown(md)</code>.</li>
+<li><code>src/compose.js</code> — <code>composeFromMarkdown(md, opts)</code>. Walks the marked lexer, splits prose vs. <code>```htmd:*</code> fences, renders each, dedupes CSS/JS, returns a single HTML string.</li>
+<li><code>src/detect.js</code> — <code>detectTemplates(md)</code>. Heuristic detectors per template; returns array of suggestions with line ranges, confidence, sample YAML.</li>
+<li><code>src/extract.js</code> — <code>extractState(html)</code>. Parses any <code>&lt;script type=&quot;application/json&quot; data-htmd-*&gt;</code> blocks to YAML.</li>
+<li><code>src/templates.js</code> — registry, plugin discovery.</li>
+<li><code>src/html-tag.js</code> — <code>html</code>/<code>raw</code>/<code>escapeHtml</code>/<code>cls</code> tagged template helpers. <strong>All template authors use this.</strong></li>
+<li><code>src/schema.js</code> — ajv wrapper with friendly error formatting.</li>
+</ul>
+<h2>Conventions</h2>
+<ul>
+<li><strong>No emojis in output</strong> unless data calls for them (label emojis in feedback-corrector are user data).</li>
+<li><strong>No comments in templates</strong> beyond a one-line &quot;why&quot; — code is self-evident, schemas document inputs.</li>
+<li><strong>CSS uses <code>var(--htmd-*)</code> tokens only</strong> — never hardcode colors. Dark mode is automatic via <code>prefers-color-scheme</code> in <code>tokens.css</code>.</li>
+<li><strong>Interactive templates wrap their JS in an IIFE</strong> and read initial state from <code>&lt;script type=&quot;application/json&quot; data-&lt;short&gt;-state&gt;...&lt;/script&gt;</code>. Use <code>data-*</code> attributes for queries, not classnames.</li>
+<li><strong>Print stylesheets</strong> for any template likely to be saved/shared.</li>
+<li><strong>Mobile-first</strong> for templates a human will tap on (feedback-corrector is the model).</li>
+</ul>
+<h2>Multi-instance caveat for compose</h2>
+<p>Each template&#39;s <code>script.js</code> reads its initial state from a single <code>[data-&lt;short&gt;-state]</code> element. If a Markdown file embeds the same interactive template <em>twice</em> via compose, only the first widget will hydrate. For v1, document this and recommend at most one of each interactive template per composed page. v2 fix: scope state lookups to the enclosing <code>[data-htmd-block-idx]</code> section.</p>
+<h2>Testing</h2>
+<p><code>npm test</code> runs vitest. Coverage:</p>
+<ul>
+<li><code>tests/render.test.js</code> — every template renders its <code>example.yaml</code> to valid HTML; XSS escape check.</li>
+<li><code>tests/schema.test.js</code> — schema rejects bad inputs and names the offending field.</li>
+<li><code>tests/round-trip.test.js</code> — md→html→md preserves structure for common cases.</li>
+<li><code>tests/compose.test.js</code> — markdown with htmd: fences renders as a single page with deduped CSS/JS.</li>
+<li><code>tests/detect.test.js</code> — heuristic detectors fire on canonical inputs.</li>
+<li><code>tests/extract.test.js</code> — state JSON round-trips through render + extract.</li>
+</ul>
+<p>When adding a template, add it to the <code>BUILTIN_NAMES</code> list in <code>src/templates.js</code> AND to the loops in <code>tests/render.test.js</code>.</p>
+<h2>What NOT to do</h2>
+<ul>
+<li>Don&#39;t introduce a build step. Templates are shipped as source <code>.js</code>/<code>.css</code>/<code>.json</code>.</li>
+<li>Don&#39;t add chart libraries. The 4 inline-SVG charts in <code>src/chart.js</code> are intentionally minimal.</li>
+<li>Don&#39;t add a framework (React/Lit/JSX). The <code>html\</code>`` tagged literal is the entire view layer.</li>
+<li>Don&#39;t add backend/state/auth. htmd outputs one HTML file. Period.</li>
+<li>Don&#39;t use external CDNs. Output must work offline and as an email attachment.</li>
+</ul>
+<h2>Re-rendering examples</h2>
+<p>After any template change, regenerate <code>examples/&lt;name&gt;.html</code> so the gallery stays accurate:</p>
+<pre><code class="language-bash">for t in status-report dashboard decision-matrix comparison-3-up email-digest \
+         slide-deck prompt-tuner kanban-board concept-explainer feedback-corrector \
+         checklist q-and-a data-table; do
+  node bin/htmd.js render &quot;$t&quot; --out &quot;examples/$t.html&quot;
+done
+</code></pre>
+<p>(The render command falls back to the template&#39;s <code>example.yaml</code> when <code>--data</code> isn&#39;t given.)</p>
+</article>
+</body>
+</html>

@@ -1,0 +1,2976 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Friday inbox triage — May 12</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+
+.htmd-compose {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+.htmd-prose { line-height: 1.65; }
+.htmd-prose > :first-child { margin-top: 0; }
+.htmd-prose h1, .htmd-prose h2, .htmd-prose h3 { letter-spacing: -0.01em; line-height: 1.2; }
+.htmd-prose h1 { font-size: 2rem; margin: 1.5rem 0 0.75rem; }
+.htmd-prose h2 { font-size: 1.5rem; margin: 1.5rem 0 0.5rem; }
+.htmd-prose h3 { font-size: 1.2rem; margin: 1.25rem 0 0.5rem; }
+.htmd-prose p, .htmd-prose ul, .htmd-prose ol { margin: 0.75rem 0; }
+.htmd-prose pre {
+  background: var(--htmd-surface-2);
+  padding: 1rem;
+  border-radius: var(--htmd-radius-sm);
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+.htmd-prose code {
+  background: var(--htmd-surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.htmd-prose pre code { background: none; padding: 0; }
+.htmd-prose blockquote {
+  border-left: 3px solid var(--htmd-accent);
+  margin: 1rem 0;
+  padding: 0.25rem 1rem;
+  color: var(--htmd-fg-muted);
+}
+.htmd-prose table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+.htmd-prose th, .htmd-prose td {
+  border: 1px solid var(--htmd-border);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+}
+.htmd-prose th { background: var(--htmd-surface-2); }
+
+.htmd-block {
+  position: relative;
+  border-radius: var(--htmd-radius);
+  border: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.htmd-block > main:first-child,
+.htmd-block > section:first-child,
+.htmd-block > div:first-child { padding-top: 0; }
+.htmd-block::before {
+  content: attr(data-htmd-block);
+  position: absolute;
+  top: 0.6rem;
+  right: 0.85rem;
+  z-index: 5;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* In compose mode, per-template FABs (every interactive template has its
+   own bottom-right fixed-position copy button) would all stack at the same
+   viewport corner and overlap each other AND the global compose FAB. Hide
+   them — the compose-level "Copy all changes" button below aggregates every
+   block's export, so per-block FABs are redundant inside a composed page. */
+.htmd-block .fc-fab,
+.htmd-block .cl-fab,
+.htmd-block .qa-fab,
+.htmd-block .al-fab,
+.htmd-block .rk-fab,
+.htmd-block .tr-fab,
+.htmd-block .pm-fab,
+.htmd-block .dm-fab,
+.htmd-block .cmp-fab,
+.htmd-block .ed-fab,
+.htmd-block .cr-fab {
+  display: none !important;
+}
+/* Their modals are hidden by default; hiding the FAB suffices. The transient
+   toasts these templates emit only fire on direct interaction with the FAB,
+   so they won't appear either. */
+
+/* The kanban-board's "Export Markdown" header buttons are NOT fixed-position
+   FABs — they live inside the card. Leave them alone (still useful in compose). */
+/* The data-table "Send edits back" button is in the card header, not a fixed
+   FAB — leave it visible (it has its own modal). */
+.htmd-block .dt-export-btn-edits { display: none !important; }
+/* Same reasoning: edits flow through the global FAB. */
+
+.htmd-block-error {
+  border: 1px solid var(--htmd-danger);
+  background: var(--htmd-danger-soft);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg);
+}
+.htmd-block-error header { font-size: var(--htmd-text-md); margin-bottom: 0.4rem; }
+.htmd-block-error pre {
+  background: var(--htmd-surface);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: 0.78rem;
+  overflow-x: auto;
+  margin-top: 0.4rem;
+}
+
+/* Compose-level export FAB */
+.htmd-cx-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  left: 1.1rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.65rem 1.1rem;
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+}
+.htmd-cx-fab:hover { transform: translateY(-1px); }
+.htmd-cx-fab:disabled, .htmd-cx-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.htmd-cx-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.htmd-cx-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.htmd-cx-modal[hidden] { display: none; }
+.htmd-cx-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.htmd-cx-modal-panel {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow-lg);
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.htmd-cx-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.htmd-cx-modal-head h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.htmd-cx-modal-x {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+.htmd-cx-modal-x:hover { background: var(--htmd-surface-2); }
+.htmd-cx-modal-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--htmd-fg);
+}
+.htmd-cx-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+}
+.htmd-cx-btn {
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.htmd-cx-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.htmd-cx-btn-ghost:hover { background: var(--htmd-surface-2); }
+.htmd-cx-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+.htmd-cx-btn-primary:hover { filter: brightness(1.05); }
+
+.htmd-cx-toast {
+  position: fixed;
+  bottom: 4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.55rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  box-shadow: var(--htmd-shadow-lg);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.18s;
+  pointer-events: none;
+}
+.htmd-cx-toast[hidden] { display: none; }
+.htmd-cx-toast.htmd-cx-toast-show { opacity: 1; }
+
+@media (max-width: 560px) {
+  .htmd-compose { padding: 1.25rem 0.85rem 7rem; gap: 1.25rem; }
+  .htmd-cx-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+
+@media print {
+  .htmd-cx-fab, .htmd-cx-modal, .htmd-cx-toast { display: none !important; }
+  .htmd-block { box-shadow: none; break-inside: avoid; }
+}
+
+.ed {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 6rem;
+}
+.ed-suggested {
+  margin-top: 0.45rem;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.ed-suggested strong { color: var(--htmd-fg); }
+.ed-actions {
+  margin-top: 0.55rem;
+  display: flex; gap: 0.35rem; flex-wrap: wrap;
+}
+.ed-action-btn {
+  --ed-action-color: var(--htmd-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 36px; padding: 0.35rem 0.85rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border); border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.ed-action-btn:hover { border-color: var(--ed-action-color); }
+.ed-action-btn[aria-checked="true"] {
+  background: var(--ed-action-color);
+  color: #fff; border-color: var(--ed-action-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ed-action-color) 22%, transparent);
+}
+.ed-item.ed-decided { background: color-mix(in srgb, var(--htmd-accent) 4%, transparent); }
+.ed-note {
+  margin-top: 0.55rem; width: 100%;
+  padding: 0.45rem 0.6rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 38px;
+}
+.ed-note:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.ed-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.ed-fab:disabled, .ed-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.ed-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.ed-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.ed-modal[hidden] { display: none; }
+.ed-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.ed-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.ed-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.ed-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.ed-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.ed-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.ed-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.ed-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.ed-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.ed-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.ed-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.ed-toast[hidden] { display: none; }
+.ed-toast.ed-toast-show { opacity: 1; }
+.ed-head {
+  margin-bottom: 1.5rem;
+}
+.ed-eyebrow {
+  display: inline-block;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--htmd-accent);
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+.ed-date {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.ed-summary {
+  margin-top: 0.75rem;
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.ed-chip {
+  font-size: var(--htmd-text-xs);
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+.ed-chip-urgent { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.ed-chip-useful { background: var(--htmd-warn-soft); color: var(--htmd-warn); }
+.ed-chip-noise { background: var(--htmd-surface-2); color: var(--htmd-fg-muted); }
+
+.ed-section {
+  margin-bottom: 1.25rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.ed-urgent { border-left: 4px solid var(--htmd-danger); }
+.ed-useful { border-left: 4px solid var(--htmd-warn); }
+.ed-noise { border-left: 4px solid var(--htmd-muted); }
+
+.ed-sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.7rem 1.1rem;
+  border-bottom: 1px solid var(--htmd-border);
+  background: var(--htmd-surface-2);
+}
+.ed-band {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+.ed-band-urgent { color: var(--htmd-danger); }
+.ed-band-useful { color: var(--htmd-warn); }
+.ed-band-noise { color: var(--htmd-fg-muted); }
+.ed-sec-count {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  font-weight: 600;
+}
+
+.ed-list { list-style: none; margin: 0; padding: 0; }
+.ed-item {
+  padding: 0.85rem 1.1rem 0.95rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.ed-item:last-child { border-bottom: none; }
+
+.ed-item-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  margin-bottom: 0.2rem;
+}
+.ed-from { font-weight: 600; color: var(--htmd-fg); }
+.ed-ts { font-variant-numeric: tabular-nums; }
+
+.ed-subject {
+  font-weight: 600;
+  font-size: var(--htmd-text-md);
+  line-height: 1.35;
+  margin-bottom: 0.3rem;
+}
+.ed-snippet {
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.5;
+}
+.ed-action {
+  margin-top: 0.55rem;
+}
+.ed-action-pill {
+  display: inline-block;
+  background: var(--htmd-danger);
+  color: white;
+  font-size: var(--htmd-text-xs);
+  font-weight: 600;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--htmd-radius-sm);
+}
+
+.ed-noise-text {
+  padding: 0.85rem 1.1rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.55;
+}
+
+.fc {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 6rem;
+}
+
+.fc-head {
+  margin-bottom: 1.25rem;
+}
+.fc-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.fc-subtitle {
+  margin-top: 0.4rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+}
+
+/* List */
+.fc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Item card */
+.fc-item {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius);
+  padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.08s;
+}
+.fc-item.fc-modified {
+  border-left-color: var(--htmd-accent);
+  box-shadow: var(--htmd-shadow-lg);
+}
+
+.fc-item-head {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.fc-item-meta {
+  flex: 1 1 60%;
+  min-width: 0;
+}
+.fc-item-title {
+  font-weight: 600;
+  font-size: var(--htmd-text-md);
+  line-height: 1.35;
+  word-break: break-word;
+}
+.fc-item-subtitle {
+  margin-top: 0.15rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-sm);
+  word-break: break-word;
+}
+
+.fc-kv {
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+}
+.fc-kv-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.fc-kv dt {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--htmd-muted);
+}
+.fc-kv dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Current label badge */
+.fc-current-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+.fc-mini-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+
+.fc-badge {
+  --fc-label-color: var(--htmd-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fc-label-color) 14%, transparent);
+  color: var(--fc-label-color);
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.fc-badge-emoji { font-size: 0.85rem; line-height: 1; }
+
+.fc-item-body {
+  margin-top: 0.6rem;
+  font-size: var(--htmd-text-sm);
+  line-height: 1.55;
+  color: var(--htmd-fg);
+}
+.fc-verdict {
+  margin-top: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--htmd-surface-2);
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.5;
+}
+.fc-verdict-label {
+  font-weight: 700;
+  color: var(--htmd-fg);
+  margin-right: 0.25rem;
+}
+
+/* Pills (radio-style label chooser) */
+.fc-pills {
+  margin-top: 0.85rem;
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.fc-pill {
+  --fc-label-color: var(--htmd-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0.45rem 0.95rem;
+  background: var(--htmd-surface);
+  color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border);
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+}
+.fc-pill:hover {
+  border-color: var(--fc-label-color);
+}
+.fc-pill:active { transform: scale(0.97); }
+.fc-pill-selected {
+  background: var(--fc-label-color);
+  color: #fff;
+  border-color: var(--fc-label-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-label-color) 22%, transparent);
+}
+.fc-pill-emoji { font-size: 1rem; line-height: 1; }
+
+/* Clarification */
+.fc-clar {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.fc-clar-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+.fc-clar-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--htmd-text-sm);
+  line-height: 1.5;
+  padding: 0.55rem 0.7rem;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  resize: vertical;
+  min-height: 44px;
+  transition: border-color 0.12s, background 0.12s;
+}
+.fc-clar-input:focus {
+  outline: none;
+  border-color: var(--htmd-accent);
+  background: var(--htmd-surface);
+}
+
+.fc-modified-tag {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.85rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+/* Floating action button */
+.fc-bottom-spacer {
+  height: 4rem;
+}
+.fc-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  right: 1.1rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.7rem 1.2rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
+}
+.fc-fab:hover { transform: translateY(-1px); }
+.fc-fab:active { transform: translateY(0); }
+.fc-fab:disabled, .fc-fab[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.fc-fab-icon { font-size: 1rem; line-height: 1; }
+.fc-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  color: inherit;
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Modal */
+.fc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.fc-modal[hidden] { display: none; }
+.fc-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.fc-modal-panel {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow-lg);
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.fc-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.fc-modal-head h2 {
+  font-size: var(--htmd-text-lg);
+  font-weight: 700;
+}
+.fc-modal-x {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+.fc-modal-x:hover { background: var(--htmd-surface-2); }
+.fc-modal-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--htmd-fg);
+}
+.fc-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+}
+.fc-btn {
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.fc-btn-ghost {
+  background: transparent;
+  color: var(--htmd-fg-muted);
+  border-color: var(--htmd-border);
+}
+.fc-btn-ghost:hover { background: var(--htmd-surface-2); }
+.fc-btn-primary {
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+}
+.fc-btn-primary:hover { filter: brightness(1.05); }
+
+/* Toast */
+.fc-toast {
+  position: fixed;
+  bottom: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  box-shadow: var(--htmd-shadow-lg);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.18s, transform 0.18s;
+  pointer-events: none;
+}
+.fc-toast[hidden] { display: none; }
+.fc-toast.fc-toast-show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .fc { padding: 1rem 0.85rem 7rem; }
+  .fc-title { font-size: 1.5rem; }
+  .fc-item { padding: 0.85rem 0.85rem 0.95rem; }
+  .fc-item-head { gap: 0.5rem; }
+  .fc-current-wrap { align-items: flex-start; flex-direction: row; gap: 0.45rem; }
+  .fc-fab {
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.9rem;
+    justify-content: center;
+    border-radius: var(--htmd-radius);
+  }
+  .fc-modal { padding: 0; align-items: stretch; }
+  .fc-modal-panel {
+    max-width: none;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+  .fc-modal-pre { font-size: 0.8rem; }
+}
+
+/* Print: hide buttons, show clean list */
+@media print {
+  .fc-fab, .fc-modal, .fc-toast, .fc-pills, .fc-clar { display: none !important; }
+  .fc-item { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+  body { background: white; color: black; }
+}
+
+.al { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.al-head { margin-bottom: 1rem; }
+.al-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.al-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.al-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.al-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+.al-item {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius); padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.al-item.al-decided { border-left-color: var(--al-color, var(--htmd-accent)); }
+.al-item-head { display: flex; gap: 0.75rem; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.al-item-meta { flex: 1 1 60%; min-width: 0; }
+.al-item-title { font-weight: 600; line-height: 1.35; word-break: break-word; }
+.al-item-subtitle { margin-top: 0.15rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); word-break: break-word; }
+.al-mini { font-size: 0.7rem; color: var(--htmd-muted); }
+.al-mini strong { color: var(--htmd-fg); }
+.al-kv { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.85rem; }
+.al-kv-row { display: inline-flex; gap: 0.3rem; font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); }
+.al-kv dt { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--htmd-muted); }
+.al-kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.al-body { margin-top: 0.55rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg); line-height: 1.55; }
+
+.al-actions {
+  margin-top: 0.85rem;
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+}
+.al-btn-action {
+  --al-color: var(--htmd-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 0.4rem 0.95rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border); border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.al-btn-action:hover { border-color: var(--al-color); }
+.al-btn-action[aria-checked="true"] {
+  background: var(--al-color);
+  color: #fff;
+  border-color: var(--al-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--al-color) 22%, transparent);
+}
+
+.al-reason {
+  margin-top: 0.65rem; width: 100%;
+  padding: 0.5rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 38px;
+}
+.al-reason:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.al-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.al-fab:disabled, .al-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.al-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.al-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.al-modal[hidden] { display: none; }
+.al-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.al-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.al-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.al-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.al-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.al-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.al-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.al-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.al-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.al-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.al-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.al-toast[hidden] { display: none; }
+.al-toast.al-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .al { padding: 1rem 0.85rem 6rem; }
+  .al-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .al-fab, .al-modal, .al-toast { display: none !important; }
+  .al-item { box-shadow: none; break-inside: avoid; }
+  .al-actions { display: none; }
+}
+
+.qa {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 5rem;
+}
+.qa-head { margin-bottom: 1rem; }
+.qa-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.qa-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.qa-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.qa-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; counter-reset: qa; gap: 0.85rem; }
+.qa-item {
+  position: relative; counter-increment: qa;
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 1rem 1.1rem 1.1rem 2.6rem;
+  box-shadow: var(--htmd-shadow);
+}
+.qa-item::before {
+  content: counter(qa) ".";
+  position: absolute; left: 1rem; top: 0.95rem;
+  font-weight: 700; color: var(--htmd-accent); font-variant-numeric: tabular-nums;
+}
+.qa-q { font-weight: 600; line-height: 1.45; }
+.qa-context { margin-top: 0.3rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); line-height: 1.5; }
+.qa-text {
+  margin-top: 0.6rem; width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm); line-height: 1.5;
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 60px;
+}
+.qa-text:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+.qa-choices { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.qa-choice {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  cursor: pointer; transition: background 0.12s, border-color 0.12s;
+  min-height: 40px;
+}
+.qa-choice:hover { background: var(--htmd-surface-2); border-color: var(--htmd-accent); }
+.qa-choice input { margin: 0; }
+.qa-choice-text { font-size: var(--htmd-text-sm); }
+.qa-hint { color: var(--htmd-muted); font-size: var(--htmd-text-xs); margin-top: 0.15rem; }
+
+.qa-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px; font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.qa-fab:disabled, .qa-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.qa-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.qa-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.qa-modal[hidden] { display: none; }
+.qa-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.qa-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.qa-panel header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border);
+}
+.qa-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.qa-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.qa-x:hover { background: var(--htmd-surface-2); }
+.qa-pre {
+  margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.qa-panel footer {
+  padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border);
+  display: flex; justify-content: flex-end; gap: 0.5rem;
+}
+.qa-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.qa-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.qa-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.qa-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.qa-toast[hidden] { display: none; }
+.qa-toast.qa-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .qa { padding: 1rem 0.85rem 6rem; }
+  .qa-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .qa-fab, .qa-modal, .qa-toast { display: none !important; }
+  .qa-item { box-shadow: none; break-inside: avoid; }
+}
+
+</style>
+</head>
+<body data-htmd-template="compose">
+<main class="htmd-compose">
+<section class="htmd-prose"><h1>Friday inbox triage — May 12</h1>
+<p>Three things to clear before the weekend: today&#39;s inbox digest, a batch of email-classifier corrections to feed back to the model, and a few PRs that need decisions. Pick actions on each, then <strong>Copy all changes</strong> at the bottom-left.</p>
+<h2>Today&#39;s inbox</h2>
+</section>
+<section class="htmd-block" data-htmd-block="email-digest" data-htmd-block-idx="0">
+    <main class="ed">
+      <header class="ed-head">
+        <span class="ed-eyebrow">Email Digest</span>
+        <h1 class="ed-date">May 11, 2026</h1>
+        <div class="ed-summary">
+          <span class="ed-chip ed-chip-urgent">3 urgent</span>
+          <span class="ed-chip ed-chip-useful">4 useful</span>
+          <span class="ed-chip ed-chip-noise">78 noise</span>
+        </div>
+      </header>
+
+      <style>[data-ed-action-color="reply"]{--ed-action-color:#0284c7;}[data-ed-action-color="archive"]{--ed-action-color:#94a3b8;}[data-ed-action-color="keep"]{--ed-action-color:#16a34a;}[data-ed-action-color="forward"]{--ed-action-color:#d97706;}</style>
+
+      
+    <section class="ed-section ed-urgent">
+      <header class="ed-sec-head">
+        <span class="ed-band ed-band-urgent">Urgent — needs you</span>
+        <span class="ed-sec-count">3</span>
+      </header>
+      <ul class="ed-list">
+        
+          <li class="ed-item" data-ed-item="e1">
+            <div class="ed-item-meta">
+              <span class="ed-from">Stripe</span>
+              <time class="ed-ts">9:14 AM</time>
+            </div>
+            <div class="ed-subject">Action required — verify business address by May 14</div>
+            <p class="ed-snippet">3 days to verify or payouts pause. Has form link.</p>
+            <div class="ed-suggested">Agent suggests: <strong>Reply</strong></div>
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e1" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e1" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e1" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e1" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e1" placeholder="Reply draft / note (optional)" hidden></textarea>
+          </li>
+        
+          <li class="ed-item" data-ed-item="e2">
+            <div class="ed-item-meta">
+              <span class="ed-from">Sarah (Acme)</span>
+              <time class="ed-ts">8:02 AM</time>
+            </div>
+            <div class="ed-subject">Re: Q3 contract — needs signature today</div>
+            <p class="ed-snippet">Redlines accepted; waiting on signature before EOD to lock the rate.</p>
+            <div class="ed-suggested">Agent suggests: <strong>Reply</strong></div>
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e2" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e2" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e2" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e2" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e2" placeholder="Reply draft / note (optional)" hidden></textarea>
+          </li>
+        
+          <li class="ed-item" data-ed-item="e3">
+            <div class="ed-item-meta">
+              <span class="ed-from">GitHub</span>
+              <time class="ed-ts">6:44 AM</time>
+            </div>
+            <div class="ed-subject">[security] Critical CVE in turndown — patch available</div>
+            <p class="ed-snippet">Affects 2 repos. Update to 7.2.0.</p>
+            <div class="ed-suggested">Agent suggests: <strong>Reply</strong></div>
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e3" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e3" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e3" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e3" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e3" placeholder="Reply draft / note (optional)" hidden></textarea>
+          </li>
+        
+      </ul>
+    </section>
+  
+      
+    <section class="ed-section ed-useful">
+      <header class="ed-sec-head">
+        <span class="ed-band ed-band-useful">Useful — read when you can</span>
+        <span class="ed-sec-count">4</span>
+      </header>
+      <ul class="ed-list">
+        
+          <li class="ed-item" data-ed-item="e4">
+            <div class="ed-item-meta">
+              <span class="ed-from">Anthropic</span>
+              <time class="ed-ts">7:30 AM</time>
+            </div>
+            <div class="ed-subject">Claude 4.7 release notes</div>
+            <p class="ed-snippet">Extended thinking, 50% lower batch pricing, MCP improvements.</p>
+            
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e4" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e4" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e4" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e4" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e4" placeholder="Reply draft / note (optional)" hidden></textarea>
+          </li>
+        
+          <li class="ed-item" data-ed-item="e5">
+            <div class="ed-item-meta">
+              <span class="ed-from">Lenny&#39;s Newsletter</span>
+              <time class="ed-ts">6:00 AM</time>
+            </div>
+            <div class="ed-subject">How great PMs interview candidates</div>
+            <p class="ed-snippet">4-question framework: signal, scope, speed, sticking.</p>
+            
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e5" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e5" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e5" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e5" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e5" placeholder="Reply draft / note (optional)" hidden></textarea>
+          </li>
+        
+          <li class="ed-item" data-ed-item="e6">
+            <div class="ed-item-meta">
+              <span class="ed-from">AWS</span>
+              <time class="ed-ts">5:55 AM</time>
+            </div>
+            <div class="ed-subject">Lambda costs dropped 18% MoM</div>
+            <p class="ed-snippet">Memory tuning recommendations active; ~$340 saved.</p>
+            
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e6" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e6" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e6" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e6" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e6" placeholder="Reply draft / note (optional)" hidden></textarea>
+          </li>
+        
+          <li class="ed-item" data-ed-item="e7">
+            <div class="ed-item-meta">
+              <span class="ed-from">Hacker News</span>
+              <time class="ed-ts">6:00 AM</time>
+            </div>
+            <div class="ed-subject">Daily digest</div>
+            <p class="ed-snippet">Linear&#39;s CEO on writing as thinking tool, postgres LISTEN/NOTIFY tricks.</p>
+            
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e7" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e7" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e7" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e7" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e7" placeholder="Reply draft / note (optional)" hidden></textarea>
+          </li>
+        
+      </ul>
+    </section>
+  
+
+      
+        <section class="ed-section ed-noise">
+          <header class="ed-sec-head">
+            <span class="ed-band ed-band-noise">Noise</span>
+            <span class="ed-sec-count">filtered</span>
+          </header>
+          <p class="ed-noise-text">78 promotional / list emails. Top senders to consider unsubscribing from: Substack digest (12), Medium daily (9), LinkedIn news (8), random SaaS newsletters (40+).</p>
+        </section>
+      
+
+      <button type="button" class="ed-fab" data-ed-copy aria-label="Send actions back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send actions back</span>
+        <span class="ed-fab-badge" data-ed-count>0</span>
+      </button>
+
+      <div class="ed-modal" data-ed-modal hidden role="dialog" aria-modal="true">
+        <div class="ed-backdrop" data-ed-close></div>
+        <div class="ed-panel">
+          <header><h2>Inbox actions</h2><button type="button" class="ed-x" data-ed-close aria-label="Close">&#x2715;</button></header>
+          <pre class="ed-pre" data-ed-text></pre>
+          <footer>
+            <button type="button" class="ed-btn ed-btn-ghost" data-ed-close>Cancel</button>
+            <button type="button" class="ed-btn ed-btn-primary" data-ed-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="ed-toast" data-ed-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-ed-state data-htmd-state="email-digest">{"block_id":"","date":"2026-05-12","prompt_intro":"Inbox actions for May 12.","actions":[{"value":"reply","label":"Reply","color":"#0284c7"},{"value":"archive","label":"Archive","color":"#94a3b8"},{"value":"keep","label":"Keep","color":"#16a34a"},{"value":"forward","label":"Forward","color":"#d97706"}],"items":[{"id":"e1","section":"urgent","from":"Stripe","subject":"Action required — verify business address by May 14","agent_action":"Reply","action":"","note":""},{"id":"e2","section":"urgent","from":"Sarah (Acme)","subject":"Re: Q3 contract — needs signature today","agent_action":"Reply","action":"","note":""},{"id":"e3","section":"urgent","from":"GitHub","subject":"[security] Critical CVE in turndown — patch available","agent_action":"Reply","action":"","note":""},{"id":"e4","section":"useful","from":"Anthropic","subject":"Claude 4.7 release notes","agent_action":"","action":"","note":""},{"id":"e5","section":"useful","from":"Lenny's Newsletter","subject":"How great PMs interview candidates","agent_action":"","action":"","note":""},{"id":"e6","section":"useful","from":"AWS","subject":"Lambda costs dropped 18% MoM","agent_action":"","action":"","note":""},{"id":"e7","section":"useful","from":"Hacker News","subject":"Daily digest","agent_action":"","action":"","note":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Classifier corrections</h2>
+<p>These are emails the inbox classifier labeled this week. If you disagree, flip the label and add a clarification — the agent will use these to retrain.</p>
+</section>
+<section class="htmd-block" data-htmd-block="feedback-corrector" data-htmd-block-idx="1">
+    <main class="fc">
+      <header class="fc-head">
+        <h1 class="fc-title">Recent classifications to verify</h1>
+        
+      </header>
+
+      <style>[data-fc-color="URGENT"]{--fc-label-color:#dc2626;}[data-fc-color="USEFUL"]{--fc-label-color:#d97706;}[data-fc-color="NOISE"]{--fc-label-color:#94a3b8;}</style>
+
+      <ol class="fc-list">
+        
+    <li class="fc-item" data-fc-item="c1" data-fc-idx="0">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Your AWS bill is ready — $4,127.32</div>
+          <div class="fc-item-subtitle">AWS Billing</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Recurring monthly bill</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="c1"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="c1"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="c1"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="c1" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="c2" data-fc-idx="1">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Re: Re: Re: spec questions for v2</div>
+          <div class="fc-item-subtitle">Bob from platform</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Long thread, looked like noise</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="c2"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="c2"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="c2"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="c2" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="c3" data-fc-idx="2">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Your DNS expires in 7 days</div>
+          <div class="fc-item-subtitle">Namecheap</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Pre-expiry warning</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="c3"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="c3"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="c3"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="c3" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="c4" data-fc-idx="3">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Webinar: Building agentic systems</div>
+          <div class="fc-item-subtitle">AWS Events</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Industry event</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="c4"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="c4"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="c4"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="c4" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="c5" data-fc-idx="4">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Annual security audit: schedule confirmed</div>
+          <div class="fc-item-subtitle">ComplianceCo</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Newsletter-shaped subject</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="c5"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="c5"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="c5"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="c5" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+      </ol>
+
+      <div class="fc-bottom-spacer" aria-hidden="true"></div>
+
+      <button type="button" class="fc-fab" data-fc-copy aria-label="Copy correction prompt">
+        <span class="fc-fab-icon" aria-hidden="true">&#x270E;</span>
+        <span class="fc-fab-label">Copy Correction Prompt</span>
+        <span class="fc-fab-badge" data-fc-modified-count>0</span>
+      </button>
+
+      <div class="fc-modal" data-fc-modal hidden role="dialog" aria-modal="true" aria-labelledby="fc-modal-title">
+        <div class="fc-modal-backdrop" data-fc-modal-close></div>
+        <div class="fc-modal-panel">
+          <header class="fc-modal-head">
+            <h2 id="fc-modal-title">Correction prompt</h2>
+            <button type="button" class="fc-modal-x" data-fc-modal-close aria-label="Close">&#x2715;</button>
+          </header>
+          <pre class="fc-modal-pre" data-fc-modal-text></pre>
+          <footer class="fc-modal-foot">
+            <button type="button" class="fc-btn fc-btn-ghost" data-fc-modal-close>Cancel</button>
+            <button type="button" class="fc-btn fc-btn-primary" data-fc-confirm-copy>Copy</button>
+          </footer>
+        </div>
+      </div>
+
+      <div class="fc-toast" data-fc-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-fc-state data-htmd-state="feedback-corrector">{"items":[{"id":"c1","original_label":"NOISE","current_label":"NOISE","title":"Your AWS bill is ready — $4,127.32","subtitle":"AWS Billing","clarification":""},{"id":"c2","original_label":"NOISE","current_label":"NOISE","title":"Re: Re: Re: spec questions for v2","subtitle":"Bob from platform","clarification":""},{"id":"c3","original_label":"USEFUL","current_label":"USEFUL","title":"Your DNS expires in 7 days","subtitle":"Namecheap","clarification":""},{"id":"c4","original_label":"USEFUL","current_label":"USEFUL","title":"Webinar: Building agentic systems","subtitle":"AWS Events","clarification":""},{"id":"c5","original_label":"NOISE","current_label":"NOISE","title":"Annual security audit: schedule confirmed","subtitle":"ComplianceCo","clarification":""}],"labels":[{"value":"URGENT","label":"Urgent","color":"#dc2626","emoji":"🔴","_color":"#dc2626"},{"value":"USEFUL","label":"Useful","color":"#d97706","emoji":"🟡","_color":"#d97706"},{"value":"NOISE","label":"Noise","color":"#94a3b8","emoji":"⚪","_color":"#94a3b8"}],"context_id":"gmail-classifier-2026-05-12","prompt_intro":"Triage corrections for the inbox classifier.","prompt_template":""}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>PRs to clear before EOD</h2>
+</section>
+<section class="htmd-block" data-htmd-block="approval-list" data-htmd-block-idx="2">
+    <main class="al">
+      <header class="al-head">
+        <h1 class="al-title">Friday PR queue</h1>
+        
+        <div class="al-progress" data-al-progress aria-live="polite"><span data-al-decided>0</span> of <span>5</span> decided</div>
+      </header>
+
+      <style>[data-al-color="approve"]{--al-color:#16a34a;}[data-al-color="reject"]{--al-color:#dc2626;}[data-al-color="hold"]{--al-color:#d97706;}</style>
+
+      <ol class="al-list">
+        
+    <li class="al-item" data-al-item="pr1">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">fix: prevent crash on empty kanban board</div>
+          <div class="al-item-subtitle">alice — +12 / -2</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr2">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">feat: data-table editable mode + diff export</div>
+          <div class="al-item-subtitle">alice — +320 / -80</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">New behavior; gated by editable: true</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr2" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr2" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr2" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr2" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr3">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">refactor: extract shared FAB CSS into _base</div>
+          <div class="al-item-subtitle">bob — +180 / -300</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>hold</strong></span>
+      </header>
+      <p class="al-body">Cleanup; touches every interactive template&#39;s style.css. Worth it but big diff.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr3" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr3" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr3" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr3" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr4">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">docs: rewrite SKILL.md for compose-first usage</div>
+          <div class="al-item-subtitle">alice — +210 / -90</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr4" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr4" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr4" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr4" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr5">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">deps: bump turndown 7.1 → 7.2 (CVE)</div>
+          <div class="al-item-subtitle">dependabot</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr5" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr5" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr5" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr5" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+      </ol>
+
+      <button type="button" class="al-fab" data-al-copy aria-label="Send decisions back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send decisions back</span>
+        <span class="al-fab-badge" data-al-count>0</span>
+      </button>
+
+      <div class="al-modal" data-al-modal hidden role="dialog" aria-modal="true">
+        <div class="al-backdrop" data-al-close></div>
+        <div class="al-panel">
+          <header><h2>Decisions</h2><button type="button" class="al-x" data-al-close aria-label="Close">&#x2715;</button></header>
+          <pre class="al-pre" data-al-text></pre>
+          <footer>
+            <button type="button" class="al-btn al-btn-ghost" data-al-close>Cancel</button>
+            <button type="button" class="al-btn al-btn-primary" data-al-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="al-toast" data-al-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-al-state data-htmd-state="approval-list">{"block_id":"","title":"Friday PR queue","prompt_intro":"Decisions on the Friday PR queue.","actions":[{"value":"approve","label":"Approve","color":"#16a34a"},{"value":"reject","label":"Reject","color":"#dc2626"},{"value":"hold","label":"Hold","color":"#d97706"}],"items":[{"id":"pr1","title":"fix: prevent crash on empty kanban board","decision":"","reason":""},{"id":"pr2","title":"feat: data-table editable mode + diff export","decision":"","reason":""},{"id":"pr3","title":"refactor: extract shared FAB CSS into _base","decision":"","reason":""},{"id":"pr4","title":"docs: rewrite SKILL.md for compose-first usage","decision":"","reason":""},{"id":"pr5","title":"deps: bump turndown 7.1 → 7.2 (CVE)","decision":"","reason":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Anything else?</h2>
+</section>
+<section class="htmd-block" data-htmd-block="q-and-a" data-htmd-block-idx="3">
+    <main class="qa">
+      <header class="qa-head">
+        <h1 class="qa-title">One last check before the weekend</h1>
+        
+        <div class="qa-progress" data-qa-progress aria-live="polite">
+          <span data-qa-answered>0</span> of <span>2</span> answered
+        </div>
+      </header>
+
+      <ol class="qa-list">
+        
+    <li class="qa-item" data-qa-item="q1">
+      <div class="qa-q">Anything blocking that you&#39;d like me to escalate before Monday?</div>
+      
+      
+    <textarea class="qa-text" rows="2" data-qa-input="q1" data-qa-kind="free" placeholder="Your answer…"></textarea>
+  
+    </li>
+  
+    <li class="qa-item" data-qa-item="q2">
+      <div class="qa-q">Should I draft a Friday-end summary for the team channel?</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="radio" name="qa-q2" value="Yes please" data-qa-input="q2" data-qa-kind="single">
+              <span class="qa-choice-text">Yes please</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q2" value="No, I&#39;ll do it" data-qa-input="q2" data-qa-kind="single">
+              <span class="qa-choice-text">No, I&#39;ll do it</span>
+            </label>
+          
+        
+      </div>
+    
+    </li>
+  
+      </ol>
+
+      <button type="button" class="qa-fab" data-qa-copy aria-label="Copy answers as prompt">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send answers back</span>
+        <span class="qa-fab-badge" data-qa-count>0</span>
+      </button>
+
+      <div class="qa-modal" data-qa-modal hidden role="dialog" aria-modal="true">
+        <div class="qa-backdrop" data-qa-close></div>
+        <div class="qa-panel">
+          <header><h2>Answer prompt</h2><button type="button" class="qa-x" data-qa-close aria-label="Close">&#x2715;</button></header>
+          <pre class="qa-pre" data-qa-text></pre>
+          <footer>
+            <button type="button" class="qa-btn qa-btn-ghost" data-qa-close>Cancel</button>
+            <button type="button" class="qa-btn qa-btn-primary" data-qa-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="qa-toast" data-qa-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-qa-state data-htmd-state="q-and-a">{"block_id":"","title":"One last check before the weekend","prompt_intro":"Quick check before EOD.","questions":[{"id":"q1","prompt":"Anything blocking that you'd like me to escalate before Monday?","kind":"free","answer":"","original_answer":""},{"id":"q2","prompt":"Should I draft a Friday-end summary for the team channel?","kind":"single","answer":"","original_answer":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><p>When done: <strong>Copy all changes</strong> sends inbox actions, classifier corrections, PR decisions, and your free-form notes back as one prompt.</p>
+</section>
+
+<button type="button" class="htmd-cx-fab" data-htmd-cx-export aria-label="Copy all changes back to agent">
+  <span aria-hidden="true">&#x21B5;</span>
+  <span>Copy all changes</span>
+  <span class="htmd-cx-fab-badge" data-htmd-cx-count>0</span>
+</button>
+<div class="htmd-cx-modal" data-htmd-cx-modal hidden role="dialog" aria-modal="true" aria-labelledby="htmd-cx-title">
+  <div class="htmd-cx-modal-backdrop" data-htmd-cx-close></div>
+  <div class="htmd-cx-modal-panel">
+    <header class="htmd-cx-modal-head">
+      <h2 id="htmd-cx-title">Aggregated agent prompt</h2>
+      <button type="button" class="htmd-cx-modal-x" data-htmd-cx-close aria-label="Close">&#x2715;</button>
+    </header>
+    <pre class="htmd-cx-modal-pre" data-htmd-cx-text></pre>
+    <footer class="htmd-cx-modal-foot">
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-ghost" data-htmd-cx-close>Cancel</button>
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-primary" data-htmd-cx-confirm>Copy</button>
+    </footer>
+  </div>
+</div>
+<div class="htmd-cx-toast" data-htmd-cx-toast hidden role="status" aria-live="polite"></div>
+
+</main>
+<script>
+(function () {
+  const root = document.querySelector('main.ed');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-ed-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+  const actByVal = new Map();
+  state.actions.forEach((a) => actByVal.set(a.value, a));
+
+  const fab = root.querySelector('[data-ed-copy]');
+  const countEl = root.querySelector('[data-ed-count]');
+  const modal = root.querySelector('[data-ed-modal]');
+  const modalText = root.querySelector('[data-ed-text]');
+  const toast = root.querySelector('[data-ed-toast]');
+
+  function decided() { return state.items.filter((it) => !!it.action); }
+  function refresh() {
+    const n = decided().length;
+    if (countEl) countEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+  function updateUi(itemId) {
+    const it = idx.get(itemId); if (!it) return;
+    const li = root.querySelector(`[data-ed-item="${cssEscape(itemId)}"]`);
+    if (!li) return;
+    li.classList.toggle('ed-decided', !!it.action);
+    li.querySelectorAll('[data-ed-action]').forEach((b) => {
+      const sel = b.dataset.edAction === it.action;
+      b.setAttribute('aria-checked', sel ? 'true' : 'false');
+    });
+    const note = li.querySelector('[data-ed-note]');
+    if (note) {
+      if (it.action === 'reply' || it.action === 'forward') note.removeAttribute('hidden');
+      else note.setAttribute('hidden', '');
+    }
+  }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Inbox actions for ${state.date || 'today'}:`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const it of state.items) {
+      if (!it.action) continue;
+      n++;
+      const action = actByVal.get(it.action);
+      lines.push(`${n}. [${it.section}] ${it.from} — ${it.subject}`);
+      lines.push(`   Action: ${action ? action.label : it.action}`);
+      if (it.agent_action && it.action !== it.agent_action.toLowerCase()) {
+        lines.push(`   (agent suggested: ${it.agent_action})`);
+      }
+      const note = (it.note || '').trim();
+      if (note) lines.push(`   Note: ${note}`);
+      lines.push('');
+    }
+    if (n === 0) lines.push('(no actions taken)');
+    else lines.push('Please process these actions.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('ed-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('ed-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (decided().length === 0) { showToast('Pick an action on at least one email'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-ed-action]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.edActionItem;
+      const value = btn.dataset.edAction;
+      const it = idx.get(itemId); if (!it) return;
+      it.action = it.action === value ? '' : value;
+      updateUi(itemId); refresh();
+    });
+  });
+  root.querySelectorAll('[data-ed-note]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.edNote); if (!it) return;
+      it.note = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-ed-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-ed-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'email-digest',
+    blockId: state.block_id || state.date,
+    hasChanges: () => decided().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const stateNode = document.querySelector('[data-fc-state]');
+  if (!stateNode) return;
+
+  let state;
+  try {
+    state = JSON.parse(stateNode.textContent);
+  } catch (e) {
+    console.error('feedback-corrector: failed to parse state', e);
+    return;
+  }
+
+  // Index items by id for fast lookup.
+  const itemIndex = new Map();
+  state.items.forEach((it) => itemIndex.set(it.id, it));
+
+  const labelByValue = new Map();
+  state.labels.forEach((l) => labelByValue.set(l.value, l));
+
+  const fab = document.querySelector('[data-fc-copy]');
+  const counterEl = document.querySelector('[data-fc-modified-count]');
+  const modal = document.querySelector('[data-fc-modal]');
+  const modalText = document.querySelector('[data-fc-modal-text]');
+  const toast = document.querySelector('[data-fc-toast]');
+
+  // -------- helpers --------
+  function isModified(item) {
+    return item.current_label !== item.original_label || (item.clarification && item.clarification.trim() !== '');
+  }
+
+  function modifiedCount() {
+    let n = 0;
+    for (const it of state.items) if (isModified(it)) n++;
+    return n;
+  }
+
+  function updateCounter() {
+    const n = modifiedCount();
+    if (counterEl) counterEl.textContent = n;
+    if (fab) {
+      fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+      fab.disabled = n === 0;
+    }
+  }
+
+  function updateItemUi(itemId) {
+    const item = itemIndex.get(itemId);
+    if (!item) return;
+    const card = document.querySelector(`[data-fc-item="${cssEscape(itemId)}"]`);
+    if (!card) return;
+
+    // Toggle modified styling + tag
+    const modified = isModified(item);
+    card.classList.toggle('fc-modified', modified);
+    const tag = card.querySelector('[data-fc-modified-tag]');
+    if (tag) {
+      if (modified) tag.removeAttribute('hidden');
+      else tag.setAttribute('hidden', '');
+    }
+
+    // Refresh pill selection state
+    card.querySelectorAll('[data-fc-pill]').forEach((btn) => {
+      const selected = btn.dataset.fcPill === item.current_label;
+      btn.classList.toggle('fc-pill-selected', selected);
+      btn.setAttribute('aria-checked', selected ? 'true' : 'false');
+    });
+  }
+
+  function debounce(fn, ms) {
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  function showToast(msg, ms) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    // force reflow then add show class
+    void toast.offsetWidth;
+    toast.classList.add('fc-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.classList.remove('fc-toast-show');
+      setTimeout(() => toast.setAttribute('hidden', ''), 220);
+    }, ms || 1800);
+  }
+
+  // -------- prompt assembly --------
+  function buildPrompt() {
+    const lines = [];
+    const intro = state.prompt_intro || 'I reviewed the following classifications and have corrections to share.';
+    lines.push(intro.trim());
+    lines.push('');
+    if (state.context_id) lines.push(`Context: ${state.context_id}`);
+    lines.push(`Date: ${new Date().toISOString()}`);
+    lines.push('');
+    lines.push('The following classifications need to be corrected:');
+    lines.push('');
+
+    let n = 0;
+    for (const it of state.items) {
+      if (!isModified(it)) continue;
+      n++;
+      const wasLbl = labelByValue.get(it.original_label);
+      const newLbl = labelByValue.get(it.current_label);
+      const wasName = wasLbl ? wasLbl.label : it.original_label;
+      const newName = newLbl ? newLbl.label : it.current_label;
+      const titleStr = it.title || `(item ${it.id})`;
+      lines.push(`${n}. Item: "${titleStr}"`);
+      if (it.subtitle) lines.push(`   Subtitle: ${it.subtitle}`);
+      lines.push(`   Was classified as: ${wasName}`);
+      lines.push(`   Should be: ${newName}`);
+      const clar = (it.clarification || '').trim();
+      lines.push(`   Clarification: ${clar || '(none)'}`);
+      lines.push('');
+    }
+
+    lines.push('Please update the classifier accordingly.');
+    return lines.join('\n');
+  }
+
+  // Optional template substitution if user provided one.
+  function buildPromptWithTemplate() {
+    if (!state.prompt_template) return buildPrompt();
+    const itemsBlock = state.items.filter(isModified).map((it, idx) => {
+      const wasLbl = labelByValue.get(it.original_label);
+      const newLbl = labelByValue.get(it.current_label);
+      const wasName = wasLbl ? wasLbl.label : it.original_label;
+      const newName = newLbl ? newLbl.label : it.current_label;
+      const clar = (it.clarification || '').trim() || '(none)';
+      return `${idx + 1}. Item: "${it.title || it.id}"\n   Was: ${wasName}\n   Should be: ${newName}\n   Clarification: ${clar}`;
+    }).join('\n\n');
+    return state.prompt_template
+      .replace(/\{intro\}/g, state.prompt_intro || '')
+      .replace(/\{context_id\}/g, state.context_id || '')
+      .replace(/\{date\}/g, new Date().toISOString())
+      .replace(/\{items\}/g, itemsBlock);
+  }
+
+  function assemble() {
+    return state.prompt_template ? buildPromptWithTemplate() : buildPrompt();
+  }
+
+  // -------- copy --------
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (e) {
+        // fall through to fallback
+      }
+    }
+    // Fallback for older Safari: hidden textarea + execCommand
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  // -------- modal --------
+  function openModal() {
+    if (modifiedCount() === 0) {
+      showToast('No changes to copy yet');
+      return;
+    }
+    if (!modal) return;
+    const text = assemble();
+    if (modalText) modalText.textContent = text;
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  // -------- event wiring --------
+  // Pills: clicking one selects it as the new label for that item.
+  document.querySelectorAll('[data-fc-pill]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.fcPillItem;
+      const value = btn.dataset.fcPill;
+      const item = itemIndex.get(itemId);
+      if (!item) return;
+      item.current_label = value;
+      updateItemUi(itemId);
+      updateCounter();
+    });
+  });
+
+  // Clarifications
+  const debouncedCounter = debounce(updateCounter, 150);
+  document.querySelectorAll('[data-fc-clar]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const itemId = ta.dataset.fcClar;
+      const item = itemIndex.get(itemId);
+      if (!item) return;
+      item.clarification = ta.value;
+      // Auto-grow rows up to a cap
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 280) + 'px';
+      // Modified state may have flipped if clarification went 0 ↔ non-empty
+      const card = document.querySelector(`[data-fc-item="${cssEscape(itemId)}"]`);
+      if (card) {
+        const mod = isModified(item);
+        card.classList.toggle('fc-modified', mod);
+        const tag = card.querySelector('[data-fc-modified-tag]');
+        if (tag) {
+          if (mod) tag.removeAttribute('hidden');
+          else tag.setAttribute('hidden', '');
+        }
+      }
+      debouncedCounter();
+    });
+  });
+
+  // FAB
+  if (fab) fab.addEventListener('click', openModal);
+
+  // Modal close
+  document.querySelectorAll('[data-fc-modal-close]').forEach((el) => {
+    el.addEventListener('click', closeModal);
+  });
+  // Esc to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) closeModal();
+  });
+
+  // Confirm copy
+  const confirmBtn = document.querySelector('[data-fc-confirm-copy]');
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', async () => {
+      const text = modalText ? modalText.textContent : assemble();
+      const ok = await copyText(text);
+      closeModal();
+      showToast(ok ? 'Copied!' : 'Copy failed — see console');
+      if (!ok) console.log(text);
+    });
+  }
+
+  // Register with the compose-level export bridge so that a parent compose
+  // page can include this block's prompt in the global "Copy all changes" FAB.
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'feedback-corrector',
+    blockId: state.context_id || '',
+    hasChanges: () => modifiedCount() > 0,
+    getPrompt: () => assemble()
+  });
+
+  updateCounter();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.al');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-al-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+  const actionByValue = new Map();
+  state.actions.forEach((a) => actionByValue.set(a.value, a));
+
+  const fab = root.querySelector('[data-al-copy]');
+  const countEl = root.querySelector('[data-al-count]');
+  const decEl = root.querySelector('[data-al-decided]');
+  const modal = root.querySelector('[data-al-modal]');
+  const modalText = root.querySelector('[data-al-text]');
+  const toast = root.querySelector('[data-al-toast]');
+
+  function decided(it) { return !!it.decision; }
+  function decidedCount() { return state.items.filter(decided).length; }
+
+  function refresh() {
+    const n = decidedCount();
+    if (countEl) countEl.textContent = n;
+    if (decEl) decEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function updateItemUi(itemId) {
+    const it = idx.get(itemId); if (!it) return;
+    const card = root.querySelector(`[data-al-item="${cssEscape(itemId)}"]`);
+    if (!card) return;
+    card.classList.toggle('al-decided', decided(it));
+    const action = actionByValue.get(it.decision);
+    if (action) card.style.setProperty('--al-color', action.color || 'var(--htmd-accent)');
+    card.querySelectorAll('[data-al-decision]').forEach((btn) => {
+      const sel = btn.dataset.alDecision === it.decision;
+      btn.setAttribute('aria-checked', sel ? 'true' : 'false');
+    });
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Decisions on "${state.title}":`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const it of state.items) {
+      if (!decided(it)) continue;
+      n++;
+      const action = actionByValue.get(it.decision);
+      lines.push(`${n}. ${it.title}`);
+      lines.push(`   Decision: ${action ? action.label : it.decision}`);
+      const r = (it.reason || '').trim();
+      if (r) lines.push(`   Reason: ${r}`);
+      lines.push('');
+    }
+    if (n === 0) lines.push('(no decisions made)');
+    else lines.push('Please proceed accordingly.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('al-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('al-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (decidedCount() === 0) { showToast('No decisions yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  root.querySelectorAll('[data-al-decision]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.alDecisionItem;
+      const value = btn.dataset.alDecision;
+      const it = idx.get(itemId); if (!it) return;
+      it.decision = it.decision === value ? '' : value;
+      updateItemUi(itemId);
+      refresh();
+    });
+  });
+  root.querySelectorAll('[data-al-reason]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.alReason); if (!it) return;
+      it.reason = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-al-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-al-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'approval-list',
+    blockId: state.block_id || state.title,
+    hasChanges: () => decidedCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.qa');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-qa-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch (e) { return; }
+
+  const idx = new Map();
+  state.questions.forEach((q) => idx.set(q.id, q));
+
+  const fab = root.querySelector('[data-qa-copy]');
+  const countEl = root.querySelector('[data-qa-count]');
+  const ansEl = root.querySelector('[data-qa-answered]');
+  const modal = root.querySelector('[data-qa-modal]');
+  const modalText = root.querySelector('[data-qa-text]');
+  const toast = root.querySelector('[data-qa-toast]');
+
+  function isAnswered(q) {
+    if (q.kind === 'multi') return Array.isArray(q.answer) && q.answer.length > 0;
+    return (q.answer || '').toString().trim() !== '';
+  }
+  function answeredCount() { return state.questions.filter(isAnswered).length; }
+
+  function refresh() {
+    const n = answeredCount();
+    if (countEl) countEl.textContent = n;
+    if (ansEl) ansEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Here are answers to the clarifying questions for "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const q of state.questions) {
+      n++;
+      lines.push(`${n}. ${q.prompt}`);
+      if (!isAnswered(q)) { lines.push('   Answer: (skipped)'); }
+      else if (Array.isArray(q.answer)) { lines.push(`   Answer: ${q.answer.join(', ')}`); }
+      else { lines.push(`   Answer: ${q.answer}`); }
+      lines.push('');
+    }
+    lines.push('Please proceed using these answers.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('qa-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('qa-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (answeredCount() === 0) { showToast('No answers yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-qa-input]').forEach((el) => {
+    const evt = el.tagName === 'TEXTAREA' || el.type === 'text' ? 'input' : 'change';
+    el.addEventListener(evt, () => {
+      const id = el.dataset.qaInput;
+      const q = idx.get(id); if (!q) return;
+      const kind = el.dataset.qaKind || q.kind;
+      if (kind === 'multi') {
+        const all = root.querySelectorAll(`[data-qa-input="${id}"]:checked`);
+        q.answer = Array.from(all).map((n) => n.value);
+      } else if (kind === 'single') {
+        q.answer = el.value;
+      } else {
+        q.answer = el.value;
+      }
+      refresh();
+    });
+  });
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-qa-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-qa-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'q-and-a',
+    blockId: state.block_id || state.title,
+    hasChanges: () => answeredCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+
+(function () {
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  const reg = window.__htmd;
+  const fab = document.querySelector('[data-htmd-cx-export]');
+  const countEl = document.querySelector('[data-htmd-cx-count]');
+  const modal = document.querySelector('[data-htmd-cx-modal]');
+  const modalText = document.querySelector('[data-htmd-cx-text]');
+  const toast = document.querySelector('[data-htmd-cx-toast]');
+  if (!fab) return;
+
+  function changedBlocks() {
+    return reg.blocks.filter((b) => {
+      try { return typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; }
+      catch { return false; }
+    });
+  }
+
+  function refresh() {
+    const n = changedBlocks().length;
+    if (countEl) countEl.textContent = n;
+    fab.disabled = n === 0;
+    fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+  }
+
+  function buildAggregatePrompt() {
+    const parts = [];
+    parts.push('I reviewed your output in the browser and have the following changes/answers across multiple blocks. Please proceed accordingly.');
+    parts.push('');
+    let n = 0;
+    for (const b of reg.blocks) {
+      let changes = false;
+      try { changes = typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; } catch { changes = false; }
+      if (!changes) continue;
+      let promptText = '';
+      try { promptText = b.getPrompt ? b.getPrompt() : ''; } catch (e) { promptText = '(error generating prompt: ' + e.message + ')'; }
+      if (!promptText) continue;
+      n++;
+      parts.push('---');
+      parts.push('Block ' + n + ' (' + (b.template || 'unknown') + (b.blockId ? ' #' + b.blockId : '') + '):');
+      parts.push('');
+      parts.push(promptText.trim());
+      parts.push('');
+    }
+    if (n === 0) parts.push('(no changes recorded)');
+    return parts.join('\n');
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    void toast.offsetWidth;
+    toast.classList.add('htmd-cx-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.classList.remove('htmd-cx-toast-show');
+      setTimeout(() => toast.setAttribute('hidden', ''), 220);
+    }, 1800);
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function open() {
+    if (changedBlocks().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return;
+    if (modalText) modalText.textContent = buildAggregatePrompt();
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  fab.addEventListener('click', open);
+  document.querySelectorAll('[data-htmd-cx-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = document.querySelector('[data-htmd-cx-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildAggregatePrompt();
+    const ok = await copyText(text);
+    close();
+    showToast(ok ? 'Copied to clipboard' : 'Copy failed — see console');
+    if (!ok) console.log(text);
+  });
+
+  // Poll for changes (cheap; covers the case where a block doesn't dispatch events).
+  setInterval(refresh, 800);
+  refresh();
+})();
+
+</script>
+</body>
+</html>

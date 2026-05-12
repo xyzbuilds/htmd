@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Review the compose feature</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.cr { max-width: 1000px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.cr-head { margin-bottom: 1rem; }
+.cr-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.cr-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.cr-hint { margin-top: 0.4rem; font-size: var(--htmd-text-xs); color: var(--htmd-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+.cr-file {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  margin-bottom: 1rem;
+  overflow: hidden;
+  box-shadow: var(--htmd-shadow);
+}
+.cr-file-head {
+  padding: 0.55rem 0.85rem;
+  background: var(--htmd-surface-2);
+  border-bottom: 1px solid var(--htmd-border);
+  display: flex; gap: 0.5rem; align-items: center;
+  font-family: var(--htmd-font-mono); font-size: var(--htmd-text-sm);
+}
+.cr-lang {
+  font-size: 0.7rem;
+  color: var(--htmd-muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+.cr-code {
+  font-family: var(--htmd-font-mono);
+  font-size: 0.85rem;
+  line-height: 1.5;
+  overflow-x: auto;
+}
+.cr-row {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  align-items: stretch;
+}
+.cr-row.cr-add { background: var(--htmd-success-soft); }
+.cr-row.cr-del { background: var(--htmd-danger-soft); }
+.cr-linenum {
+  background: transparent; border: none; cursor: pointer;
+  padding: 0 0.55rem;
+  color: var(--htmd-muted);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  user-select: none;
+  border-right: 1px solid var(--htmd-border);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  min-height: 1.6rem;
+}
+.cr-linenum:hover { background: var(--htmd-accent-soft); color: var(--htmd-accent); }
+.cr-text {
+  padding: 0.05rem 0.85rem;
+  white-space: pre;
+  display: block;
+  background: transparent;
+}
+.cr-row.cr-add .cr-text::before { content: '+'; color: var(--htmd-success); margin-right: 0.5rem; opacity: 0.7; }
+.cr-row.cr-del .cr-text::before { content: '−'; color: var(--htmd-danger); margin-right: 0.5rem; opacity: 0.7; }
+
+.cr-comments, .cr-user-comments {
+  grid-column: 2;
+  list-style: none;
+  margin: 0.4rem 0;
+  padding: 0;
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.cr-comment {
+  padding: 0.45rem 0.65rem;
+  background: var(--htmd-warn-soft);
+  border-left: 3px solid var(--htmd-warn);
+  border-radius: var(--htmd-radius-sm);
+  font-family: var(--htmd-font-sans);
+  font-size: var(--htmd-text-sm);
+  white-space: normal;
+}
+.cr-comment-preset { background: var(--htmd-info-soft); border-left-color: var(--htmd-info); }
+.cr-user-comments .cr-comment-edit {
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.cr-user-comments textarea {
+  width: 100%;
+  font-family: var(--htmd-font-sans);
+  font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  padding: 0.45rem 0.6rem;
+  resize: vertical; min-height: 38px;
+}
+.cr-user-comments textarea:focus { outline: none; border-color: var(--htmd-accent); }
+.cr-comment-actions { display: flex; gap: 0.35rem; }
+.cr-btn-mini {
+  font-size: var(--htmd-text-xs); font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  background: var(--htmd-surface-2); color: var(--htmd-fg-muted);
+  border: 1px solid var(--htmd-border); border-radius: 999px;
+  cursor: pointer;
+}
+.cr-btn-mini.cr-btn-mini-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); border-color: transparent; }
+
+.cr-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.cr-fab:disabled, .cr-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.cr-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.cr-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.cr-modal[hidden] { display: none; }
+.cr-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.cr-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 720px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.cr-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.cr-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.cr-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.cr-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.cr-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.cr-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.cr-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.cr-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.cr-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cr-toast[hidden] { display: none; }
+.cr-toast.cr-toast-show { opacity: 1; }
+
+@media print {
+  .cr-fab, .cr-modal, .cr-toast { display: none !important; }
+  .cr-file { box-shadow: none; break-inside: avoid; }
+}
+
+</style>
+</head>
+<body data-htmd-template="code-review">
+
+    <main class="cr">
+      <header class="cr-head">
+        <h1 class="cr-title">Review the compose feature</h1>
+        <p class="cr-subtitle">Click any line number to leave a comment. Pre-placed comments are from the agent.</p>
+        <p class="cr-hint">Click any line number to add an inline comment. The Send button at the bottom-right copies all comments back as a prompt.</p>
+      </header>
+
+      
+    <section class="cr-file" data-cr-file="f1">
+      <header class="cr-file-head">
+        <code>src/compose.js</code>
+        <span class="cr-lang">javascript</span>
+      </header>
+      <div class="cr-code">
+        
+    <div class="cr-row" data-cr-line="60">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:60" aria-label="Comment on line 60">60</button>
+      <code class="cr-text">export async function composeFromMarkdown(mdText, opts = {}) {</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:60"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="61">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:61" aria-label="Comment on line 61">61</button>
+      <code class="cr-text">  const segments = parseSegments(mdText);</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:61"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="62">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:62" aria-label="Comment on line 62">62</button>
+      <code class="cr-text">  const cssByTemplate = new Map();</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:62"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="63">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:63" aria-label="Comment on line 63">63</button>
+      <code class="cr-text">  const jsByTemplate = new Map();</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:63"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="64">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:64" aria-label="Comment on line 64">64</button>
+      <code class="cr-text">  const blocksMeta = [];</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:64"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="65">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:65" aria-label="Comment on line 65">65</button>
+      <code class="cr-text">  const errors = [];</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:65"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="66">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:66" aria-label="Comment on line 66">66</button>
+      <code class="cr-text">  const bodyParts = [];</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:66"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="67">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:67" aria-label="Comment on line 67">67</button>
+      <code class="cr-text">  let blockIdx = 0;</code>
+      
+        <ul class="cr-comments">
+          <li class="cr-comment cr-comment-preset">Consider using Map.groupBy() once Node 20 LTS is everyone&#39;s baseline.</li>
+        </ul>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:67"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="68">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:68" aria-label="Comment on line 68">68</button>
+      <code class="cr-text"> </code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:68"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="69">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:69" aria-label="Comment on line 69">69</button>
+      <code class="cr-text">  for (const seg of segments) {</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:69"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="70">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:70" aria-label="Comment on line 70">70</button>
+      <code class="cr-text">    if (seg.type === &#39;prose&#39;) {</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:70"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="71">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:71" aria-label="Comment on line 71">71</button>
+      <code class="cr-text">      bodyParts.push(&#96;&lt;section class=&quot;htmd-prose&quot;&gt;${mdToHtml(seg.md)}&lt;/section&gt;&#96;);</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:71"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="72">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:72" aria-label="Comment on line 72">72</button>
+      <code class="cr-text">      continue;</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:72"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="73">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:73" aria-label="Comment on line 73">73</button>
+      <code class="cr-text">    }</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:73"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="74">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:74" aria-label="Comment on line 74">74</button>
+      <code class="cr-text">    if (seg.parseError) {</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:74"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="75">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:75" aria-label="Comment on line 75">75</button>
+      <code class="cr-text">      errors.push({ template: seg.template, idx: blockIdx, error: seg.parseError });</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:75"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="76">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:76" aria-label="Comment on line 76">76</button>
+      <code class="cr-text">      bodyParts.push(blockErrorCard(seg.template, blockIdx, ...));</code>
+      
+        <ul class="cr-comments">
+          <li class="cr-comment cr-comment-preset">Should probably surface seg.template in the error so a misconfigured fence is debuggable.</li>
+        </ul>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:76"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="77">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:77" aria-label="Comment on line 77">77</button>
+      <code class="cr-text">      blockIdx++;</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:77"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="78">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:78" aria-label="Comment on line 78">78</button>
+      <code class="cr-text">      continue;</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:78"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="79">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:79" aria-label="Comment on line 79">79</button>
+      <code class="cr-text">    }</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:79"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="80">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:80" aria-label="Comment on line 80">80</button>
+      <code class="cr-text">    try {</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:80"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="81">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:81" aria-label="Comment on line 81">81</button>
+      <code class="cr-text">      const parts = await renderTemplateParts(seg.template, seg.data, opts);</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:81"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="82">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:82" aria-label="Comment on line 82">82</button>
+      <code class="cr-text">      cssByTemplate.set(seg.template, parts.css);</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:82"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="83">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:83" aria-label="Comment on line 83">83</button>
+      <code class="cr-text">      if (parts.js) jsByTemplate.set(seg.template, parts.js);</code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:83"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="84">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f1:84" aria-label="Comment on line 84">84</button>
+      <code class="cr-text"> </code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f1:84"></ul>
+    </div>
+  
+      </div>
+    </section>
+  
+    <section class="cr-file" data-cr-file="f2">
+      <header class="cr-file-head">
+        <code>src/extract.js</code>
+        <span class="cr-lang">javascript</span>
+      </header>
+      <div class="cr-code">
+        
+    <div class="cr-row" data-cr-line="28">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f2:28" aria-label="Comment on line 28">28</button>
+      <code class="cr-text">const ATTR_RE = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:&quot;([^&quot;]*)&quot;|&#39;([^&#39;]*)&#39;|([^\s&quot;&#39;&#96;&lt;&gt;]+)))?/g;</code>
+      
+        <ul class="cr-comments">
+          <li class="cr-comment cr-comment-preset">This regex is hand-rolled — fine for now, but consider a proper HTML parser if extract usage grows.</li>
+        </ul>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f2:28"></ul>
+    </div>
+  
+    <div class="cr-row" data-cr-line="29">
+      <button type="button" class="cr-linenum" data-cr-add-comment="f2:29" aria-label="Comment on line 29">29</button>
+      <code class="cr-text"> </code>
+      
+      <ul class="cr-user-comments" data-cr-user-comments="f2:29"></ul>
+    </div>
+  
+      </div>
+    </section>
+  
+
+      <button type="button" class="cr-fab" data-cr-copy aria-label="Send comments back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send review comments back</span>
+        <span class="cr-fab-badge" data-cr-count>0</span>
+      </button>
+
+      <div class="cr-modal" data-cr-modal hidden role="dialog" aria-modal="true">
+        <div class="cr-backdrop" data-cr-close></div>
+        <div class="cr-panel">
+          <header><h2>Review comments</h2><button type="button" class="cr-x" data-cr-close aria-label="Close">&#x2715;</button></header>
+          <pre class="cr-pre" data-cr-text></pre>
+          <footer>
+            <button type="button" class="cr-btn cr-btn-ghost" data-cr-close>Cancel</button>
+            <button type="button" class="cr-btn cr-btn-primary" data-cr-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="cr-toast" data-cr-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-cr-state data-htmd-state="code-review">{"block_id":"","title":"Review the compose feature","prompt_intro":"Code review comments on the compose feature.","files":[{"file_id":"f1","path":"src/compose.js","preset_comments":[{"body":"Consider using Map.groupBy() once Node 20 LTS is everyone's baseline.","author":"agent","original":true},{"body":"Should probably surface seg.template in the error so a misconfigured fence is debuggable.","author":"agent","original":true}],"user_comments":[]},{"file_id":"f2","path":"src/extract.js","preset_comments":[{"body":"This regex is hand-rolled — fine for now, but consider a proper HTML parser if extract usage grows.","author":"agent","original":true}],"user_comments":[]}]}</script>
+    </main>
+  
+<script>
+(function () {
+  const root = document.querySelector('main.cr');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-cr-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const fab = root.querySelector('[data-cr-copy]');
+  const countEl = root.querySelector('[data-cr-count]');
+  const modal = root.querySelector('[data-cr-modal]');
+  const modalText = root.querySelector('[data-cr-text]');
+  const toast = root.querySelector('[data-cr-toast]');
+
+  const userComments = []; // { fileId, path, line, body }
+
+  function refresh() {
+    const n = userComments.filter((c) => (c.body || '').trim() !== '').length;
+    if (countEl) countEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Code review for "${state.title}":`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    const valid = userComments.filter((c) => (c.body || '').trim() !== '');
+    if (valid.length === 0) lines.push('(no comments)');
+    let n = 0;
+    for (const c of valid) {
+      n++;
+      lines.push(`${n}. ${c.path}:${c.line}`);
+      lines.push(`   ${c.body.trim()}`);
+      lines.push('');
+    }
+    lines.push('Please address these comments.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('cr-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('cr-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (userComments.filter((c) => (c.body || '').trim() !== '').length === 0) { showToast('No comments yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_:-]/g, (c) => '\\' + c);
+  }
+
+  root.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-cr-add-comment]');
+    if (!btn) return;
+    const [fileId, lineStr] = btn.dataset.crAddComment.split(':');
+    const line = parseInt(lineStr, 10);
+    const ul = root.querySelector(`[data-cr-user-comments="${cssEscape(fileId + ':' + line)}"]`);
+    if (!ul) return;
+    const file = state.files.find((f) => f.file_id === fileId);
+    const path = file ? file.path : fileId;
+    const li = document.createElement('li');
+    li.className = 'cr-comment cr-comment-edit';
+    const ta = document.createElement('textarea');
+    ta.placeholder = 'Comment for the agent…';
+    ta.rows = 2;
+    const actions = document.createElement('div');
+    actions.className = 'cr-comment-actions';
+    const save = document.createElement('button');
+    save.className = 'cr-btn-mini cr-btn-mini-primary';
+    save.textContent = 'Save';
+    const cancel = document.createElement('button');
+    cancel.className = 'cr-btn-mini';
+    cancel.textContent = 'Cancel';
+    actions.append(save, cancel);
+    li.append(ta, actions);
+    ul.append(li);
+    ta.focus();
+
+    const entry = { fileId, path, line, body: '' };
+    userComments.push(entry);
+    refresh();
+    const finalize = () => {
+      entry.body = ta.value;
+      li.classList.remove('cr-comment-edit');
+      li.innerHTML = '';
+      const text = document.createElement('div');
+      text.textContent = `${path}:${line} — ${entry.body}`;
+      li.append(text);
+      refresh();
+    };
+    save.addEventListener('click', finalize);
+    cancel.addEventListener('click', () => {
+      const i = userComments.indexOf(entry);
+      if (i >= 0) userComments.splice(i, 1);
+      li.remove();
+      refresh();
+    });
+    ta.addEventListener('input', () => {
+      entry.body = ta.value;
+      refresh();
+    });
+  });
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-cr-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-cr-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'code-review',
+    blockId: state.block_id || state.title,
+    hasChanges: () => userComments.filter((c) => (c.body || '').trim() !== '').length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
+</body>
+</html>

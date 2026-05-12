@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="htmd v0.1.0">
+<meta name="generator" content="htmd v0.2.0">
 <title>How should we deploy our LLM service?</title>
 <style>
 /* htmd minimal reset */
@@ -101,8 +101,115 @@ code, pre, kbd, samp {
 .cmp {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 1.5rem 6rem;
 }
+.cmp-suggested { margin-top: 0.4rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); }
+.cmp-suggested strong { color: var(--htmd-accent); }
+.cmp-col.cmp-chosen { border-color: var(--htmd-accent); box-shadow: 0 0 0 2px var(--htmd-accent-soft), var(--htmd-shadow); }
+.cmp-note {
+  margin: 0.85rem 1rem 1rem;
+  padding: 0.45rem 0.6rem;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  resize: vertical; min-height: 38px;
+}
+.cmp-note:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.cmp-decision {
+  margin-top: 1.25rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--htmd-shadow);
+}
+.cmp-decision header {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.cmp-pick { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.65rem; }
+.cmp-pick-opt {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  background: var(--htmd-surface-2);
+  border: 1.5px solid var(--htmd-border);
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  cursor: pointer;
+}
+.cmp-pick-opt:hover { border-color: var(--htmd-accent); }
+.cmp-pick-opt input { accent-color: var(--htmd-accent); }
+.cmp-pick-opt:has(input:checked) {
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border-color: var(--htmd-accent);
+}
+.cmp-rat-label {
+  display: block;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.cmp-rationale {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  resize: vertical; min-height: 50px;
+}
+.cmp-rationale:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.cmp-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.cmp-fab:disabled, .cmp-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+
+.cmp-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.cmp-modal[hidden] { display: none; }
+.cmp-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.cmp-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.cmp-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.cmp-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.cmp-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.cmp-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.cmp-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.cmp-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.cmp-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.cmp-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.cmp-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cmp-toast[hidden] { display: none; }
+.cmp-toast.cmp-toast-show { opacity: 1; }
 .cmp-head { margin-bottom: 1.5rem; }
 .cmp-title {
   font-size: var(--htmd-text-2xl);
@@ -251,10 +358,11 @@ code, pre, kbd, samp {
       <header class="cmp-head">
         <h1 class="cmp-title">How should we deploy our LLM service?</h1>
         <p class="cmp-subtitle">Three approaches for serving Claude in production at our scale (~50 RPS, mostly bursty)</p>
+        <p class="cmp-suggested">Agent suggests: <strong>Self-hosted proxy + cache</strong></p>
       </header>
       <div class="cmp-grid" data-cols="3">
         
-    <article class="cmp-col" data-idx="0">
+    <article class="cmp-col" data-cmp-col="a0" data-idx="0">
       <header class="cmp-col-head">
         <span class="cmp-col-num">01</span>
         <h2 class="cmp-col-name">Direct API calls</h2>
@@ -284,9 +392,10 @@ code, pre, kbd, samp {
 </code></pre>
         </section>
       
+      <textarea class="cmp-note" data-cmp-note="a0" rows="1" placeholder="Note on Direct API calls…"></textarea>
     </article>
   
-    <article class="cmp-col" data-idx="1">
+    <article class="cmp-col" data-cmp-col="a1" data-idx="1">
       <header class="cmp-col-head">
         <span class="cmp-col-num">02</span>
         <h2 class="cmp-col-name">Self-hosted proxy + cache</h2>
@@ -317,9 +426,10 @@ code, pre, kbd, samp {
 </code></pre>
         </section>
       
+      <textarea class="cmp-note" data-cmp-note="a1" rows="1" placeholder="Note on Self-hosted proxy + cache…"></textarea>
     </article>
   
-    <article class="cmp-col" data-idx="2">
+    <article class="cmp-col" data-cmp-col="a2" data-idx="2">
       <header class="cmp-col-head">
         <span class="cmp-col-num">03</span>
         <h2 class="cmp-col-name">Batch + scheduled offline</h2>
@@ -348,17 +458,186 @@ code, pre, kbd, samp {
 </code></pre>
         </section>
       
+      <textarea class="cmp-note" data-cmp-note="a2" rows="1" placeholder="Note on Batch + scheduled offline…"></textarea>
     </article>
   
       </div>
       
         <aside class="cmp-verdict">
-          <span class="cmp-verdict-pill">Verdict</span>
+          <span class="cmp-verdict-pill">Agent's verdict</span>
           <p><p>Start with <strong>Direct API calls</strong> while you&#39;re prototyping. As soon as you cross ~$1k/mo in API spend or need observability, move to a <strong>self-hosted proxy with caching</strong>. Use <strong>batch</strong> for any non-interactive workload — it&#39;s free 50% off.</p>
 </p>
         </aside>
       
+
+      <section class="cmp-decision">
+        <header>Your decision</header>
+        <div class="cmp-pick" role="radiogroup" aria-label="Pick the option you'd choose">
+          
+            <label class="cmp-pick-opt">
+              <input type="radio" name="cmp-pick" value="a0" data-cmp-pick>
+              <span class="cmp-pick-text">Direct API calls</span>
+            </label>
+          
+            <label class="cmp-pick-opt">
+              <input type="radio" name="cmp-pick" value="a1" data-cmp-pick>
+              <span class="cmp-pick-text">Self-hosted proxy + cache</span>
+            </label>
+          
+            <label class="cmp-pick-opt">
+              <input type="radio" name="cmp-pick" value="a2" data-cmp-pick>
+              <span class="cmp-pick-text">Batch + scheduled offline</span>
+            </label>
+          
+          <label class="cmp-pick-opt">
+            <input type="radio" name="cmp-pick" value="__none__" data-cmp-pick>
+            <span class="cmp-pick-text">None / something else</span>
+          </label>
+        </div>
+        <label class="cmp-rat-label" for="cmp-rationale">Rationale (optional)</label>
+        <textarea id="cmp-rationale" class="cmp-rationale" data-cmp-rationale rows="2" placeholder="Why this option (or why none of them)?"></textarea>
+      </section>
+
+      <button type="button" class="cmp-fab" data-cmp-copy aria-label="Send decision back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send decision back</span>
+      </button>
+
+      <div class="cmp-modal" data-cmp-modal hidden role="dialog" aria-modal="true">
+        <div class="cmp-backdrop" data-cmp-close></div>
+        <div class="cmp-panel">
+          <header><h2>Decision</h2><button type="button" class="cmp-x" data-cmp-close aria-label="Close">&#x2715;</button></header>
+          <pre class="cmp-pre" data-cmp-text></pre>
+          <footer>
+            <button type="button" class="cmp-btn cmp-btn-ghost" data-cmp-close>Cancel</button>
+            <button type="button" class="cmp-btn cmp-btn-primary" data-cmp-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="cmp-toast" data-cmp-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-cmp-state data-htmd-state="comparison-3-up">{"block_id":"","title":"How should we deploy our LLM service?","prompt_intro":"My take on the LLM deployment options.","suggested":"Self-hosted proxy + cache","approaches":[{"aid":"a0","name":"Direct API calls","note":""},{"aid":"a1","name":"Self-hosted proxy + cache","note":""},{"aid":"a2","name":"Batch + scheduled offline","note":""}],"chosen":"","rationale":""}</script>
     </main>
   
+<script>
+(function () {
+  const root = document.querySelector('main.cmp');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-cmp-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const fab = root.querySelector('[data-cmp-copy]');
+  const modal = root.querySelector('[data-cmp-modal]');
+  const modalText = root.querySelector('[data-cmp-text]');
+  const toast = root.querySelector('[data-cmp-toast]');
+  const rationale = root.querySelector('[data-cmp-rationale]');
+
+  function aById(aid) { return state.approaches.find((a) => a.aid === aid); }
+
+  function isChanged() {
+    if (state.chosen) return true;
+    if ((state.rationale || '').trim()) return true;
+    return state.approaches.some((a) => (a.note || '').trim() !== '');
+  }
+  function refresh() {
+    if (fab) {
+      const ch = isChanged();
+      fab.disabled = !ch;
+      fab.setAttribute('aria-disabled', ch ? 'false' : 'true');
+    }
+    // Visually mark the chosen column
+    root.querySelectorAll('[data-cmp-col]').forEach((col) => col.classList.remove('cmp-chosen'));
+    if (state.chosen && state.chosen !== '__none__') {
+      const col = root.querySelector(`[data-cmp-col="${cssEscape(state.chosen)}"]`);
+      if (col) col.classList.add('cmp-chosen');
+    }
+  }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `My decision on "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    if (state.suggested) lines.push(`Agent suggested: ${state.suggested}`);
+    let chosenName = '(none picked)';
+    if (state.chosen === '__none__') chosenName = 'None of the above';
+    else if (state.chosen) {
+      const a = aById(state.chosen);
+      chosenName = a ? a.name : state.chosen;
+    }
+    lines.push(`I'd choose: ${chosenName}`);
+    if ((state.rationale || '').trim()) {
+      lines.push(''); lines.push('Rationale:'); state.rationale.split('\n').forEach((l) => lines.push(`  ${l}`));
+    }
+    const notes = state.approaches.filter((a) => (a.note || '').trim() !== '');
+    if (notes.length) {
+      lines.push(''); lines.push('Per-option notes:');
+      notes.forEach((a) => { lines.push(`  ${a.name}:`); a.note.split('\n').forEach((l) => lines.push(`    ${l}`)); });
+    }
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('cmp-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('cmp-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (!isChanged()) { showToast('Pick an option or add a note first'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-cmp-pick]').forEach((r) => {
+    r.addEventListener('change', () => { state.chosen = r.value; refresh(); });
+  });
+  root.querySelectorAll('[data-cmp-note]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const a = aById(ta.dataset.cmpNote); if (!a) return;
+      a.note = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+      refresh();
+    });
+  });
+  if (rationale) rationale.addEventListener('input', () => { state.rationale = rationale.value; refresh(); });
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-cmp-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-cmp-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'comparison-3-up',
+    blockId: state.block_id || state.title,
+    hasChanges: () => isChanged(),
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
 </body>
 </html>

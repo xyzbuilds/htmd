@@ -86,7 +86,7 @@ export default function render(data, h) {
 
       <div class="fc-toast" data-fc-toast hidden role="status" aria-live="polite"></div>
 
-      <script type="application/json" data-fc-state>${h.raw(safeJson(initialState))}</script>
+      <script type="application/json" data-fc-state data-htmd-state="feedback-corrector">${h.raw(safeJson(initialState))}</script>
     </main>
   `;
 }

@@ -19,7 +19,16 @@ const BUILTIN_NAMES = [
   'prompt-tuner',
   'kanban-board',
   'concept-explainer',
-  'feedback-corrector'
+  'feedback-corrector',
+  'checklist',
+  'q-and-a',
+  'data-table',
+  'approval-list',
+  'rank-order',
+  'text-redline',
+  'priority-matrix',
+  'chart-block',
+  'code-review'
 ];
 
 const _cache = new Map();

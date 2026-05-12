@@ -1,0 +1,3287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Sprint review — week of May 11</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+
+.htmd-compose {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+.htmd-prose { line-height: 1.65; }
+.htmd-prose > :first-child { margin-top: 0; }
+.htmd-prose h1, .htmd-prose h2, .htmd-prose h3 { letter-spacing: -0.01em; line-height: 1.2; }
+.htmd-prose h1 { font-size: 2rem; margin: 1.5rem 0 0.75rem; }
+.htmd-prose h2 { font-size: 1.5rem; margin: 1.5rem 0 0.5rem; }
+.htmd-prose h3 { font-size: 1.2rem; margin: 1.25rem 0 0.5rem; }
+.htmd-prose p, .htmd-prose ul, .htmd-prose ol { margin: 0.75rem 0; }
+.htmd-prose pre {
+  background: var(--htmd-surface-2);
+  padding: 1rem;
+  border-radius: var(--htmd-radius-sm);
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+.htmd-prose code {
+  background: var(--htmd-surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.htmd-prose pre code { background: none; padding: 0; }
+.htmd-prose blockquote {
+  border-left: 3px solid var(--htmd-accent);
+  margin: 1rem 0;
+  padding: 0.25rem 1rem;
+  color: var(--htmd-fg-muted);
+}
+.htmd-prose table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+.htmd-prose th, .htmd-prose td {
+  border: 1px solid var(--htmd-border);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+}
+.htmd-prose th { background: var(--htmd-surface-2); }
+
+.htmd-block {
+  position: relative;
+  border-radius: var(--htmd-radius);
+  border: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.htmd-block > main:first-child,
+.htmd-block > section:first-child,
+.htmd-block > div:first-child { padding-top: 0; }
+.htmd-block::before {
+  content: attr(data-htmd-block);
+  position: absolute;
+  top: 0.6rem;
+  right: 0.85rem;
+  z-index: 5;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* In compose mode, per-template FABs (every interactive template has its
+   own bottom-right fixed-position copy button) would all stack at the same
+   viewport corner and overlap each other AND the global compose FAB. Hide
+   them — the compose-level "Copy all changes" button below aggregates every
+   block's export, so per-block FABs are redundant inside a composed page. */
+.htmd-block .fc-fab,
+.htmd-block .cl-fab,
+.htmd-block .qa-fab,
+.htmd-block .al-fab,
+.htmd-block .rk-fab,
+.htmd-block .tr-fab,
+.htmd-block .pm-fab,
+.htmd-block .dm-fab,
+.htmd-block .cmp-fab,
+.htmd-block .ed-fab,
+.htmd-block .cr-fab {
+  display: none !important;
+}
+/* Their modals are hidden by default; hiding the FAB suffices. The transient
+   toasts these templates emit only fire on direct interaction with the FAB,
+   so they won't appear either. */
+
+/* The kanban-board's "Export Markdown" header buttons are NOT fixed-position
+   FABs — they live inside the card. Leave them alone (still useful in compose). */
+/* The data-table "Send edits back" button is in the card header, not a fixed
+   FAB — leave it visible (it has its own modal). */
+.htmd-block .dt-export-btn-edits { display: none !important; }
+/* Same reasoning: edits flow through the global FAB. */
+
+.htmd-block-error {
+  border: 1px solid var(--htmd-danger);
+  background: var(--htmd-danger-soft);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg);
+}
+.htmd-block-error header { font-size: var(--htmd-text-md); margin-bottom: 0.4rem; }
+.htmd-block-error pre {
+  background: var(--htmd-surface);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: 0.78rem;
+  overflow-x: auto;
+  margin-top: 0.4rem;
+}
+
+/* Compose-level export FAB */
+.htmd-cx-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  left: 1.1rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.65rem 1.1rem;
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+}
+.htmd-cx-fab:hover { transform: translateY(-1px); }
+.htmd-cx-fab:disabled, .htmd-cx-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.htmd-cx-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.htmd-cx-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.htmd-cx-modal[hidden] { display: none; }
+.htmd-cx-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.htmd-cx-modal-panel {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow-lg);
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.htmd-cx-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.htmd-cx-modal-head h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.htmd-cx-modal-x {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+.htmd-cx-modal-x:hover { background: var(--htmd-surface-2); }
+.htmd-cx-modal-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--htmd-fg);
+}
+.htmd-cx-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+}
+.htmd-cx-btn {
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.htmd-cx-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.htmd-cx-btn-ghost:hover { background: var(--htmd-surface-2); }
+.htmd-cx-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+.htmd-cx-btn-primary:hover { filter: brightness(1.05); }
+
+.htmd-cx-toast {
+  position: fixed;
+  bottom: 4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.55rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  box-shadow: var(--htmd-shadow-lg);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.18s;
+  pointer-events: none;
+}
+.htmd-cx-toast[hidden] { display: none; }
+.htmd-cx-toast.htmd-cx-toast-show { opacity: 1; }
+
+@media (max-width: 560px) {
+  .htmd-compose { padding: 1.25rem 0.85rem 7rem; gap: 1.25rem; }
+  .htmd-cx-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+
+@media print {
+  .htmd-cx-fab, .htmd-cx-modal, .htmd-cx-toast { display: none !important; }
+  .htmd-block { box-shadow: none; break-inside: avoid; }
+}
+
+.sr {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.sr-hero {
+  background: linear-gradient(135deg, var(--htmd-accent) 0%, color-mix(in srgb, var(--htmd-accent) 70%, #000) 100%);
+  color: var(--htmd-accent-fg);
+  padding: 2.25rem 2rem;
+  border-radius: var(--htmd-radius);
+  margin-bottom: 1.5rem;
+  box-shadow: var(--htmd-shadow);
+}
+.sr-hero-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--htmd-text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  margin-bottom: 0.75rem;
+}
+.sr-eyebrow {
+  font-weight: 600;
+}
+.sr-period {
+  background: rgba(255, 255, 255, 0.18);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+.sr-title {
+  font-size: var(--htmd-text-3xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  margin-bottom: 0.75rem;
+}
+.sr-meta {
+  font-size: var(--htmd-text-sm);
+  opacity: 0.9;
+}
+.sr-meta-owner::before { content: "by "; opacity: 0.7; }
+
+.sr-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.sr-metric {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--htmd-shadow);
+}
+.sr-metric-label {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-fg-muted);
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+}
+.sr-metric-value {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.sr-metric-delta {
+  margin-top: 0.4rem;
+  font-size: var(--htmd-text-xs);
+  font-weight: 600;
+}
+.sr-metric-delta.up { color: var(--htmd-success); }
+.sr-metric-delta.down { color: var(--htmd-danger); }
+
+.sr-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 720px) {
+  .sr-grid { grid-template-columns: 1fr; }
+}
+
+.sr-section {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem 1.1rem;
+  box-shadow: var(--htmd-shadow);
+}
+.sr-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+.sr-pill {
+  display: inline-block;
+  padding: 0.25rem 0.7rem;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-radius: 999px;
+}
+.sr-pill-success { background: var(--htmd-success-soft); color: var(--htmd-success); }
+.sr-pill-info { background: var(--htmd-info-soft); color: var(--htmd-info); }
+.sr-pill-danger { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.sr-pill-muted { background: var(--htmd-surface-2); color: var(--htmd-fg-muted); }
+
+.sr-count {
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.sr-list { list-style: none; padding: 0; margin: 0; }
+.sr-item {
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--htmd-border);
+}
+.sr-item:first-child { border-top: none; padding-top: 0.25rem; }
+
+.sr-item-title {
+  font-weight: 500;
+  line-height: 1.35;
+}
+.sr-item-title a { color: var(--htmd-fg); border-bottom: 1px dotted var(--htmd-muted); }
+.sr-item-title a:hover { color: var(--htmd-accent); border-color: var(--htmd-accent); text-decoration: none; }
+
+.sr-item-meta {
+  margin-top: 0.4rem;
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.sr-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg-muted);
+  font-weight: 500;
+}
+.sr-tag-eta { background: var(--htmd-info-soft); color: var(--htmd-info); }
+.sr-tag-blocker { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.sr-tag-owner::before { content: "@"; opacity: 0.6; margin-right: 1px; }
+
+.sr-empty {
+  color: var(--htmd-muted);
+  font-style: italic;
+  font-size: var(--htmd-text-sm);
+  padding: 0.5rem 0;
+}
+
+@media print {
+  body { background: white; }
+  .sr-hero { box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .sr-section, .sr-metric { box-shadow: none; break-inside: avoid; }
+  .sr-grid { gap: 0.5rem; }
+}
+
+.al { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.al-head { margin-bottom: 1rem; }
+.al-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.al-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.al-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.al-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+.al-item {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius); padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.al-item.al-decided { border-left-color: var(--al-color, var(--htmd-accent)); }
+.al-item-head { display: flex; gap: 0.75rem; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.al-item-meta { flex: 1 1 60%; min-width: 0; }
+.al-item-title { font-weight: 600; line-height: 1.35; word-break: break-word; }
+.al-item-subtitle { margin-top: 0.15rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); word-break: break-word; }
+.al-mini { font-size: 0.7rem; color: var(--htmd-muted); }
+.al-mini strong { color: var(--htmd-fg); }
+.al-kv { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.85rem; }
+.al-kv-row { display: inline-flex; gap: 0.3rem; font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); }
+.al-kv dt { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--htmd-muted); }
+.al-kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.al-body { margin-top: 0.55rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg); line-height: 1.55; }
+
+.al-actions {
+  margin-top: 0.85rem;
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+}
+.al-btn-action {
+  --al-color: var(--htmd-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 0.4rem 0.95rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border); border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.al-btn-action:hover { border-color: var(--al-color); }
+.al-btn-action[aria-checked="true"] {
+  background: var(--al-color);
+  color: #fff;
+  border-color: var(--al-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--al-color) 22%, transparent);
+}
+
+.al-reason {
+  margin-top: 0.65rem; width: 100%;
+  padding: 0.5rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 38px;
+}
+.al-reason:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.al-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.al-fab:disabled, .al-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.al-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.al-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.al-modal[hidden] { display: none; }
+.al-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.al-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.al-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.al-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.al-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.al-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.al-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.al-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.al-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.al-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.al-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.al-toast[hidden] { display: none; }
+.al-toast.al-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .al { padding: 1rem 0.85rem 6rem; }
+  .al-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .al-fab, .al-modal, .al-toast { display: none !important; }
+  .al-item { box-shadow: none; break-inside: avoid; }
+  .al-actions { display: none; }
+}
+
+.qa {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 5rem;
+}
+.qa-head { margin-bottom: 1rem; }
+.qa-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.qa-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.qa-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.qa-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; counter-reset: qa; gap: 0.85rem; }
+.qa-item {
+  position: relative; counter-increment: qa;
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 1rem 1.1rem 1.1rem 2.6rem;
+  box-shadow: var(--htmd-shadow);
+}
+.qa-item::before {
+  content: counter(qa) ".";
+  position: absolute; left: 1rem; top: 0.95rem;
+  font-weight: 700; color: var(--htmd-accent); font-variant-numeric: tabular-nums;
+}
+.qa-q { font-weight: 600; line-height: 1.45; }
+.qa-context { margin-top: 0.3rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); line-height: 1.5; }
+.qa-text {
+  margin-top: 0.6rem; width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm); line-height: 1.5;
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 60px;
+}
+.qa-text:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+.qa-choices { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.qa-choice {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  cursor: pointer; transition: background 0.12s, border-color 0.12s;
+  min-height: 40px;
+}
+.qa-choice:hover { background: var(--htmd-surface-2); border-color: var(--htmd-accent); }
+.qa-choice input { margin: 0; }
+.qa-choice-text { font-size: var(--htmd-text-sm); }
+.qa-hint { color: var(--htmd-muted); font-size: var(--htmd-text-xs); margin-top: 0.15rem; }
+
+.qa-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px; font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.qa-fab:disabled, .qa-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.qa-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.qa-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.qa-modal[hidden] { display: none; }
+.qa-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.qa-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.qa-panel header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border);
+}
+.qa-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.qa-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.qa-x:hover { background: var(--htmd-surface-2); }
+.qa-pre {
+  margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.qa-panel footer {
+  padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border);
+  display: flex; justify-content: flex-end; gap: 0.5rem;
+}
+.qa-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.qa-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.qa-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.qa-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.qa-toast[hidden] { display: none; }
+.qa-toast.qa-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .qa { padding: 1rem 0.85rem 6rem; }
+  .qa-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .qa-fab, .qa-modal, .qa-toast { display: none !important; }
+  .qa-item { box-shadow: none; break-inside: avoid; }
+}
+
+.cl {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 5rem;
+}
+.cl-head { margin-bottom: 1rem; }
+.cl-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.cl-subtitle {
+  margin-top: 0.4rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-md);
+}
+.cl-progress {
+  margin-top: 0.5rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.cl-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cl-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, opacity 0.15s;
+}
+.cl-item.cl-done { opacity: 0.65; border-left-color: var(--htmd-success); }
+.cl-item.cl-done .cl-text { text-decoration: line-through; color: var(--htmd-fg-muted); }
+.cl-check {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+.cl-check input { position: absolute; opacity: 0; pointer-events: none; }
+.cl-check-box {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--htmd-border);
+  border-radius: 6px;
+  background: var(--htmd-surface);
+  transition: background 0.12s, border-color 0.12s;
+  position: relative;
+}
+.cl-check input:checked + .cl-check-box {
+  background: var(--htmd-success);
+  border-color: var(--htmd-success);
+}
+.cl-check input:checked + .cl-check-box::after {
+  content: '';
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 6px; height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.cl-body { flex: 1; min-width: 0; }
+.cl-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.cl-text { font-weight: 500; line-height: 1.4; word-break: break-word; }
+.cl-pri {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+.cl-pri-high { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.cl-pri-med { background: var(--htmd-warn-soft); color: var(--htmd-warn); }
+.cl-pri-low { background: var(--htmd-info-soft); color: var(--htmd-info); }
+.cl-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+.cl-meta-pill {
+  font-size: 0.7rem;
+  color: var(--htmd-fg-muted);
+  background: var(--htmd-surface-2);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.cl-note {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  font-family: inherit;
+  font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--htmd-radius-sm);
+  color: var(--htmd-fg);
+  resize: vertical;
+  min-height: 32px;
+}
+.cl-note:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+.cl-note:placeholder-shown { color: var(--htmd-fg-muted); }
+
+.cl-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  right: 1.1rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+}
+.cl-fab:disabled, .cl-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.cl-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+}
+
+.cl-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.cl-modal[hidden] { display: none; }
+.cl-modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.cl-modal-panel {
+  position: relative; background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius);
+  width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cl-modal-panel header {
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cl-modal-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.cl-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.cl-x:hover { background: var(--htmd-surface-2); }
+.cl-modal-pre {
+  margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.cl-modal-panel footer {
+  padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border);
+  display: flex; justify-content: flex-end; gap: 0.5rem;
+}
+.cl-btn {
+  min-height: 40px; padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  cursor: pointer; border: 1px solid transparent;
+}
+.cl-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.cl-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.cl-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cl-toast[hidden] { display: none; }
+.cl-toast.cl-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .cl { padding: 1rem 0.85rem 6rem; }
+  .cl-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .cl-fab, .cl-modal, .cl-toast { display: none !important; }
+  .cl-item { box-shadow: none; break-inside: avoid; }
+}
+
+.fc {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 6rem;
+}
+
+.fc-head {
+  margin-bottom: 1.25rem;
+}
+.fc-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.fc-subtitle {
+  margin-top: 0.4rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+}
+
+/* List */
+.fc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Item card */
+.fc-item {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius);
+  padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s, transform 0.08s;
+}
+.fc-item.fc-modified {
+  border-left-color: var(--htmd-accent);
+  box-shadow: var(--htmd-shadow-lg);
+}
+
+.fc-item-head {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.fc-item-meta {
+  flex: 1 1 60%;
+  min-width: 0;
+}
+.fc-item-title {
+  font-weight: 600;
+  font-size: var(--htmd-text-md);
+  line-height: 1.35;
+  word-break: break-word;
+}
+.fc-item-subtitle {
+  margin-top: 0.15rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-sm);
+  word-break: break-word;
+}
+
+.fc-kv {
+  margin: 0.5rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.85rem;
+}
+.fc-kv-row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.fc-kv dt {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--htmd-muted);
+}
+.fc-kv dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Current label badge */
+.fc-current-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+.fc-mini-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+
+.fc-badge {
+  --fc-label-color: var(--htmd-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--fc-label-color) 14%, transparent);
+  color: var(--fc-label-color);
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.fc-badge-emoji { font-size: 0.85rem; line-height: 1; }
+
+.fc-item-body {
+  margin-top: 0.6rem;
+  font-size: var(--htmd-text-sm);
+  line-height: 1.55;
+  color: var(--htmd-fg);
+}
+.fc-verdict {
+  margin-top: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  background: var(--htmd-surface-2);
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.5;
+}
+.fc-verdict-label {
+  font-weight: 700;
+  color: var(--htmd-fg);
+  margin-right: 0.25rem;
+}
+
+/* Pills (radio-style label chooser) */
+.fc-pills {
+  margin-top: 0.85rem;
+  display: flex;
+  gap: 0.4rem;
+  overflow-x: auto;
+  padding-bottom: 0.4rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.fc-pill {
+  --fc-label-color: var(--htmd-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0.45rem 0.95rem;
+  background: var(--htmd-surface);
+  color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border);
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s, transform 0.06s;
+  white-space: nowrap;
+}
+.fc-pill:hover {
+  border-color: var(--fc-label-color);
+}
+.fc-pill:active { transform: scale(0.97); }
+.fc-pill-selected {
+  background: var(--fc-label-color);
+  color: #fff;
+  border-color: var(--fc-label-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--fc-label-color) 22%, transparent);
+}
+.fc-pill-emoji { font-size: 1rem; line-height: 1; }
+
+/* Clarification */
+.fc-clar {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.fc-clar-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+.fc-clar-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: var(--htmd-text-sm);
+  line-height: 1.5;
+  padding: 0.55rem 0.7rem;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  resize: vertical;
+  min-height: 44px;
+  transition: border-color 0.12s, background 0.12s;
+}
+.fc-clar-input:focus {
+  outline: none;
+  border-color: var(--htmd-accent);
+  background: var(--htmd-surface);
+}
+
+.fc-modified-tag {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.85rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+}
+
+/* Floating action button */
+.fc-bottom-spacer {
+  height: 4rem;
+}
+.fc-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  right: 1.1rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.7rem 1.2rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, opacity 0.12s;
+}
+.fc-fab:hover { transform: translateY(-1px); }
+.fc-fab:active { transform: translateY(0); }
+.fc-fab:disabled, .fc-fab[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.fc-fab-icon { font-size: 1rem; line-height: 1; }
+.fc-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  color: inherit;
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Modal */
+.fc-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.fc-modal[hidden] { display: none; }
+.fc-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.fc-modal-panel {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow-lg);
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.fc-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.fc-modal-head h2 {
+  font-size: var(--htmd-text-lg);
+  font-weight: 700;
+}
+.fc-modal-x {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+.fc-modal-x:hover { background: var(--htmd-surface-2); }
+.fc-modal-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--htmd-fg);
+}
+.fc-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+}
+.fc-btn {
+  min-height: 44px;
+  padding: 0.55rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.fc-btn-ghost {
+  background: transparent;
+  color: var(--htmd-fg-muted);
+  border-color: var(--htmd-border);
+}
+.fc-btn-ghost:hover { background: var(--htmd-surface-2); }
+.fc-btn-primary {
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+}
+.fc-btn-primary:hover { filter: brightness(1.05); }
+
+/* Toast */
+.fc-toast {
+  position: fixed;
+  bottom: 5.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.6rem 1.1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  box-shadow: var(--htmd-shadow-lg);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.18s, transform 0.18s;
+  pointer-events: none;
+}
+.fc-toast[hidden] { display: none; }
+.fc-toast.fc-toast-show { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  .fc { padding: 1rem 0.85rem 7rem; }
+  .fc-title { font-size: 1.5rem; }
+  .fc-item { padding: 0.85rem 0.85rem 0.95rem; }
+  .fc-item-head { gap: 0.5rem; }
+  .fc-current-wrap { align-items: flex-start; flex-direction: row; gap: 0.45rem; }
+  .fc-fab {
+    left: 1rem;
+    right: 1rem;
+    bottom: 0.9rem;
+    justify-content: center;
+    border-radius: var(--htmd-radius);
+  }
+  .fc-modal { padding: 0; align-items: stretch; }
+  .fc-modal-panel {
+    max-width: none;
+    max-height: 100vh;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+  .fc-modal-pre { font-size: 0.8rem; }
+}
+
+/* Print: hide buttons, show clean list */
+@media print {
+  .fc-fab, .fc-modal, .fc-toast, .fc-pills, .fc-clar { display: none !important; }
+  .fc-item { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+  body { background: white; color: black; }
+}
+
+.pm { max-width: 1080px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.pm-head { margin-bottom: 1rem; }
+.pm-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.pm-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.pm-hint { margin-top: 0.4rem; font-size: var(--htmd-text-xs); color: var(--htmd-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+.pm-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;
+}
+.pm-quad {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 0.85rem;
+  min-height: 200px;
+  display: flex; flex-direction: column;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.pm-quad.pm-drop-on { border-color: var(--htmd-accent); box-shadow: 0 0 0 2px var(--htmd-accent-soft); }
+.pm-quad-head { display: flex; align-items: baseline; gap: 0.5rem; margin-bottom: 0.5rem; }
+.pm-quad-head strong { font-size: var(--htmd-text-md); }
+.pm-quad-hint { font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); }
+
+.pm-list {
+  list-style: none; padding: 0; margin: 0;
+  flex: 1; min-height: 60px;
+  display: flex; flex-direction: column; gap: 0.4rem;
+}
+.pm-chip {
+  padding: 0.45rem 0.7rem;
+  background: var(--htmd-surface-2); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); cursor: grab; user-select: none;
+}
+.pm-chip:active { cursor: grabbing; }
+.pm-chip.pm-dragging { opacity: 0.45; }
+
+.pm-pool {
+  margin-top: 0.85rem;
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 0.85rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s;
+}
+.pm-pool.pm-drop-on { border-color: var(--htmd-accent); }
+.pm-pool-head {
+  font-size: var(--htmd-text-xs); text-transform: uppercase; letter-spacing: 0.05em;
+  color: var(--htmd-fg-muted); font-weight: 700; margin-bottom: 0.5rem;
+}
+.pm-pool .pm-list { flex-direction: row; flex-wrap: wrap; }
+.pm-pool .pm-chip { background: var(--htmd-warn-soft); color: var(--htmd-fg); border-color: var(--htmd-warn); }
+
+.pm-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.pm-fab:disabled, .pm-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.pm-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.pm-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.pm-modal[hidden] { display: none; }
+.pm-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.pm-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 600px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.pm-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.pm-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.pm-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.pm-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.pm-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.pm-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.pm-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.pm-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.pm-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.pm-toast[hidden] { display: none; }
+.pm-toast.pm-toast-show { opacity: 1; }
+
+@media (max-width: 600px) {
+  .pm-grid { grid-template-columns: 1fr; }
+  .pm-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print { .pm-fab, .pm-modal, .pm-toast { display: none !important; } }
+
+</style>
+</head>
+<body data-htmd-template="compose">
+<main class="htmd-compose">
+<section class="htmd-prose"><h1>Sprint review — week of May 11</h1>
+<p>The agent assembled this single Markdown file with prose and <strong>multiple interactive widgets</strong>. Every widget below has a <strong>Copy back</strong> button; the floating action button at the bottom-left aggregates <strong>all</strong> changes across blocks into one prompt to send back to the agent.</p>
+<h2>What we shipped</h2>
+<p>A compact status of the week:</p>
+</section>
+<section class="htmd-block" data-htmd-block="status-report" data-htmd-block-idx="0">
+    <main class="sr">
+      <header class="sr-hero">
+        <div class="sr-hero-top">
+          <span class="sr-eyebrow">Status Report</span>
+          
+        </div>
+        <h1 class="sr-title">Week 19</h1>
+        <div class="sr-meta">
+          
+        </div>
+      </header>
+
+      
+        <section class="sr-metrics" aria-label="Key metrics">
+          
+            <div class="sr-metric">
+              <div class="sr-metric-label">Templates shipped</div>
+              <div class="sr-metric-value">17</div>
+              
+            </div>
+          
+            <div class="sr-metric">
+              <div class="sr-metric-label">Tests passing</div>
+              <div class="sr-metric-value">60/60</div>
+              
+            </div>
+          
+            <div class="sr-metric">
+              <div class="sr-metric-label">New LOC</div>
+              <div class="sr-metric-value">3400</div>
+              
+            </div>
+          
+        </section>
+      
+
+      <section class="sr-grid">
+        
+    <section class="sr-section sr-shipped">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-success">Shipped</span>
+        <span class="sr-count">3</span>
+      </header>
+      
+        <ul class="sr-list">
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                htmd compose command
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                <span class="sr-tag sr-tag-owner">alice</span>
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                7 new bidirectional templates
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                <span class="sr-tag sr-tag-owner">alice</span>
+              </div>
+            </li>
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                detect + extract commands
+              </div>
+              <div class="sr-item-meta">
+                
+                
+                <span class="sr-tag sr-tag-owner">alice</span>
+              </div>
+            </li>
+          
+        </ul>
+      
+    </section>
+  
+        
+    <section class="sr-section sr-in-progress">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-info">In progress</span>
+        <span class="sr-count">1</span>
+      </header>
+      
+        <ul class="sr-list">
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Plugin auto-discovery in scoped npm packages
+              </div>
+              <div class="sr-item-meta">
+                <span class="sr-tag sr-tag-eta">ETA next week</span>
+                
+                <span class="sr-tag sr-tag-owner">bob</span>
+              </div>
+            </li>
+          
+        </ul>
+      
+    </section>
+  
+        
+    <section class="sr-section sr-blocked">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-danger">Blocked</span>
+        <span class="sr-count">1</span>
+      </header>
+      
+        <ul class="sr-list">
+          
+            <li class="sr-item">
+              <div class="sr-item-title">
+                Theme system roadmap
+              </div>
+              <div class="sr-item-meta">
+                
+                <span class="sr-tag sr-tag-blocker">waiting on design tokens spec</span>
+                
+              </div>
+            </li>
+          
+        </ul>
+      
+    </section>
+  
+        
+    <section class="sr-section sr-next-week">
+      <header class="sr-section-head">
+        <span class="sr-pill sr-pill-muted">Next week</span>
+        <span class="sr-count">0</span>
+      </header>
+      <div class="sr-empty">Nothing here</div>
+    </section>
+  
+      </section>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Decisions you need to make</h2>
+<p>PRs lined up — pick <strong>approve / reject / hold</strong> for each:</p>
+</section>
+<section class="htmd-block" data-htmd-block="approval-list" data-htmd-block-idx="1">
+    <main class="al">
+      <header class="al-head">
+        <h1 class="al-title">PRs awaiting your review</h1>
+        
+        <div class="al-progress" data-al-progress aria-live="polite"><span data-al-decided>0</span> of <span>3</span> decided</div>
+      </header>
+
+      <style>[data-al-color="approve"]{--al-color:#16a34a;}[data-al-color="reject"]{--al-color:#dc2626;}[data-al-color="hold"]{--al-color:#d97706;}</style>
+
+      <ol class="al-list">
+        
+    <li class="al-item" data-al-item="pr1421">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">feat: htmd compose command</div>
+          <div class="al-item-subtitle">alice — +612 / -38</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">Adds compose subcommand, src/compose.js, tests.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1421" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1421" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1421" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1421" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr1404">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">feat: detect command (DRAFT)</div>
+          <div class="al-item-subtitle">alice — +356 / -2</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>hold</strong></span>
+      </header>
+      <p class="al-body">Heuristic markdown scanner. Tests added; one detector still flaky on multi-line H2s.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1404" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1404" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1404" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1404" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr1399">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">test: round-trip md/html</div>
+          <div class="al-item-subtitle">bob — +92 / -0</div>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1399" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1399" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1399" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1399" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+      </ol>
+
+      <button type="button" class="al-fab" data-al-copy aria-label="Send decisions back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send decisions back</span>
+        <span class="al-fab-badge" data-al-count>0</span>
+      </button>
+
+      <div class="al-modal" data-al-modal hidden role="dialog" aria-modal="true">
+        <div class="al-backdrop" data-al-close></div>
+        <div class="al-panel">
+          <header><h2>Decisions</h2><button type="button" class="al-x" data-al-close aria-label="Close">&#x2715;</button></header>
+          <pre class="al-pre" data-al-text></pre>
+          <footer>
+            <button type="button" class="al-btn al-btn-ghost" data-al-close>Cancel</button>
+            <button type="button" class="al-btn al-btn-primary" data-al-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="al-toast" data-al-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-al-state data-htmd-state="approval-list">{"block_id":"","title":"PRs awaiting your review","prompt_intro":"Decisions on this week's PR queue.","actions":[{"value":"approve","label":"Approve","color":"#16a34a"},{"value":"reject","label":"Reject","color":"#dc2626"},{"value":"hold","label":"Hold","color":"#d97706"}],"items":[{"id":"pr1421","title":"feat: htmd compose command","decision":"","reason":""},{"id":"pr1404","title":"feat: detect command (DRAFT)","decision":"","reason":""},{"id":"pr1399","title":"test: round-trip md/html","decision":"","reason":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>A few clarifying questions</h2>
+</section>
+<section class="htmd-block" data-htmd-block="q-and-a" data-htmd-block-idx="2">
+    <main class="qa">
+      <header class="qa-head">
+        <h1 class="qa-title">Before I queue next sprint</h1>
+        
+        <div class="qa-progress" data-qa-progress aria-live="polite">
+          <span data-qa-answered>0</span> of <span>3</span> answered
+        </div>
+      </header>
+
+      <ol class="qa-list">
+        
+    <li class="qa-item" data-qa-item="q1">
+      <div class="qa-q">Which compose use cases should be the headline demo in the README?</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q1" value="status" data-qa-input="q1" data-qa-kind="multi">
+              <span class="qa-choice-text">Status reports + KPIs</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q1" value="triage" data-qa-input="q1" data-qa-kind="multi">
+              <span class="qa-choice-text">Email triage corrections</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q1" value="review" data-qa-input="q1" data-qa-kind="multi">
+              <span class="qa-choice-text">PR approvals + redline drafts</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q1" value="planning" data-qa-input="q1" data-qa-kind="multi">
+              <span class="qa-choice-text">Roadmap (kanban + priority-matrix)</span>
+            </label>
+          
+        <small class="qa-hint">Choose all that apply</small>
+      </div>
+    
+    </li>
+  
+    <li class="qa-item" data-qa-item="q2">
+      <div class="qa-q">Should the global FAB also include un-changed blocks (as a &#39;no changes&#39; note) or only modified ones?</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="radio" name="qa-q2" value="Only modified" data-qa-input="q2" data-qa-kind="single">
+              <span class="qa-choice-text">Only modified</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q2" value="Always include all blocks" data-qa-input="q2" data-qa-kind="single">
+              <span class="qa-choice-text">Always include all blocks</span>
+            </label>
+          
+        
+      </div>
+    
+    </li>
+  
+    <li class="qa-item" data-qa-item="q3">
+      <div class="qa-q">Anything else I should change about the bidirectional flow?</div>
+      
+      
+    <textarea class="qa-text" rows="2" data-qa-input="q3" data-qa-kind="free" placeholder="free-form notes"></textarea>
+  
+    </li>
+  
+      </ol>
+
+      <button type="button" class="qa-fab" data-qa-copy aria-label="Copy answers as prompt">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send answers back</span>
+        <span class="qa-fab-badge" data-qa-count>0</span>
+      </button>
+
+      <div class="qa-modal" data-qa-modal hidden role="dialog" aria-modal="true">
+        <div class="qa-backdrop" data-qa-close></div>
+        <div class="qa-panel">
+          <header><h2>Answer prompt</h2><button type="button" class="qa-x" data-qa-close aria-label="Close">&#x2715;</button></header>
+          <pre class="qa-pre" data-qa-text></pre>
+          <footer>
+            <button type="button" class="qa-btn qa-btn-ghost" data-qa-close>Cancel</button>
+            <button type="button" class="qa-btn qa-btn-primary" data-qa-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="qa-toast" data-qa-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-qa-state data-htmd-state="q-and-a">{"block_id":"","title":"Before I queue next sprint","prompt_intro":"Answers to your clarifying questions for next sprint planning.","questions":[{"id":"q1","prompt":"Which compose use cases should be the headline demo in the README?","kind":"multi","answer":[],"original_answer":[]},{"id":"q2","prompt":"Should the global FAB also include un-changed blocks (as a 'no changes' note) or only modified ones?","kind":"single","answer":"","original_answer":""},{"id":"q3","prompt":"Anything else I should change about the bidirectional flow?","kind":"free","answer":"","original_answer":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Tasks for this week</h2>
+</section>
+<section class="htmd-block" data-htmd-block="checklist" data-htmd-block-idx="3">
+    <main class="cl">
+      <header class="cl-head">
+        <h1 class="cl-title">Friday cut-over checklist</h1>
+        
+        <div class="cl-progress" data-cl-progress aria-live="polite">
+          <span data-cl-done>0</span> of <span>5</span> complete
+        </div>
+      </header>
+
+      <ol class="cl-list">
+        
+    <li class="cl-item" data-cl-item="c1">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c1" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Compose end-to-end smoke test on real markdown</span>
+          <span class="cl-pri cl-pri-high">high</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c1" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c2">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c2" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Update SKILL.md with the compose flow</span>
+          <span class="cl-pri cl-pri-high">high</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c2" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item cl-done" data-cl-item="c3">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c3" checked>
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Re-render examples/</span>
+          <span class="cl-pri cl-pri-med">med</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c3" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c4">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c4" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Tag v0.2.0 once docs are merged</span>
+          <span class="cl-pri cl-pri-med">med</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c4" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c5">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c5" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Tweet the launch with a GIF of the compose page</span>
+          <span class="cl-pri cl-pri-low">low</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c5" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+      </ol>
+
+      <button type="button" class="cl-fab" data-cl-copy aria-label="Copy progress as prompt">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Copy progress as prompt</span>
+        <span class="cl-fab-badge" data-cl-changed>0</span>
+      </button>
+
+      <div class="cl-modal" data-cl-modal hidden role="dialog" aria-modal="true">
+        <div class="cl-modal-backdrop" data-cl-close></div>
+        <div class="cl-modal-panel">
+          <header><h2>Progress prompt</h2><button type="button" class="cl-x" data-cl-close aria-label="Close">&#x2715;</button></header>
+          <pre class="cl-modal-pre" data-cl-text></pre>
+          <footer>
+            <button type="button" class="cl-btn cl-btn-ghost" data-cl-close>Cancel</button>
+            <button type="button" class="cl-btn cl-btn-primary" data-cl-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="cl-toast" data-cl-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-cl-state data-htmd-state="checklist">{"items":[{"id":"c1","original_done":false,"done":false,"original_note":"","note":"","title":"Compose end-to-end smoke test on real markdown"},{"id":"c2","original_done":false,"done":false,"original_note":"","note":"","title":"Update SKILL.md with the compose flow"},{"id":"c3","original_done":true,"done":true,"original_note":"","note":"","title":"Re-render examples/"},{"id":"c4","original_done":false,"done":false,"original_note":"","note":"","title":"Tag v0.2.0 once docs are merged"},{"id":"c5","original_done":false,"done":false,"original_note":"","note":"","title":"Tweet the launch with a GIF of the compose page"}],"title":"Friday cut-over checklist","block_id":"","prompt_intro":"Where I am on the Friday cut-over."}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Triage your inbox</h2>
+<p>If anything below is mis-classified, pick the right label and add a clarification:</p>
+</section>
+<section class="htmd-block" data-htmd-block="feedback-corrector" data-htmd-block-idx="4">
+    <main class="fc">
+      <header class="fc-head">
+        <h1 class="fc-title">Email triage corrections</h1>
+        
+      </header>
+
+      <style>[data-fc-color="URGENT"]{--fc-label-color:#dc2626;}[data-fc-color="USEFUL"]{--fc-label-color:#d97706;}[data-fc-color="NOISE"]{--fc-label-color:#94a3b8;}</style>
+
+      <ol class="fc-list">
+        
+    <li class="fc-item" data-fc-item="e1" data-fc-idx="0">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">ACTION REQUIRED: market data renewal</div>
+          <div class="fc-item-subtitle">Interactive Brokers</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Urgent action required to maintain market data</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e1"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e1"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e1"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e1" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e2" data-fc-idx="1">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">Updates to the Instacart Terms of Service</div>
+          <div class="fc-item-subtitle">Instacart</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="NOISE">
+      <span class="fc-badge-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-badge-text">Noise</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> TOS update</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e2"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e2"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e2"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e2" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+    <li class="fc-item" data-fc-item="e3" data-fc-idx="2">
+      <header class="fc-item-head">
+        <div class="fc-item-meta">
+          <div class="fc-item-title">We processed your payment</div>
+          <div class="fc-item-subtitle">American Express</div>
+          
+        </div>
+        <div class="fc-current-wrap">
+          <span class="fc-mini-label">currently</span>
+          
+    <span class="fc-badge" data-fc-color="USEFUL">
+      <span class="fc-badge-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-badge-text">Useful</span>
+    </span>
+  
+        </div>
+      </header>
+
+      
+      <p class="fc-verdict"><span class="fc-verdict-label">Reason:</span> Transaction confirmation</p>
+
+      <div class="fc-pills" role="radiogroup" aria-label="Choose correct label">
+        
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="URGENT"
+      data-fc-pill-item="e3"
+      data-fc-color="URGENT"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🔴</span>
+      <span class="fc-pill-text">Urgent</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill fc-pill-selected"
+      role="radio"
+      aria-checked="true"
+      data-fc-pill="USEFUL"
+      data-fc-pill-item="e3"
+      data-fc-color="USEFUL"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">🟡</span>
+      <span class="fc-pill-text">Useful</span>
+    </button>
+  
+    <button
+      type="button"
+      class="fc-pill"
+      role="radio"
+      aria-checked="false"
+      data-fc-pill="NOISE"
+      data-fc-pill-item="e3"
+      data-fc-color="NOISE"
+    >
+      <span class="fc-pill-emoji" aria-hidden="true">⚪</span>
+      <span class="fc-pill-text">Noise</span>
+    </button>
+  
+      </div>
+
+      <label class="fc-clar">
+        <span class="fc-clar-label">Clarification (optional)</span>
+        <textarea class="fc-clar-input" rows="2" data-fc-clar="e3" placeholder="Why this label? Any nuance to share?"></textarea>
+      </label>
+
+      <div class="fc-modified-tag" data-fc-modified-tag hidden>Modified</div>
+    </li>
+  
+      </ol>
+
+      <div class="fc-bottom-spacer" aria-hidden="true"></div>
+
+      <button type="button" class="fc-fab" data-fc-copy aria-label="Copy correction prompt">
+        <span class="fc-fab-icon" aria-hidden="true">&#x270E;</span>
+        <span class="fc-fab-label">Copy Correction Prompt</span>
+        <span class="fc-fab-badge" data-fc-modified-count>0</span>
+      </button>
+
+      <div class="fc-modal" data-fc-modal hidden role="dialog" aria-modal="true" aria-labelledby="fc-modal-title">
+        <div class="fc-modal-backdrop" data-fc-modal-close></div>
+        <div class="fc-modal-panel">
+          <header class="fc-modal-head">
+            <h2 id="fc-modal-title">Correction prompt</h2>
+            <button type="button" class="fc-modal-x" data-fc-modal-close aria-label="Close">&#x2715;</button>
+          </header>
+          <pre class="fc-modal-pre" data-fc-modal-text></pre>
+          <footer class="fc-modal-foot">
+            <button type="button" class="fc-btn fc-btn-ghost" data-fc-modal-close>Cancel</button>
+            <button type="button" class="fc-btn fc-btn-primary" data-fc-confirm-copy>Copy</button>
+          </footer>
+        </div>
+      </div>
+
+      <div class="fc-toast" data-fc-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-fc-state data-htmd-state="feedback-corrector">{"items":[{"id":"e1","original_label":"USEFUL","current_label":"USEFUL","title":"ACTION REQUIRED: market data renewal","subtitle":"Interactive Brokers","clarification":""},{"id":"e2","original_label":"NOISE","current_label":"NOISE","title":"Updates to the Instacart Terms of Service","subtitle":"Instacart","clarification":""},{"id":"e3","original_label":"USEFUL","current_label":"USEFUL","title":"We processed your payment","subtitle":"American Express","clarification":""}],"labels":[{"value":"URGENT","label":"Urgent","color":"#dc2626","emoji":"🔴","_color":"#dc2626"},{"value":"USEFUL","label":"Useful","color":"#d97706","emoji":"🟡","_color":"#d97706"},{"value":"NOISE","label":"Noise","color":"#94a3b8","emoji":"⚪","_color":"#94a3b8"}],"context_id":"gmail-triage-2026-05-11","prompt_intro":"Triage corrections for the inbox classifications.","prompt_template":""}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Triage these new tasks (priority matrix)</h2>
+</section>
+<section class="htmd-block" data-htmd-block="priority-matrix" data-htmd-block-idx="5">
+    <main class="pm">
+      <header class="pm-head">
+        <h1 class="pm-title">New asks from this week</h1>
+        
+        <p class="pm-hint">Drag items between quadrants. Items at the bottom haven't been placed yet.</p>
+      </header>
+
+      <div class="pm-grid">
+        
+    <section class="pm-quad" data-pm-quad="do">
+      <header class="pm-quad-head">
+        <strong>Do now</strong>
+        <span class="pm-quad-hint">Urgent + Important</span>
+      </header>
+      <ul class="pm-list" data-pm-list="do">
+        
+      </ul>
+    </section>
+  
+    <section class="pm-quad" data-pm-quad="plan">
+      <header class="pm-quad-head">
+        <strong>Plan</strong>
+        <span class="pm-quad-hint">Important, not urgent</span>
+      </header>
+      <ul class="pm-list" data-pm-list="plan">
+        
+      </ul>
+    </section>
+  
+    <section class="pm-quad" data-pm-quad="delegate">
+      <header class="pm-quad-head">
+        <strong>Delegate</strong>
+        <span class="pm-quad-hint">Urgent, not important</span>
+      </header>
+      <ul class="pm-list" data-pm-list="delegate">
+        
+      </ul>
+    </section>
+  
+    <section class="pm-quad" data-pm-quad="drop">
+      <header class="pm-quad-head">
+        <strong>Drop</strong>
+        <span class="pm-quad-hint">Neither</span>
+      </header>
+      <ul class="pm-list" data-pm-list="drop">
+        
+      </ul>
+    </section>
+  
+      </div>
+
+      <section class="pm-pool" data-pm-pool="">
+        <header class="pm-pool-head">Unplaced</header>
+        <ul class="pm-list" data-pm-list="">
+          
+    <li class="pm-chip" draggable="true" data-pm-item="a1">Fix the OAuth refresh bug</li>
+  
+    <li class="pm-chip" draggable="true" data-pm-item="a2">Refactor the legacy billing webhook</li>
+  
+    <li class="pm-chip" draggable="true" data-pm-item="a3">Reply to vendor security questionnaire</li>
+  
+    <li class="pm-chip" draggable="true" data-pm-item="a4">Write Q3 planning doc</li>
+  
+    <li class="pm-chip" draggable="true" data-pm-item="a5">Update the brand guidelines deck</li>
+  
+        </ul>
+      </section>
+
+      <button type="button" class="pm-fab" data-pm-copy aria-label="Send placement back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send placements back</span>
+        <span class="pm-fab-badge" data-pm-changed>0</span>
+      </button>
+
+      <div class="pm-modal" data-pm-modal hidden role="dialog" aria-modal="true">
+        <div class="pm-backdrop" data-pm-close></div>
+        <div class="pm-panel">
+          <header><h2>Placements</h2><button type="button" class="pm-x" data-pm-close aria-label="Close">&#x2715;</button></header>
+          <pre class="pm-pre" data-pm-text></pre>
+          <footer>
+            <button type="button" class="pm-btn pm-btn-ghost" data-pm-close>Cancel</button>
+            <button type="button" class="pm-btn pm-btn-primary" data-pm-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="pm-toast" data-pm-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-pm-state data-htmd-state="priority-matrix">{"block_id":"","title":"New asks from this week","prompt_intro":"Triage of the new asks into the priority matrix.","quadrants":[{"id":"do","label":"Do now","hint":"Urgent + Important"},{"id":"plan","label":"Plan","hint":"Important, not urgent"},{"id":"delegate","label":"Delegate","hint":"Urgent, not important"},{"id":"drop","label":"Drop","hint":"Neither"}],"items":[{"id":"a1","title":"Fix the OAuth refresh bug","quadrant":"","original_quadrant":""},{"id":"a2","title":"Refactor the legacy billing webhook","quadrant":"","original_quadrant":""},{"id":"a3","title":"Reply to vendor security questionnaire","quadrant":"","original_quadrant":""},{"id":"a4","title":"Write Q3 planning doc","quadrant":"","original_quadrant":""},{"id":"a5","title":"Update the brand guidelines deck","quadrant":"","original_quadrant":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><hr>
+<p>When you&#39;re done, click <strong>Copy all changes</strong> at the bottom-left to send everything back to the agent in one prompt.</p>
+</section>
+
+<button type="button" class="htmd-cx-fab" data-htmd-cx-export aria-label="Copy all changes back to agent">
+  <span aria-hidden="true">&#x21B5;</span>
+  <span>Copy all changes</span>
+  <span class="htmd-cx-fab-badge" data-htmd-cx-count>0</span>
+</button>
+<div class="htmd-cx-modal" data-htmd-cx-modal hidden role="dialog" aria-modal="true" aria-labelledby="htmd-cx-title">
+  <div class="htmd-cx-modal-backdrop" data-htmd-cx-close></div>
+  <div class="htmd-cx-modal-panel">
+    <header class="htmd-cx-modal-head">
+      <h2 id="htmd-cx-title">Aggregated agent prompt</h2>
+      <button type="button" class="htmd-cx-modal-x" data-htmd-cx-close aria-label="Close">&#x2715;</button>
+    </header>
+    <pre class="htmd-cx-modal-pre" data-htmd-cx-text></pre>
+    <footer class="htmd-cx-modal-foot">
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-ghost" data-htmd-cx-close>Cancel</button>
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-primary" data-htmd-cx-confirm>Copy</button>
+    </footer>
+  </div>
+</div>
+<div class="htmd-cx-toast" data-htmd-cx-toast hidden role="status" aria-live="polite"></div>
+
+</main>
+<script>
+(function () {
+  const root = document.querySelector('main.al');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-al-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+  const actionByValue = new Map();
+  state.actions.forEach((a) => actionByValue.set(a.value, a));
+
+  const fab = root.querySelector('[data-al-copy]');
+  const countEl = root.querySelector('[data-al-count]');
+  const decEl = root.querySelector('[data-al-decided]');
+  const modal = root.querySelector('[data-al-modal]');
+  const modalText = root.querySelector('[data-al-text]');
+  const toast = root.querySelector('[data-al-toast]');
+
+  function decided(it) { return !!it.decision; }
+  function decidedCount() { return state.items.filter(decided).length; }
+
+  function refresh() {
+    const n = decidedCount();
+    if (countEl) countEl.textContent = n;
+    if (decEl) decEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function updateItemUi(itemId) {
+    const it = idx.get(itemId); if (!it) return;
+    const card = root.querySelector(`[data-al-item="${cssEscape(itemId)}"]`);
+    if (!card) return;
+    card.classList.toggle('al-decided', decided(it));
+    const action = actionByValue.get(it.decision);
+    if (action) card.style.setProperty('--al-color', action.color || 'var(--htmd-accent)');
+    card.querySelectorAll('[data-al-decision]').forEach((btn) => {
+      const sel = btn.dataset.alDecision === it.decision;
+      btn.setAttribute('aria-checked', sel ? 'true' : 'false');
+    });
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Decisions on "${state.title}":`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const it of state.items) {
+      if (!decided(it)) continue;
+      n++;
+      const action = actionByValue.get(it.decision);
+      lines.push(`${n}. ${it.title}`);
+      lines.push(`   Decision: ${action ? action.label : it.decision}`);
+      const r = (it.reason || '').trim();
+      if (r) lines.push(`   Reason: ${r}`);
+      lines.push('');
+    }
+    if (n === 0) lines.push('(no decisions made)');
+    else lines.push('Please proceed accordingly.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('al-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('al-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (decidedCount() === 0) { showToast('No decisions yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  root.querySelectorAll('[data-al-decision]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.alDecisionItem;
+      const value = btn.dataset.alDecision;
+      const it = idx.get(itemId); if (!it) return;
+      it.decision = it.decision === value ? '' : value;
+      updateItemUi(itemId);
+      refresh();
+    });
+  });
+  root.querySelectorAll('[data-al-reason]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.alReason); if (!it) return;
+      it.reason = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-al-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-al-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'approval-list',
+    blockId: state.block_id || state.title,
+    hasChanges: () => decidedCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.qa');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-qa-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch (e) { return; }
+
+  const idx = new Map();
+  state.questions.forEach((q) => idx.set(q.id, q));
+
+  const fab = root.querySelector('[data-qa-copy]');
+  const countEl = root.querySelector('[data-qa-count]');
+  const ansEl = root.querySelector('[data-qa-answered]');
+  const modal = root.querySelector('[data-qa-modal]');
+  const modalText = root.querySelector('[data-qa-text]');
+  const toast = root.querySelector('[data-qa-toast]');
+
+  function isAnswered(q) {
+    if (q.kind === 'multi') return Array.isArray(q.answer) && q.answer.length > 0;
+    return (q.answer || '').toString().trim() !== '';
+  }
+  function answeredCount() { return state.questions.filter(isAnswered).length; }
+
+  function refresh() {
+    const n = answeredCount();
+    if (countEl) countEl.textContent = n;
+    if (ansEl) ansEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Here are answers to the clarifying questions for "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const q of state.questions) {
+      n++;
+      lines.push(`${n}. ${q.prompt}`);
+      if (!isAnswered(q)) { lines.push('   Answer: (skipped)'); }
+      else if (Array.isArray(q.answer)) { lines.push(`   Answer: ${q.answer.join(', ')}`); }
+      else { lines.push(`   Answer: ${q.answer}`); }
+      lines.push('');
+    }
+    lines.push('Please proceed using these answers.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('qa-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('qa-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (answeredCount() === 0) { showToast('No answers yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-qa-input]').forEach((el) => {
+    const evt = el.tagName === 'TEXTAREA' || el.type === 'text' ? 'input' : 'change';
+    el.addEventListener(evt, () => {
+      const id = el.dataset.qaInput;
+      const q = idx.get(id); if (!q) return;
+      const kind = el.dataset.qaKind || q.kind;
+      if (kind === 'multi') {
+        const all = root.querySelectorAll(`[data-qa-input="${id}"]:checked`);
+        q.answer = Array.from(all).map((n) => n.value);
+      } else if (kind === 'single') {
+        q.answer = el.value;
+      } else {
+        q.answer = el.value;
+      }
+      refresh();
+    });
+  });
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-qa-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-qa-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'q-and-a',
+    blockId: state.block_id || state.title,
+    hasChanges: () => answeredCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.cl');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-cl-state]');
+  if (!stateNode) return;
+  let state;
+  try { state = JSON.parse(stateNode.textContent); } catch (e) { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+
+  const fab = root.querySelector('[data-cl-copy]');
+  const changedEl = root.querySelector('[data-cl-changed]');
+  const doneEl = root.querySelector('[data-cl-done]');
+  const modal = root.querySelector('[data-cl-modal]');
+  const modalText = root.querySelector('[data-cl-text]');
+  const toast = root.querySelector('[data-cl-toast]');
+
+  function changedItems() {
+    return state.items.filter((it) =>
+      it.done !== it.original_done || (it.note || '').trim() !== (it.original_note || '').trim()
+    );
+  }
+  function doneCount() { return state.items.filter((it) => it.done).length; }
+
+  function refresh() {
+    const ch = changedItems().length;
+    if (changedEl) changedEl.textContent = ch;
+    if (fab) { fab.disabled = ch === 0; fab.setAttribute('aria-disabled', ch === 0 ? 'true' : 'false'); }
+    if (doneEl) doneEl.textContent = doneCount();
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `I worked through the "${state.title}" checklist; here is the resulting state.`);
+    lines.push('');
+    lines.push(`Date: ${new Date().toISOString()}`);
+    lines.push(`Progress: ${doneCount()} of ${state.items.length} complete`);
+    lines.push('');
+    const ch = changedItems();
+    if (ch.length === 0) {
+      lines.push('No items changed since the agent generated this checklist.');
+      return lines.join('\n');
+    }
+    lines.push('Changes:');
+    let n = 0;
+    for (const it of ch) {
+      n++;
+      const becameDone = it.done && !it.original_done;
+      const becameUndone = !it.done && it.original_done;
+      const noteChanged = (it.note || '').trim() !== (it.original_note || '').trim();
+      lines.push(`${n}. ${it.title}`);
+      if (becameDone) lines.push('   - Completed');
+      if (becameUndone) lines.push('   - Re-opened (was previously marked done)');
+      if (noteChanged) lines.push(`   - Note: ${(it.note || '').trim() || '(cleared)'}`);
+      lines.push('');
+    }
+    lines.push('Please continue from here.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) {
+      try { await navigator.clipboard.writeText(text); return true; } catch {}
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('cl-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('cl-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+
+  function open() {
+    if (changedItems().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return;
+    if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-cl-check]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      const it = idx.get(cb.dataset.clCheck); if (!it) return;
+      it.done = cb.checked;
+      const li = cb.closest('.cl-item'); if (li) li.classList.toggle('cl-done', cb.checked);
+      refresh();
+    });
+  });
+  root.querySelectorAll('[data-cl-note]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.clNote); if (!it) return;
+      it.note = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+      refresh();
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-cl-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-cl-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close();
+    showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  // Register with the compose-level export bridge so a parent compose page can
+  // include this block's prompt in an aggregate "Copy all changes" action.
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'checklist',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changedItems().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const stateNode = document.querySelector('[data-fc-state]');
+  if (!stateNode) return;
+
+  let state;
+  try {
+    state = JSON.parse(stateNode.textContent);
+  } catch (e) {
+    console.error('feedback-corrector: failed to parse state', e);
+    return;
+  }
+
+  // Index items by id for fast lookup.
+  const itemIndex = new Map();
+  state.items.forEach((it) => itemIndex.set(it.id, it));
+
+  const labelByValue = new Map();
+  state.labels.forEach((l) => labelByValue.set(l.value, l));
+
+  const fab = document.querySelector('[data-fc-copy]');
+  const counterEl = document.querySelector('[data-fc-modified-count]');
+  const modal = document.querySelector('[data-fc-modal]');
+  const modalText = document.querySelector('[data-fc-modal-text]');
+  const toast = document.querySelector('[data-fc-toast]');
+
+  // -------- helpers --------
+  function isModified(item) {
+    return item.current_label !== item.original_label || (item.clarification && item.clarification.trim() !== '');
+  }
+
+  function modifiedCount() {
+    let n = 0;
+    for (const it of state.items) if (isModified(it)) n++;
+    return n;
+  }
+
+  function updateCounter() {
+    const n = modifiedCount();
+    if (counterEl) counterEl.textContent = n;
+    if (fab) {
+      fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+      fab.disabled = n === 0;
+    }
+  }
+
+  function updateItemUi(itemId) {
+    const item = itemIndex.get(itemId);
+    if (!item) return;
+    const card = document.querySelector(`[data-fc-item="${cssEscape(itemId)}"]`);
+    if (!card) return;
+
+    // Toggle modified styling + tag
+    const modified = isModified(item);
+    card.classList.toggle('fc-modified', modified);
+    const tag = card.querySelector('[data-fc-modified-tag]');
+    if (tag) {
+      if (modified) tag.removeAttribute('hidden');
+      else tag.setAttribute('hidden', '');
+    }
+
+    // Refresh pill selection state
+    card.querySelectorAll('[data-fc-pill]').forEach((btn) => {
+      const selected = btn.dataset.fcPill === item.current_label;
+      btn.classList.toggle('fc-pill-selected', selected);
+      btn.setAttribute('aria-checked', selected ? 'true' : 'false');
+    });
+  }
+
+  function debounce(fn, ms) {
+    let t;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), ms);
+    };
+  }
+
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  function showToast(msg, ms) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    // force reflow then add show class
+    void toast.offsetWidth;
+    toast.classList.add('fc-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.classList.remove('fc-toast-show');
+      setTimeout(() => toast.setAttribute('hidden', ''), 220);
+    }, ms || 1800);
+  }
+
+  // -------- prompt assembly --------
+  function buildPrompt() {
+    const lines = [];
+    const intro = state.prompt_intro || 'I reviewed the following classifications and have corrections to share.';
+    lines.push(intro.trim());
+    lines.push('');
+    if (state.context_id) lines.push(`Context: ${state.context_id}`);
+    lines.push(`Date: ${new Date().toISOString()}`);
+    lines.push('');
+    lines.push('The following classifications need to be corrected:');
+    lines.push('');
+
+    let n = 0;
+    for (const it of state.items) {
+      if (!isModified(it)) continue;
+      n++;
+      const wasLbl = labelByValue.get(it.original_label);
+      const newLbl = labelByValue.get(it.current_label);
+      const wasName = wasLbl ? wasLbl.label : it.original_label;
+      const newName = newLbl ? newLbl.label : it.current_label;
+      const titleStr = it.title || `(item ${it.id})`;
+      lines.push(`${n}. Item: "${titleStr}"`);
+      if (it.subtitle) lines.push(`   Subtitle: ${it.subtitle}`);
+      lines.push(`   Was classified as: ${wasName}`);
+      lines.push(`   Should be: ${newName}`);
+      const clar = (it.clarification || '').trim();
+      lines.push(`   Clarification: ${clar || '(none)'}`);
+      lines.push('');
+    }
+
+    lines.push('Please update the classifier accordingly.');
+    return lines.join('\n');
+  }
+
+  // Optional template substitution if user provided one.
+  function buildPromptWithTemplate() {
+    if (!state.prompt_template) return buildPrompt();
+    const itemsBlock = state.items.filter(isModified).map((it, idx) => {
+      const wasLbl = labelByValue.get(it.original_label);
+      const newLbl = labelByValue.get(it.current_label);
+      const wasName = wasLbl ? wasLbl.label : it.original_label;
+      const newName = newLbl ? newLbl.label : it.current_label;
+      const clar = (it.clarification || '').trim() || '(none)';
+      return `${idx + 1}. Item: "${it.title || it.id}"\n   Was: ${wasName}\n   Should be: ${newName}\n   Clarification: ${clar}`;
+    }).join('\n\n');
+    return state.prompt_template
+      .replace(/\{intro\}/g, state.prompt_intro || '')
+      .replace(/\{context_id\}/g, state.context_id || '')
+      .replace(/\{date\}/g, new Date().toISOString())
+      .replace(/\{items\}/g, itemsBlock);
+  }
+
+  function assemble() {
+    return state.prompt_template ? buildPromptWithTemplate() : buildPrompt();
+  }
+
+  // -------- copy --------
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (e) {
+        // fall through to fallback
+      }
+    }
+    // Fallback for older Safari: hidden textarea + execCommand
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    ta.style.top = '0';
+    ta.style.left = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  // -------- modal --------
+  function openModal() {
+    if (modifiedCount() === 0) {
+      showToast('No changes to copy yet');
+      return;
+    }
+    if (!modal) return;
+    const text = assemble();
+    if (modalText) modalText.textContent = text;
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal() {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  // -------- event wiring --------
+  // Pills: clicking one selects it as the new label for that item.
+  document.querySelectorAll('[data-fc-pill]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.fcPillItem;
+      const value = btn.dataset.fcPill;
+      const item = itemIndex.get(itemId);
+      if (!item) return;
+      item.current_label = value;
+      updateItemUi(itemId);
+      updateCounter();
+    });
+  });
+
+  // Clarifications
+  const debouncedCounter = debounce(updateCounter, 150);
+  document.querySelectorAll('[data-fc-clar]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const itemId = ta.dataset.fcClar;
+      const item = itemIndex.get(itemId);
+      if (!item) return;
+      item.clarification = ta.value;
+      // Auto-grow rows up to a cap
+      ta.style.height = 'auto';
+      ta.style.height = Math.min(ta.scrollHeight, 280) + 'px';
+      // Modified state may have flipped if clarification went 0 ↔ non-empty
+      const card = document.querySelector(`[data-fc-item="${cssEscape(itemId)}"]`);
+      if (card) {
+        const mod = isModified(item);
+        card.classList.toggle('fc-modified', mod);
+        const tag = card.querySelector('[data-fc-modified-tag]');
+        if (tag) {
+          if (mod) tag.removeAttribute('hidden');
+          else tag.setAttribute('hidden', '');
+        }
+      }
+      debouncedCounter();
+    });
+  });
+
+  // FAB
+  if (fab) fab.addEventListener('click', openModal);
+
+  // Modal close
+  document.querySelectorAll('[data-fc-modal-close]').forEach((el) => {
+    el.addEventListener('click', closeModal);
+  });
+  // Esc to close
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) closeModal();
+  });
+
+  // Confirm copy
+  const confirmBtn = document.querySelector('[data-fc-confirm-copy]');
+  if (confirmBtn) {
+    confirmBtn.addEventListener('click', async () => {
+      const text = modalText ? modalText.textContent : assemble();
+      const ok = await copyText(text);
+      closeModal();
+      showToast(ok ? 'Copied!' : 'Copy failed — see console');
+      if (!ok) console.log(text);
+    });
+  }
+
+  // Register with the compose-level export bridge so that a parent compose
+  // page can include this block's prompt in the global "Copy all changes" FAB.
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'feedback-corrector',
+    blockId: state.context_id || '',
+    hasChanges: () => modifiedCount() > 0,
+    getPrompt: () => assemble()
+  });
+
+  updateCounter();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.pm');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-pm-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+
+  const fab = root.querySelector('[data-pm-copy]');
+  const changedEl = root.querySelector('[data-pm-changed]');
+  const modal = root.querySelector('[data-pm-modal]');
+  const modalText = root.querySelector('[data-pm-text]');
+  const toast = root.querySelector('[data-pm-toast]');
+
+  function changedItems() {
+    return state.items.filter((it) => it.quadrant !== it.original_quadrant);
+  }
+  function refresh() {
+    const n = changedItems().length;
+    if (changedEl) changedEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  let dragging = null;
+  root.querySelectorAll('[data-pm-item]').forEach(wireDrag);
+
+  function wireDrag(li) {
+    li.addEventListener('dragstart', (e) => {
+      dragging = li; li.classList.add('pm-dragging');
+      try { e.dataTransfer.setData('text/plain', li.dataset.pmItem); } catch {}
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    li.addEventListener('dragend', () => {
+      if (dragging) dragging.classList.remove('pm-dragging');
+      root.querySelectorAll('.pm-drop-on').forEach((el) => el.classList.remove('pm-drop-on'));
+      dragging = null;
+    });
+  }
+
+  root.querySelectorAll('[data-pm-quad], [data-pm-pool]').forEach((zone) => {
+    const isPool = zone.matches('[data-pm-pool]');
+    zone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      zone.classList.add('pm-drop-on');
+    });
+    zone.addEventListener('dragleave', () => zone.classList.remove('pm-drop-on'));
+    zone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      zone.classList.remove('pm-drop-on');
+      if (!dragging) return;
+      const id = dragging.dataset.pmItem;
+      const it = idx.get(id); if (!it) return;
+      it.quadrant = isPool ? '' : (zone.dataset.pmQuad || '');
+      const targetList = zone.querySelector('[data-pm-list]');
+      if (targetList) targetList.appendChild(dragging);
+      refresh();
+    });
+  });
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Here's how I placed the items in "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    for (const q of state.quadrants) {
+      const inQuad = state.items.filter((it) => it.quadrant === q.id);
+      lines.push(`${q.label}${q.hint ? ` (${q.hint})` : ''}:`);
+      if (!inQuad.length) lines.push('  (none)');
+      else for (const it of inQuad) lines.push(`  - ${it.title}`);
+      lines.push('');
+    }
+    const unplaced = state.items.filter((it) => !it.quadrant);
+    if (unplaced.length) {
+      lines.push('Unplaced:');
+      for (const it of unplaced) lines.push(`  - ${it.title}`);
+      lines.push('');
+    }
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('pm-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('pm-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (changedItems().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-pm-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-pm-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'priority-matrix',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changedItems().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+
+(function () {
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  const reg = window.__htmd;
+  const fab = document.querySelector('[data-htmd-cx-export]');
+  const countEl = document.querySelector('[data-htmd-cx-count]');
+  const modal = document.querySelector('[data-htmd-cx-modal]');
+  const modalText = document.querySelector('[data-htmd-cx-text]');
+  const toast = document.querySelector('[data-htmd-cx-toast]');
+  if (!fab) return;
+
+  function changedBlocks() {
+    return reg.blocks.filter((b) => {
+      try { return typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; }
+      catch { return false; }
+    });
+  }
+
+  function refresh() {
+    const n = changedBlocks().length;
+    if (countEl) countEl.textContent = n;
+    fab.disabled = n === 0;
+    fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+  }
+
+  function buildAggregatePrompt() {
+    const parts = [];
+    parts.push('I reviewed your output in the browser and have the following changes/answers across multiple blocks. Please proceed accordingly.');
+    parts.push('');
+    let n = 0;
+    for (const b of reg.blocks) {
+      let changes = false;
+      try { changes = typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; } catch { changes = false; }
+      if (!changes) continue;
+      let promptText = '';
+      try { promptText = b.getPrompt ? b.getPrompt() : ''; } catch (e) { promptText = '(error generating prompt: ' + e.message + ')'; }
+      if (!promptText) continue;
+      n++;
+      parts.push('---');
+      parts.push('Block ' + n + ' (' + (b.template || 'unknown') + (b.blockId ? ' #' + b.blockId : '') + '):');
+      parts.push('');
+      parts.push(promptText.trim());
+      parts.push('');
+    }
+    if (n === 0) parts.push('(no changes recorded)');
+    return parts.join('\n');
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    void toast.offsetWidth;
+    toast.classList.add('htmd-cx-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.classList.remove('htmd-cx-toast-show');
+      setTimeout(() => toast.setAttribute('hidden', ''), 220);
+    }, 1800);
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function open() {
+    if (changedBlocks().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return;
+    if (modalText) modalText.textContent = buildAggregatePrompt();
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  fab.addEventListener('click', open);
+  document.querySelectorAll('[data-htmd-cx-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = document.querySelector('[data-htmd-cx-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildAggregatePrompt();
+    const ok = await copyText(text);
+    close();
+    showToast(ok ? 'Copied to clipboard' : 'Copy failed — see console');
+    if (!ok) console.log(text);
+  });
+
+  // Poll for changes (cheap; covers the case where a block doesn't dispatch events).
+  setInterval(refresh, 800);
+  refresh();
+})();
+
+</script>
+</body>
+</html>

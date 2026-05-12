@@ -1,0 +1,10 @@
+title: Q3 OKR priorities — please rank
+subtitle: Drag to reorder by importance. Top is most important.
+prompt_intro: Here are the Q3 OKR priorities ordered by importance from my perspective.
+items:
+  - { id: o1, title: "Cut p99 latency on checkout to <300ms", subtitle: "Engineering — currently 480ms" }
+  - { id: o2, title: "Ship the new onboarding flow to 100% of new users", subtitle: "Growth — A/B at +14% activation" }
+  - { id: o3, title: "Reduce monthly infra spend by 20%", subtitle: "Platform — $48k → $38k target" }
+  - { id: o4, title: "SOC2 Type II report ready for Sep audit", subtitle: "Security — drafting controls" }
+  - { id: o5, title: "Launch the AI-assisted analytics suggestions", subtitle: "Product — code complete, behind flag" }
+  - { id: o6, title: "Hire two senior engineers for the platform team", subtitle: "People — 1 offer out, 4 in pipeline" }

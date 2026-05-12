@@ -1,68 +1,90 @@
 ---
 name: htmd
-description: Render structured agent output to rich self-contained HTML using htmd templates instead of writing HTML directly. Use when you need a status report, dashboard, decision matrix, comparison, email digest, slide deck, prompt-tuner, kanban board, concept explainer, or feedback corrector for reviewing AI classifications.
+description: Render agent output to rich self-contained HTML using htmd templates instead of writing HTML directly. Use compose to mix prose + many interactive widgets in one markdown file with one global "Copy all changes" button that aggregates all human edits back into one prompt for the agent. Templates: status-report, dashboard, decision-matrix, comparison-3-up, email-digest, slide-deck, prompt-tuner, kanban-board, concept-explainer, feedback-corrector, checklist, q-and-a, data-table, approval-list, rank-order, text-redline, priority-matrix.
 ---
 
-# htmd — token-cheap rich HTML for agents
+# htmd — Markdown ↔ HTML bridge for human-in-the-loop agents
 
-When you need to produce visually-rich output (a status report, dashboard, decision matrix, slide deck, classification corrector, etc.), **prefer htmd templates over writing HTML inline**. You emit ~150 tokens of YAML; htmd gives the user back ~1,500 tokens of styled, interactive HTML. Charts, dark mode, print stylesheets, accessibility — included.
+When you need to produce visually-rich output **and want the human to interact with it and respond back to you**, prefer htmd over writing HTML inline. You emit ~150 tokens of YAML; htmd gives the user back ~1,500 tokens of styled, interactive HTML with **a button that copies their edits back to you as a clean prompt**.
 
-## When to use htmd
+## The decision tree
 
-Decision rule:
+1. Plain prose / a few lines → **emit Markdown.** Cheapest.
+2. **Multiple structured blocks in one page** (e.g. status + checklist + corrections + ranking) → **author ONE markdown file with `\`\`\`htmd:<template>` fences and run `htmd compose`**. The page gets one global "Copy all changes" button that aggregates every human edit into one prompt for you.
+3. A single data-shaped widget → `htmd render <template> --data input.yaml --out file.html`.
+4. Unsure which template fits a piece of plain markdown the user gave you? → `htmd detect <file.md>` returns a JSON list of template suggestions per region with sample YAML.
+5. The user mutated state in the browser (kanban moves, label changes, checks) and saved the HTML? → `htmd extract <file.html>` returns the embedded state as YAML so you can re-ingest.
+6. Truly one-off complex visual → raw HTML.
 
-1. **Plain prose / lists / simple tables → emit Markdown.** Cheapest, agents do this well.
-2. **Structured/data-shaped output that benefits from rich layout → use an htmd template.**
-3. **Truly one-off complex visual you need full control of → write raw HTML.**
+## Template shapes
 
-If your output fits one of these shapes, use a template:
-
-| Shape | Template |
+| If you're producing... | Template |
 |---|---|
-| Weekly status, sprint update | `status-report` |
-| KPI grid, executive metrics | `dashboard` |
+| Weekly status / sprint update | `status-report` |
+| KPI snapshot, executive metrics | `dashboard` |
 | Trade-off / scoring decision | `decision-matrix` |
-| Three-approach comparison | `comparison-3-up` |
-| Inbox/email summary | `email-digest` |
-| Single-file presentation | `slide-deck` |
+| 2–4 way option comparison | `comparison-3-up` |
+| Inbox digest | `email-digest` |
+| Slide deck | `slide-deck` |
 | Prompt iteration with stakeholders | `prompt-tuner` |
-| Roadmap / sprint planning | `kanban-board` |
-| Educational explainer doc | `concept-explainer` |
-| Human-in-the-loop classification corrections | `feedback-corrector` |
+| Roadmap / kanban view | `kanban-board` ↔ |
+| Onboarding doc / RFC summary | `concept-explainer` |
+| Classification corrections | `feedback-corrector` ↔ |
+| Task list to tick off | `checklist` ↔ |
+| Clarifying questions for the human | `q-and-a` ↔ |
+| Sortable / filterable data | `data-table` ↔ |
+| Approve / reject items | `approval-list` ↔ |
+| Drag-to-rank a list | `rank-order` ↔ |
+| Inline-edit a draft (paragraph by paragraph) | `text-redline` ↔ |
+| 4-quadrant drag-drop (Eisenhower etc.) | `priority-matrix` ↔ |
+
+(↔ = bidirectional: includes a Copy-back button.)
 
 ## How to use it
 
-**1. List templates:**
+**0. Compose (the main use case — multi-block markdown → one HTML page)**
+
 ```bash
-htmd templates
+htmd compose review.md --out review.html
 ```
 
-**2. Get the schema for the one you want:**
-```bash
-htmd schema status-report
+Where `review.md` looks like:
+
+````markdown
+# Sprint review
+
+Some intro prose.
+
+```htmd:status-report
+title: Week 19
+sections:
+  shipped: [{ title: htmd compose }]
 ```
 
-This returns JSON Schema. Use it to construct valid input — it documents required fields, types, and enums.
-
-**3. Render:**
-```bash
-htmd render status-report --data input.yaml --out report.html
+```htmd:approval-list
+title: PRs awaiting review
+items:
+  - { id: pr1, title: "feat: compose", suggested: approve }
 ```
+````
 
-Or inline:
-```bash
-htmd render dashboard --inline '{"title":"Q2","metrics":[{"label":"MAU","value":12000,"delta":8.3}]}'
-```
+The fence language is `htmd:<template-name>`. The body is YAML (or JSON). Multiple fences become multiple widgets sharing one polished page; **a global "Copy all changes" button aggregates every human edit into one prompt** that the human pastes back to you. Tell the human:
 
-Or from stdin:
-```bash
-echo '...' | htmd render status-report --data -
-```
+> I generated `/tmp/review.html`. Open it in a browser, make any corrections, then click "Copy all changes" at the bottom-left and paste the result back to me.
 
-**4. Programmatic from another Node script:**
+**1. List templates:** `htmd templates`
+
+**2. Get a schema:** `htmd schema status-report` (JSON Schema; required, types, enums)
+
+**3. Single render:** `htmd render <template> --data input.yaml --out report.html` (or `--inline '{...}'`, or read from stdin with `--data -`)
+
+**4. Detect:** `htmd detect <file.md>` — for plain markdown, returns suggestions of the form `{template, confidence, line_start, line_end, sample_data_yaml}`. Use this when given user markdown to figure out which sections should become widgets.
+
+**5. Extract:** `htmd extract <file.html>` — recover the embedded state of a rendered (and possibly interacted-with) HTML file as YAML. Useful when the human saves the file or sends it back instead of pressing the Copy button.
+
+**6. Programmatic:**
 ```js
-import { renderTemplate } from 'htmd';
-const html = await renderTemplate('decision-matrix', data);
+import { renderTemplate, composeFromMarkdown, detectTemplates, extractState } from 'htmd';
 ```
 
 ## Validation

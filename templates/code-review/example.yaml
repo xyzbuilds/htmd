@@ -1,0 +1,44 @@
+title: Review the compose feature
+subtitle: Click any line number to leave a comment. Pre-placed comments are from the agent.
+prompt_intro: Code review comments on the compose feature.
+files:
+  - id: f1
+    path: src/compose.js
+    language: javascript
+    start_line: 60
+    code: |
+      export async function composeFromMarkdown(mdText, opts = {}) {
+        const segments = parseSegments(mdText);
+        const cssByTemplate = new Map();
+        const jsByTemplate = new Map();
+        const blocksMeta = [];
+        const errors = [];
+        const bodyParts = [];
+        let blockIdx = 0;
+
+        for (const seg of segments) {
+          if (seg.type === 'prose') {
+            bodyParts.push(`<section class="htmd-prose">${mdToHtml(seg.md)}</section>`);
+            continue;
+          }
+          if (seg.parseError) {
+            errors.push({ template: seg.template, idx: blockIdx, error: seg.parseError });
+            bodyParts.push(blockErrorCard(seg.template, blockIdx, ...));
+            blockIdx++;
+            continue;
+          }
+          try {
+            const parts = await renderTemplateParts(seg.template, seg.data, opts);
+            cssByTemplate.set(seg.template, parts.css);
+            if (parts.js) jsByTemplate.set(seg.template, parts.js);
+    comments:
+      - { line: 67, body: "Consider using Map.groupBy() once Node 20 LTS is everyone's baseline." }
+      - { line: 76, body: "Should probably surface seg.template in the error so a misconfigured fence is debuggable." }
+  - id: f2
+    path: src/extract.js
+    language: javascript
+    start_line: 28
+    code: |
+      const ATTR_RE = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s"'`<>]+)))?/g;
+    comments:
+      - { line: 28, body: "This regex is hand-rolled — fine for now, but consider a proper HTML parser if extract usage grows." }

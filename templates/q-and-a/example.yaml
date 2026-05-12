@@ -1,0 +1,28 @@
+title: Clarifying questions before I implement
+subtitle: Answer what you can. Skip the rest. The "Send answers back" button copies a prompt you can paste back to the agent.
+prompt_intro: Here are answers to your clarifying questions for the new compose feature.
+questions:
+  - id: q1
+    prompt: Should the compose page validate every block, or render valid blocks and inline-error the invalid ones?
+    kind: single
+    choices:
+      - { value: validate_all, label: "Strict — fail the whole page if any block is invalid" }
+      - { value: lenient, label: "Lenient — render valid blocks, inline error cards for invalid ones" }
+  - id: q2
+    prompt: Which sources of state should `htmd extract` look for?
+    kind: multi
+    choices:
+      - "<script type=application/json data-htmd-state>"
+      - "Legacy per-template attrs (data-fc-state, data-kb-state, …)"
+      - "URL hash (kanban-board uses this for sharing)"
+      - "localStorage"
+  - id: q3
+    prompt: Anything you'd want changed about the compose-level "Copy all changes" button?
+    kind: free
+    placeholder: "e.g. group by template, show diffs inline, etc."
+  - id: q4
+    prompt: Should the compose CLI auto-detect template suggestions when the input has no htmd fences?
+    kind: single
+    choices:
+      - "Yes — emit suggestions to stderr"
+      - "No — keep detect as a separate command"

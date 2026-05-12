@@ -6,10 +6,13 @@ import { exec } from 'node:child_process';
 import YAML from 'yaml';
 import { listTemplates, loadTemplate } from './templates.js';
 import { renderTemplate, renderMarkdown } from './render.js';
+import { composeFromMarkdown } from './compose.js';
+import { detectTemplates } from './detect.js';
+import { extractState } from './extract.js';
 import { htmlToMd } from './html2md.js';
 import { mdToHtml } from './md.js';
 
-const VERSION = '0.1.0';
+const VERSION = '0.2.0';
 
 export async function run(argv) {
   const program = new Command();
@@ -94,6 +97,75 @@ export async function run(argv) {
       const md = await readTextOrStdin(file);
       const html = renderMarkdown(md, { title: opts.title });
       await writeOutput(html, opts.out);
+    });
+
+  program
+    .command('compose [file]')
+    .description('render a markdown file with embedded ```htmd:<template>``` fences into one HTML page')
+    .option('-o, --out <file>', 'output file (default: stdout)')
+    .option('-t, --title <title>', 'page title (default: first H1)')
+    .option('--no-validate', 'skip schema validation per block')
+    .option('--json', 'emit JSON envelope: { ok, html, errors, blocks }')
+    .action(async (file, opts) => {
+      try {
+        const md = await readTextOrStdin(file);
+        const result = await composeFromMarkdown(md, { title: opts.title, validate: opts.validate });
+        if (opts.json) {
+          process.stdout.write(JSON.stringify(result));
+          return;
+        }
+        if (result.errors.length) {
+          for (const e of result.errors) {
+            console.error(`htmd compose: block #${e.idx} (${e.template}): ${e.error}`);
+          }
+        }
+        await writeOutput(result.html, opts.out);
+      } catch (e) {
+        if (opts.json) {
+          process.stdout.write(JSON.stringify({ ok: false, error: e.message }));
+          process.exit(1);
+        }
+        console.error(`htmd: ${e.message}`);
+        process.exit(1);
+      }
+    });
+
+  program
+    .command('detect [file]')
+    .description('scan a plain markdown file and suggest htmd templates per region')
+    .option('--json', 'output as JSON (default: human-readable)')
+    .option('--min-confidence <n>', 'minimum confidence (0-1)', '0.45')
+    .action(async (file, opts) => {
+      const md = await readTextOrStdin(file);
+      const min = parseFloat(opts.minConfidence);
+      const suggestions = detectTemplates(md).filter((s) => s.confidence >= min);
+      if (opts.json) {
+        process.stdout.write(JSON.stringify(suggestions, null, 2));
+        process.stdout.write('\n');
+        return;
+      }
+      if (suggestions.length === 0) {
+        console.log('(no template suggestions above confidence threshold)');
+        return;
+      }
+      for (const s of suggestions) {
+        const conf = (s.confidence * 100).toFixed(0) + '%';
+        console.log(`L${s.line_start}-${s.line_end} → ${s.template} (${conf}) — ${s.reason}`);
+      }
+    });
+
+  program
+    .command('extract [file]')
+    .description('read a rendered HTML file and emit the embedded state (kanban moves, feedback corrections, etc.) as YAML')
+    .option('--json', 'emit JSON instead of YAML')
+    .option('-o, --out <file>', 'output file')
+    .action(async (file, opts) => {
+      const html = await readTextOrStdin(file);
+      const states = extractState(html);
+      const text = opts.json
+        ? JSON.stringify(states, null, 2)
+        : YAML.stringify(states);
+      await writeOutput(text, opts.out);
     });
 
   program

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="htmd v0.1.0">
+<meta name="generator" content="htmd v0.2.0">
 <title>decision-matrix</title>
 <style>
 /* htmd minimal reset */
@@ -101,8 +101,109 @@ code, pre, kbd, samp {
 .dm {
   max-width: 1080px;
   margin: 0 auto;
-  padding: 2rem 1.5rem 4rem;
+  padding: 2rem 1.5rem 6rem;
 }
+.dm-hint {
+  margin-top: 0.4rem;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.dm-crit-name { font-weight: 600; }
+.dm-weight-input, .dm-cell-input {
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  background: transparent;
+  color: inherit;
+  border: 1px solid transparent;
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+.dm-weight-input::-webkit-outer-spin-button,
+.dm-weight-input::-webkit-inner-spin-button,
+.dm-cell-input::-webkit-outer-spin-button,
+.dm-cell-input::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+.dm-weight-input:hover, .dm-cell-input:hover { border-color: var(--htmd-border); }
+.dm-weight-input:focus, .dm-cell-input:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.dm-rationale {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.dm-rationale-label {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+.dm-rationale-input {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  background: var(--htmd-surface);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  resize: vertical; min-height: 50px;
+}
+.dm-rationale-input:focus { outline: none; border-color: var(--htmd-accent); }
+
+.dm-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.dm-fab:disabled, .dm-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.dm-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.dm-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.dm-modal[hidden] { display: none; }
+.dm-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.dm-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 720px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.dm-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.dm-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.dm-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.dm-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.dm-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.dm-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.dm-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.dm-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.dm-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.dm-toast[hidden] { display: none; }
+.dm-toast.dm-toast-show { opacity: 1; }
 .dm-head {
   margin-bottom: 1.5rem;
 }
@@ -249,158 +350,177 @@ code, pre, kbd, samp {
         <span class="dm-eyebrow">Decision Matrix</span>
         <h1 class="dm-question">Which database should we use for the v2 backend?</h1>
         <p class="dm-context">We need to support 100k+ concurrent connections, complex aggregations, and a small ops team. Decision needed by end of sprint.</p>
+        <p class="dm-hint">Click any score or weight to edit. The recommendation re-computes live.</p>
       </header>
 
       <div class="dm-table-wrap">
-        <table class="dm-table">
+        <table class="dm-table" data-dm-table>
           <thead>
             <tr>
               <th class="dm-criteria-col">Criterion</th>
               <th class="dm-weight-col">Weight</th>
               
-                <th class="dm-option dm-winner">PostgreSQL (managed)</th>
+                <th class="dm-option dm-winner" data-dm-opt="o0" data-dm-opt-idx="0">PostgreSQL (managed)</th>
               
-                <th class="dm-option ">ClickHouse Cloud</th>
+                <th class="dm-option " data-dm-opt="o1" data-dm-opt-idx="1">ClickHouse Cloud</th>
               
-                <th class="dm-option ">DynamoDB</th>
+                <th class="dm-option " data-dm-opt="o2" data-dm-opt-idx="2">DynamoDB</th>
               
-                <th class="dm-option ">Self-hosted Cassandra</th>
+                <th class="dm-option " data-dm-opt="o3" data-dm-opt-idx="3">Self-hosted Cassandra</th>
               
             </tr>
           </thead>
           <tbody>
             
-    <tr>
+    <tr data-dm-row="c0">
       <td class="dm-crit">
-        Query performance
+        <span class="dm-crit-name">Query performance</span>
         <small class="dm-crit-note">at our 95p workload</small>
       </td>
-      <td class="dm-weight">5</td>
-      <td class="dm-cell dm-cell-good" style="--heat: 0.80">
-          <span class="dm-cell-val">8</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 1.00">
-          <span class="dm-cell-val">10</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 0.70">
-          <span class="dm-cell-val">7</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 0.80">
-          <span class="dm-cell-val">8</span>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c0" value="5" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c0" style="--heat: 0.80">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c0" data-dm-criterion="Query performance" data-dm-option="o0" value="8" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o1:c0" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c0" data-dm-criterion="Query performance" data-dm-option="o1" value="10" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o2:c0" style="--heat: 0.70">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c0" data-dm-criterion="Query performance" data-dm-option="o2" value="7" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o3:c0" style="--heat: 0.80">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c0" data-dm-criterion="Query performance" data-dm-option="o3" value="8" placeholder="—" step="0.5">
         </td>
     </tr>
   
-    <tr>
+    <tr data-dm-row="c1">
       <td class="dm-crit">
-        Operational simplicity
+        <span class="dm-crit-name">Operational simplicity</span>
         
       </td>
-      <td class="dm-weight">4</td>
-      <td class="dm-cell dm-cell-good" style="--heat: 1.00">
-          <span class="dm-cell-val">9</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 0.78">
-          <span class="dm-cell-val">7</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 1.00">
-          <span class="dm-cell-val">9</span>
-        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.33">
-          <span class="dm-cell-val">3</span>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c1" value="4" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c1" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c1" data-dm-criterion="Operational simplicity" data-dm-option="o0" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o1:c1" style="--heat: 0.78">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c1" data-dm-criterion="Operational simplicity" data-dm-option="o1" value="7" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o2:c1" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c1" data-dm-criterion="Operational simplicity" data-dm-option="o2" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c1" style="--heat: 0.33">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c1" data-dm-criterion="Operational simplicity" data-dm-option="o3" value="3" placeholder="—" step="0.5">
         </td>
     </tr>
   
-    <tr>
+    <tr data-dm-row="c2">
       <td class="dm-crit">
-        Cost (monthly $/k req)
+        <span class="dm-crit-name">Cost (monthly $/k req)</span>
         
       </td>
-      <td class="dm-weight">3 <small>↓</small></td>
-      <td class="dm-cell dm-cell-mid" style="--heat: 0.50">
-          <span class="dm-cell-val">4</span>
-        </td><td class="dm-cell dm-cell-low" style="--heat: 0.25">
-          <span class="dm-cell-val">6</span>
-        </td><td class="dm-cell dm-cell-low" style="--heat: 0.00">
-          <span class="dm-cell-val">8</span>
-        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.63">
-          <span class="dm-cell-val">3</span>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c2" value="3" min="0" step="1">
+         <small title="lower is better">↓</small>
+      </td>
+      <td class="dm-cell dm-cell-mid" data-dm-cell="o0:c2" style="--heat: 0.50">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c2" data-dm-criterion="Cost (monthly $/k req)" data-dm-option="o0" value="4" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-low" data-dm-cell="o1:c2" style="--heat: 0.25">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c2" data-dm-criterion="Cost (monthly $/k req)" data-dm-option="o1" value="6" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-low" data-dm-cell="o2:c2" style="--heat: 0.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c2" data-dm-criterion="Cost (monthly $/k req)" data-dm-option="o2" value="8" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c2" style="--heat: 0.63">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c2" data-dm-criterion="Cost (monthly $/k req)" data-dm-option="o3" value="3" placeholder="—" step="0.5">
         </td>
     </tr>
   
-    <tr>
+    <tr data-dm-row="c3">
       <td class="dm-crit">
-        Team familiarity
+        <span class="dm-crit-name">Team familiarity</span>
         
       </td>
-      <td class="dm-weight">3</td>
-      <td class="dm-cell dm-cell-good" style="--heat: 1.00">
-          <span class="dm-cell-val">9</span>
-        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.44">
-          <span class="dm-cell-val">4</span>
-        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.56">
-          <span class="dm-cell-val">5</span>
-        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.33">
-          <span class="dm-cell-val">3</span>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c3" value="3" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c3" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c3" data-dm-criterion="Team familiarity" data-dm-option="o0" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o1:c3" style="--heat: 0.44">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c3" data-dm-criterion="Team familiarity" data-dm-option="o1" value="4" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o2:c3" style="--heat: 0.56">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c3" data-dm-criterion="Team familiarity" data-dm-option="o2" value="5" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c3" style="--heat: 0.33">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c3" data-dm-criterion="Team familiarity" data-dm-option="o3" value="3" placeholder="—" step="0.5">
         </td>
     </tr>
   
-    <tr>
+    <tr data-dm-row="c4">
       <td class="dm-crit">
-        Ecosystem &amp; tooling
+        <span class="dm-crit-name">Ecosystem &amp; tooling</span>
         
       </td>
-      <td class="dm-weight">2</td>
-      <td class="dm-cell dm-cell-good" style="--heat: 1.00">
-          <span class="dm-cell-val">9</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 0.78">
-          <span class="dm-cell-val">7</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 0.67">
-          <span class="dm-cell-val">6</span>
-        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.56">
-          <span class="dm-cell-val">5</span>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c4" value="2" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c4" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o0" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o1:c4" style="--heat: 0.78">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o1" value="7" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o2:c4" style="--heat: 0.67">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o2" value="6" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c4" style="--heat: 0.56">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o3" value="5" placeholder="—" step="0.5">
         </td>
     </tr>
   
-    <tr>
+    <tr data-dm-row="c5">
       <td class="dm-crit">
-        Vendor lock-in risk
+        <span class="dm-crit-name">Vendor lock-in risk</span>
         
       </td>
-      <td class="dm-weight">2 <small>↓</small></td>
-      <td class="dm-cell dm-cell-good" style="--heat: 0.78">
-          <span class="dm-cell-val">2</span>
-        </td><td class="dm-cell dm-cell-mid" style="--heat: 0.44">
-          <span class="dm-cell-val">5</span>
-        </td><td class="dm-cell dm-cell-low" style="--heat: 0.00">
-          <span class="dm-cell-val">9</span>
-        </td><td class="dm-cell dm-cell-good" style="--heat: 0.89">
-          <span class="dm-cell-val">1</span>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c5" value="2" min="0" step="1">
+         <small title="lower is better">↓</small>
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c5" style="--heat: 0.78">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o0" value="2" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o1:c5" style="--heat: 0.44">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o1" value="5" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-low" data-dm-cell="o2:c5" style="--heat: 0.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o2" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o3:c5" style="--heat: 0.89">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o3" value="1" placeholder="—" step="0.5">
         </td>
     </tr>
   
             <tr class="dm-total-row">
               <td colspan="2" class="dm-total-label">Weighted total</td>
               
-                <td class="dm-total dm-winner">
+                <td class="dm-total dm-winner" data-dm-total="o0">
                   <div class="dm-total-bar">
-                    <span style="width: 84.5%"></span>
+                    <span data-dm-bar="o0" style="width: 84.5%"></span>
                   </div>
-                  <strong>84.5</strong>
+                  <strong data-dm-total-val="o0">84.5</strong>
                 </td>
               
-                <td class="dm-total ">
+                <td class="dm-total " data-dm-total="o1">
                   <div class="dm-total-bar">
-                    <span style="width: 66.5%"></span>
+                    <span data-dm-bar="o1" style="width: 66.5%"></span>
                   </div>
-                  <strong>66.5</strong>
+                  <strong data-dm-total-val="o1">66.5</strong>
                 </td>
               
-                <td class="dm-total ">
+                <td class="dm-total " data-dm-total="o2">
                   <div class="dm-total-bar">
-                    <span style="width: 55.3%"></span>
+                    <span data-dm-bar="o2" style="width: 55.3%"></span>
                   </div>
-                  <strong>55.3</strong>
+                  <strong data-dm-total-val="o2">55.3</strong>
                 </td>
               
-                <td class="dm-total ">
+                <td class="dm-total " data-dm-total="o3">
                   <div class="dm-total-bar">
-                    <span style="width: 58.4%"></span>
+                    <span data-dm-bar="o3" style="width: 58.4%"></span>
                   </div>
-                  <strong>58.4</strong>
+                  <strong data-dm-total-val="o3">58.4</strong>
                 </td>
               
             </tr>
@@ -408,14 +528,248 @@ code, pre, kbd, samp {
         </table>
       </div>
 
-      
-        <aside class="dm-rec">
-          <span class="dm-rec-pill">Recommendation</span>
-          <strong>PostgreSQL (managed)</strong>
-          <span class="dm-rec-score">score 84.5/100</span>
-        </aside>
-      
+      <aside class="dm-rec" data-dm-rec>
+        <span class="dm-rec-pill">Recommendation</span>
+        <strong data-dm-rec-name>PostgreSQL (managed)</strong>
+        <span class="dm-rec-score" data-dm-rec-score>score 84.5/100</span>
+      </aside>
+
+      <section class="dm-rationale">
+        <label class="dm-rationale-label" for="dm-rationale">Your rationale (optional)</label>
+        <textarea id="dm-rationale" class="dm-rationale-input" data-dm-rationale rows="2" placeholder="Why you'd pick this option (or a different one). Anything the matrix doesn't capture."></textarea>
+      </section>
+
+      <button type="button" class="dm-fab" data-dm-copy aria-label="Send revised matrix back">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send revised matrix back</span>
+        <span class="dm-fab-badge" data-dm-changed>0</span>
+      </button>
+
+      <div class="dm-modal" data-dm-modal hidden role="dialog" aria-modal="true">
+        <div class="dm-backdrop" data-dm-close></div>
+        <div class="dm-panel">
+          <header><h2>Revised matrix</h2><button type="button" class="dm-x" data-dm-close aria-label="Close">&#x2715;</button></header>
+          <pre class="dm-pre" data-dm-text></pre>
+          <footer>
+            <button type="button" class="dm-btn dm-btn-ghost" data-dm-close>Cancel</button>
+            <button type="button" class="dm-btn dm-btn-primary" data-dm-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="dm-toast" data-dm-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-dm-state data-htmd-state="decision-matrix">{"block_id":"","question":"Which database should we use for the v2 backend?","prompt_intro":"","criteria":[{"name":"Query performance","weight":5,"direction":"higher_better","note":"at our 95p workload","cid":"c0","original_weight":5},{"name":"Operational simplicity","weight":4,"direction":"higher_better","note":"","cid":"c1","original_weight":4},{"name":"Cost (monthly $/k req)","weight":3,"direction":"lower_better","note":"","cid":"c2","original_weight":3},{"name":"Team familiarity","weight":3,"direction":"higher_better","note":"","cid":"c3","original_weight":3},{"name":"Ecosystem & tooling","weight":2,"direction":"higher_better","note":"","cid":"c4","original_weight":2},{"name":"Vendor lock-in risk","weight":2,"direction":"lower_better","note":"","cid":"c5","original_weight":2}],"options":[{"oid":"o0","name":"PostgreSQL (managed)","scores":{"Query performance":8,"Operational simplicity":9,"Cost (monthly $/k req)":4,"Team familiarity":9,"Ecosystem & tooling":9,"Vendor lock-in risk":2},"original_scores":{"Query performance":8,"Operational simplicity":9,"Cost (monthly $/k req)":4,"Team familiarity":9,"Ecosystem & tooling":9,"Vendor lock-in risk":2}},{"oid":"o1","name":"ClickHouse Cloud","scores":{"Query performance":10,"Operational simplicity":7,"Cost (monthly $/k req)":6,"Team familiarity":4,"Ecosystem & tooling":7,"Vendor lock-in risk":5},"original_scores":{"Query performance":10,"Operational simplicity":7,"Cost (monthly $/k req)":6,"Team familiarity":4,"Ecosystem & tooling":7,"Vendor lock-in risk":5}},{"oid":"o2","name":"DynamoDB","scores":{"Query performance":7,"Operational simplicity":9,"Cost (monthly $/k req)":8,"Team familiarity":5,"Ecosystem & tooling":6,"Vendor lock-in risk":9},"original_scores":{"Query performance":7,"Operational simplicity":9,"Cost (monthly $/k req)":8,"Team familiarity":5,"Ecosystem & tooling":6,"Vendor lock-in risk":9}},{"oid":"o3","name":"Self-hosted Cassandra","scores":{"Query performance":8,"Operational simplicity":3,"Cost (monthly $/k req)":3,"Team familiarity":3,"Ecosystem & tooling":5,"Vendor lock-in risk":1},"original_scores":{"Query performance":8,"Operational simplicity":3,"Cost (monthly $/k req)":3,"Team familiarity":3,"Ecosystem & tooling":5,"Vendor lock-in risk":1}}],"original_recommendation":"PostgreSQL (managed)"}</script>
     </main>
   
+<script>
+(function () {
+  const root = document.querySelector('main.dm');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-dm-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const fab = root.querySelector('[data-dm-copy]');
+  const changedEl = root.querySelector('[data-dm-changed]');
+  const modal = root.querySelector('[data-dm-modal]');
+  const modalText = root.querySelector('[data-dm-text]');
+  const toast = root.querySelector('[data-dm-toast]');
+  const recName = root.querySelector('[data-dm-rec-name]');
+  const recScore = root.querySelector('[data-dm-rec-score]');
+  const rationale = root.querySelector('[data-dm-rationale]');
+
+  const critByCid = new Map();
+  const critByName = new Map();
+  state.criteria.forEach((c) => { critByCid.set(c.cid, c); critByName.set(c.name, c); });
+  const optByOid = new Map();
+  state.options.forEach((o) => optByOid.set(o.oid, o));
+
+  function computeTotals() {
+    return state.options.map((opt) => {
+      let total = 0; let wSum = 0;
+      for (const c of state.criteria) {
+        const raw = opt.scores[c.name];
+        if (typeof raw !== 'number' || !isFinite(raw)) continue;
+        const all = state.options.map((o) => o.scores[c.name]).filter((x) => typeof x === 'number' && isFinite(x));
+        if (!all.length) continue;
+        const max = Math.max(...all, 1);
+        const min = Math.min(...all, 0);
+        const range = max - min || 1;
+        const norm = c.direction === 'lower_better' ? 1 - (raw - min) / range : (raw - min) / range;
+        total += norm * (c.weight || 1);
+        wSum += c.weight || 1;
+      }
+      return wSum > 0 ? total / wSum : 0;
+    });
+  }
+  function heatFor(rawVal, criterionName) {
+    const c = critByName.get(criterionName); if (!c) return null;
+    const all = state.options.map((o) => o.scores[criterionName]).filter((x) => typeof x === 'number' && isFinite(x));
+    if (!all.length || typeof rawVal !== 'number') return null;
+    const max = Math.max(...all, 1); const min = Math.min(...all, 0); const range = max - min || 1;
+    const norm = c.direction === 'lower_better' ? 1 - (rawVal - min) / range : (rawVal - min) / range;
+    return Math.max(0, Math.min(1, norm));
+  }
+  function toneFor(heat) {
+    if (heat == null) return 'empty';
+    if (heat >= 0.66) return 'good';
+    if (heat >= 0.33) return 'mid';
+    return 'low';
+  }
+
+  function changes() {
+    const c = [];
+    state.criteria.forEach((cr) => {
+      if (cr.weight !== cr.original_weight) c.push({ kind: 'weight', criterion: cr.name, was: cr.original_weight, now: cr.weight });
+    });
+    state.options.forEach((o) => {
+      Object.keys({ ...o.scores, ...o.original_scores }).forEach((k) => {
+        const a = o.original_scores[k]; const b = o.scores[k];
+        if ((typeof a !== 'number' && typeof b !== 'number')) return;
+        if (a !== b) c.push({ kind: 'score', option: o.name, criterion: k, was: a, now: b });
+      });
+    });
+    if (rationale && rationale.value.trim()) c.push({ kind: 'rationale', text: rationale.value.trim() });
+    return c;
+  }
+
+  function refresh() {
+    const totals = computeTotals();
+    let winnerIdx = -1;
+    let max = -Infinity;
+    totals.forEach((t, i) => { if (t > max) { max = t; winnerIdx = i; } });
+
+    state.options.forEach((o, i) => {
+      const bar = root.querySelector(`[data-dm-bar="${cssEscape(o.oid)}"]`);
+      const val = root.querySelector(`[data-dm-total-val="${cssEscape(o.oid)}"]`);
+      const head = root.querySelector(`[data-dm-opt="${cssEscape(o.oid)}"]`);
+      const totalCell = root.querySelector(`[data-dm-total="${cssEscape(o.oid)}"]`);
+      if (bar) bar.style.width = (totals[i] * 100).toFixed(1) + '%';
+      if (val) val.textContent = (totals[i] * 100).toFixed(1);
+      if (head) head.classList.toggle('dm-winner', i === winnerIdx);
+      if (totalCell) totalCell.classList.toggle('dm-winner', i === winnerIdx);
+    });
+    if (recName) recName.textContent = winnerIdx >= 0 ? state.options[winnerIdx].name : '—';
+    if (recScore) recScore.textContent = winnerIdx >= 0 ? `score ${(totals[winnerIdx] * 100).toFixed(1)}/100` : '';
+
+    // Update cell heat colors
+    root.querySelectorAll('[data-dm-cell]').forEach((cell) => {
+      const [oid, cid] = cell.dataset.dmCell.split(':');
+      const c = critByCid.get(cid); const o = optByOid.get(oid);
+      if (!c || !o) return;
+      const h = heatFor(o.scores[c.name], c.name);
+      cell.style.setProperty('--heat', h == null ? 0 : h.toFixed(2));
+      cell.className = `dm-cell dm-cell-${toneFor(h)}`;
+    });
+
+    const ch = changes();
+    if (changedEl) changedEl.textContent = ch.length;
+    if (fab) { fab.disabled = ch.length === 0; fab.setAttribute('aria-disabled', ch.length === 0 ? 'true' : 'false'); }
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Revised decision matrix for: "${state.question}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    const totals = computeTotals();
+    let winnerIdx = -1; let max = -Infinity;
+    totals.forEach((t, i) => { if (t > max) { max = t; winnerIdx = i; } });
+    lines.push(`Original recommendation: ${state.original_recommendation || '(none)'}`);
+    lines.push(`My recommendation: ${winnerIdx >= 0 ? state.options[winnerIdx].name : '(none)'} (score ${winnerIdx >= 0 ? (totals[winnerIdx] * 100).toFixed(1) : '—'}/100)`);
+    lines.push('');
+    const ch = changes();
+    if (ch.length === 0) { lines.push('No changes to scores or weights.'); return lines.join('\n'); }
+    lines.push('Changes:');
+    ch.forEach((c, i) => {
+      if (c.kind === 'weight') lines.push(`${i + 1}. Weight for "${c.criterion}": ${c.was} → ${c.now}`);
+      else if (c.kind === 'score') lines.push(`${i + 1}. Score for "${c.option}" / "${c.criterion}": ${c.was ?? '—'} → ${c.now ?? '—'}`);
+      else if (c.kind === 'rationale') {
+        lines.push(`${i + 1}. Rationale:`);
+        c.text.split('\n').forEach((l) => lines.push(`   ${l}`));
+      }
+    });
+    lines.push(''); lines.push('Full revised scoring:'); lines.push('');
+    lines.push('| Criterion | Weight | ' + state.options.map((o) => o.name).join(' | ') + ' |');
+    lines.push('|---|---:|' + state.options.map(() => '---:').join('|') + '|');
+    state.criteria.forEach((c) => {
+      lines.push(`| ${c.name}${c.direction === 'lower_better' ? ' (↓)' : ''} | ${c.weight} | ` +
+        state.options.map((o) => o.scores[c.name] ?? '').join(' | ') + ' |');
+    });
+    lines.push(`| **Total** |  | ${totals.map((t) => `**${(t * 100).toFixed(1)}**`).join(' | ')} |`);
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('dm-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('dm-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (changes().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_:-]/g, (c) => '\\' + c);
+  }
+
+  // Score edits
+  root.querySelectorAll('[data-dm-score]').forEach((inp) => {
+    inp.addEventListener('input', () => {
+      const [oid, cid] = inp.dataset.dmScore.split(':');
+      const c = critByCid.get(cid); const o = optByOid.get(oid);
+      if (!c || !o) return;
+      const v = inp.value.trim();
+      o.scores[c.name] = v === '' ? null : parseFloat(v);
+      if (typeof o.scores[c.name] === 'number' && !isFinite(o.scores[c.name])) o.scores[c.name] = null;
+      refresh();
+    });
+  });
+  // Weight edits
+  root.querySelectorAll('[data-dm-weight]').forEach((inp) => {
+    inp.addEventListener('input', () => {
+      const c = critByCid.get(inp.dataset.dmWeight); if (!c) return;
+      const v = parseFloat(inp.value);
+      c.weight = isFinite(v) ? v : 0;
+      refresh();
+    });
+  });
+  if (rationale) rationale.addEventListener('input', refresh);
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-dm-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-dm-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'decision-matrix',
+    blockId: state.block_id || state.question,
+    hasChanges: () => changes().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
 </body>
 </html>
