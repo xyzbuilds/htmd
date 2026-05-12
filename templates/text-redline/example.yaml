@@ -1,0 +1,15 @@
+title: Draft launch announcement — please redline
+subtitle: Click any paragraph to edit. Use the &times; button to reject a paragraph; the pencil to add a comment.
+prompt_intro: I redlined the launch announcement draft. Final text and change log below.
+segments:
+  - id: s1
+    text: "We're thrilled to announce htmd 0.2 — a major step in how AI agents and humans collaborate on rich, structured output."
+  - id: s2
+    text: "htmd 0.2 introduces compose, a new command that lets a single markdown file mix prose with multiple interactive widgets — status reports, kanban boards, feedback correctors, and more — into one shareable HTML page."
+  - id: s3
+    text: "Every interactive widget exposes the same export contract: a button that copies the human's interactions back to the agent as a clean prompt. The loop is: agent generates, human reviews, agent continues."
+  - id: s4
+    text: "We also added 7 new templates: checklist, q-and-a, data-table, approval-list, rank-order, text-redline, and priority-matrix. Each is mobile-first, dark-mode-aware, and self-contained."
+  - id: s5
+    text: "Available now on npm: `npm install -g htmd`. Inspired by Thariq Shihipar's essay on the unreasonable effectiveness of HTML for AI agents."
+    locked: true

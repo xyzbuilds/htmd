@@ -40,6 +40,20 @@
         }
       }
     },
-    "noise_summary": { "type": "string" }
+    "noise_summary": { "type": "string" },
+    "block_id": { "type": "string" },
+    "prompt_intro": { "type": "string" },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["value"],
+        "properties": {
+          "value": { "type": "string" },
+          "label": { "type": "string" },
+          "color": { "type": "string" }
+        }
+      }
+    }
   }
 }

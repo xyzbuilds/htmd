@@ -8,7 +8,16 @@
   const closeBtn = root.querySelector('[data-sd-close-help]');
   const cur = root.querySelector('[data-sd-current]');
   const tot = root.querySelector('[data-sd-total]');
+  const notesPanel = root.querySelector('[data-sd-notes-panel]');
+  const notesBody = root.querySelector('[data-sd-notes-body]');
+  const closeNotesBtn = root.querySelector('[data-sd-close-notes]');
   let i = 0;
+  function refreshNotes() {
+    if (!notesBody) return;
+    const slide = slides[i];
+    const n = slide && slide.querySelector('.sd-notes');
+    notesBody.textContent = n ? n.textContent : '(no notes for this slide)';
+  }
   function show(n) {
     i = Math.max(0, Math.min(slides.length - 1, n));
     slides.forEach((s, idx) => {
@@ -17,7 +26,15 @@
     });
     if (cur) cur.textContent = i + 1;
     location.hash = String(i + 1);
+    refreshNotes();
   }
+  function toggleNotes(force) {
+    if (!notesPanel) return;
+    const showIt = force != null ? force : notesPanel.hasAttribute('hidden');
+    if (showIt) { notesPanel.removeAttribute('hidden'); refreshNotes(); }
+    else notesPanel.setAttribute('hidden', '');
+  }
+  if (closeNotesBtn) closeNotesBtn.addEventListener('click', () => toggleNotes(false));
   function toggleOverview(force) {
     const show = force != null ? force : overview.hasAttribute('hidden');
     if (show) overview.removeAttribute('hidden');
@@ -33,6 +50,7 @@
     else if (e.key === 'Home') show(0);
     else if (e.key === 'End') show(slides.length - 1);
     else if (e.key === 'o' || e.key === 'O') toggleOverview();
+    else if (e.key === 'n' || e.key === 'N') toggleNotes();
     else if (e.key === '?') help.showModal();
     else if (e.key === 'Escape') toggleOverview(false);
     else if (e.key === 'p' || e.key === 'P') window.print();

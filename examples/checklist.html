@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Pre-deploy checklist</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.cl {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 5rem;
+}
+.cl-head { margin-bottom: 1rem; }
+.cl-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.cl-subtitle {
+  margin-top: 0.4rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-md);
+}
+.cl-progress {
+  margin-top: 0.5rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.cl-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cl-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, opacity 0.15s;
+}
+.cl-item.cl-done { opacity: 0.65; border-left-color: var(--htmd-success); }
+.cl-item.cl-done .cl-text { text-decoration: line-through; color: var(--htmd-fg-muted); }
+.cl-check {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+.cl-check input { position: absolute; opacity: 0; pointer-events: none; }
+.cl-check-box {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--htmd-border);
+  border-radius: 6px;
+  background: var(--htmd-surface);
+  transition: background 0.12s, border-color 0.12s;
+  position: relative;
+}
+.cl-check input:checked + .cl-check-box {
+  background: var(--htmd-success);
+  border-color: var(--htmd-success);
+}
+.cl-check input:checked + .cl-check-box::after {
+  content: '';
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 6px; height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.cl-body { flex: 1; min-width: 0; }
+.cl-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.cl-text { font-weight: 500; line-height: 1.4; word-break: break-word; }
+.cl-pri {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+.cl-pri-high { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.cl-pri-med { background: var(--htmd-warn-soft); color: var(--htmd-warn); }
+.cl-pri-low { background: var(--htmd-info-soft); color: var(--htmd-info); }
+.cl-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+.cl-meta-pill {
+  font-size: 0.7rem;
+  color: var(--htmd-fg-muted);
+  background: var(--htmd-surface-2);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.cl-note {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  font-family: inherit;
+  font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--htmd-radius-sm);
+  color: var(--htmd-fg);
+  resize: vertical;
+  min-height: 32px;
+}
+.cl-note:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+.cl-note:placeholder-shown { color: var(--htmd-fg-muted); }
+
+.cl-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  right: 1.1rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+}
+.cl-fab:disabled, .cl-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.cl-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+}
+
+.cl-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.cl-modal[hidden] { display: none; }
+.cl-modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.cl-modal-panel {
+  position: relative; background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius);
+  width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cl-modal-panel header {
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cl-modal-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.cl-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.cl-x:hover { background: var(--htmd-surface-2); }
+.cl-modal-pre {
+  margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.cl-modal-panel footer {
+  padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border);
+  display: flex; justify-content: flex-end; gap: 0.5rem;
+}
+.cl-btn {
+  min-height: 40px; padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  cursor: pointer; border: 1px solid transparent;
+}
+.cl-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.cl-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.cl-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cl-toast[hidden] { display: none; }
+.cl-toast.cl-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .cl { padding: 1rem 0.85rem 6rem; }
+  .cl-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .cl-fab, .cl-modal, .cl-toast { display: none !important; }
+  .cl-item { box-shadow: none; break-inside: avoid; }
+}
+
+</style>
+</head>
+<body data-htmd-template="checklist">
+
+    <main class="cl">
+      <header class="cl-head">
+        <h1 class="cl-title">Pre-deploy checklist</h1>
+        <p class="cl-subtitle">Tick items as you complete them. Add notes for anything that needs follow-up.</p>
+        <div class="cl-progress" data-cl-progress aria-live="polite">
+          <span data-cl-done>0</span> of <span>7</span> complete
+        </div>
+      </header>
+
+      <ol class="cl-list">
+        
+    <li class="cl-item" data-cl-item="c1">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c1" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">All tests passing in CI</span>
+          <span class="cl-pri cl-pri-high">high</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@alice</span>
+          
+          <span class="cl-meta-pill">#ci</span><span class="cl-meta-pill">#blocking</span>
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c1" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c2">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c2" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Migration script reviewed by DBA</span>
+          <span class="cl-pri cl-pri-high">high</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@bob</span>
+          <span class="cl-meta-pill">due today</span>
+          <span class="cl-meta-pill">#db</span>
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c2" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c3">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c3" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Rollback plan written and shared</span>
+          <span class="cl-pri cl-pri-med">med</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          <span class="cl-meta-pill">#ops</span>
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c3" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c4">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c4" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Feature flag set to 5% in prod config</span>
+          <span class="cl-pri cl-pri-med">med</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@alice</span>
+          
+          <span class="cl-meta-pill">#flags</span>
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c4" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c5">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c5" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">PagerDuty schedule confirmed for tonight</span>
+          <span class="cl-pri cl-pri-low">low</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@oncall</span>
+          
+          <span class="cl-meta-pill">#ops</span>
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c5" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item cl-done" data-cl-item="c6">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c6" checked>
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Staging smoke test on iOS Safari</span>
+          <span class="cl-pri cl-pri-med">med</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          <span class="cl-meta-pill">#qa</span>
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c6" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="c7">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="c7" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Slack</span>
+          <span class="cl-pri cl-pri-low">low</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@pm</span>
+          
+          <span class="cl-meta-pill">#comms</span>
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="c7" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+      </ol>
+
+      <button type="button" class="cl-fab" data-cl-copy aria-label="Copy progress as prompt">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Copy progress as prompt</span>
+        <span class="cl-fab-badge" data-cl-changed>0</span>
+      </button>
+
+      <div class="cl-modal" data-cl-modal hidden role="dialog" aria-modal="true">
+        <div class="cl-modal-backdrop" data-cl-close></div>
+        <div class="cl-modal-panel">
+          <header><h2>Progress prompt</h2><button type="button" class="cl-x" data-cl-close aria-label="Close">&#x2715;</button></header>
+          <pre class="cl-modal-pre" data-cl-text></pre>
+          <footer>
+            <button type="button" class="cl-btn cl-btn-ghost" data-cl-close>Cancel</button>
+            <button type="button" class="cl-btn cl-btn-primary" data-cl-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="cl-toast" data-cl-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-cl-state data-htmd-state="checklist">{"items":[{"id":"c1","original_done":false,"done":false,"original_note":"","note":"","title":"All tests passing in CI"},{"id":"c2","original_done":false,"done":false,"original_note":"","note":"","title":"Migration script reviewed by DBA"},{"id":"c3","original_done":false,"done":false,"original_note":"","note":"","title":"Rollback plan written and shared"},{"id":"c4","original_done":false,"done":false,"original_note":"","note":"","title":"Feature flag set to 5% in prod config"},{"id":"c5","original_done":false,"done":false,"original_note":"","note":"","title":"PagerDuty schedule confirmed for tonight"},{"id":"c6","original_done":true,"done":true,"original_note":"","note":"","title":"Staging smoke test on iOS Safari"},{"id":"c7","original_done":false,"done":false,"original_note":"","note":"","title":"Slack"}],"title":"Pre-deploy checklist","block_id":"","prompt_intro":"I went through the pre-deploy checklist; here's where I am."}</script>
+    </main>
+  
+<script>
+(function () {
+  const root = document.querySelector('main.cl');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-cl-state]');
+  if (!stateNode) return;
+  let state;
+  try { state = JSON.parse(stateNode.textContent); } catch (e) { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+
+  const fab = root.querySelector('[data-cl-copy]');
+  const changedEl = root.querySelector('[data-cl-changed]');
+  const doneEl = root.querySelector('[data-cl-done]');
+  const modal = root.querySelector('[data-cl-modal]');
+  const modalText = root.querySelector('[data-cl-text]');
+  const toast = root.querySelector('[data-cl-toast]');
+
+  function changedItems() {
+    return state.items.filter((it) =>
+      it.done !== it.original_done || (it.note || '').trim() !== (it.original_note || '').trim()
+    );
+  }
+  function doneCount() { return state.items.filter((it) => it.done).length; }
+
+  function refresh() {
+    const ch = changedItems().length;
+    if (changedEl) changedEl.textContent = ch;
+    if (fab) { fab.disabled = ch === 0; fab.setAttribute('aria-disabled', ch === 0 ? 'true' : 'false'); }
+    if (doneEl) doneEl.textContent = doneCount();
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `I worked through the "${state.title}" checklist; here is the resulting state.`);
+    lines.push('');
+    lines.push(`Date: ${new Date().toISOString()}`);
+    lines.push(`Progress: ${doneCount()} of ${state.items.length} complete`);
+    lines.push('');
+    const ch = changedItems();
+    if (ch.length === 0) {
+      lines.push('No items changed since the agent generated this checklist.');
+      return lines.join('\n');
+    }
+    lines.push('Changes:');
+    let n = 0;
+    for (const it of ch) {
+      n++;
+      const becameDone = it.done && !it.original_done;
+      const becameUndone = !it.done && it.original_done;
+      const noteChanged = (it.note || '').trim() !== (it.original_note || '').trim();
+      lines.push(`${n}. ${it.title}`);
+      if (becameDone) lines.push('   - Completed');
+      if (becameUndone) lines.push('   - Re-opened (was previously marked done)');
+      if (noteChanged) lines.push(`   - Note: ${(it.note || '').trim() || '(cleared)'}`);
+      lines.push('');
+    }
+    lines.push('Please continue from here.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) {
+      try { await navigator.clipboard.writeText(text); return true; } catch {}
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('cl-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('cl-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+
+  function open() {
+    if (changedItems().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return;
+    if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-cl-check]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      const it = idx.get(cb.dataset.clCheck); if (!it) return;
+      it.done = cb.checked;
+      const li = cb.closest('.cl-item'); if (li) li.classList.toggle('cl-done', cb.checked);
+      refresh();
+    });
+  });
+  root.querySelectorAll('[data-cl-note]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.clNote); if (!it) return;
+      it.note = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+      refresh();
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-cl-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-cl-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close();
+    showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  // Register with the compose-level export bridge so a parent compose page can
+  // include this block's prompt in an aggregate "Copy all changes" action.
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'checklist',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changedItems().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
+</body>
+</html>

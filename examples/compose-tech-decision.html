@@ -1,0 +1,2476 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Tech decision: which database for v2?</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+
+.htmd-compose {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+.htmd-prose { line-height: 1.65; }
+.htmd-prose > :first-child { margin-top: 0; }
+.htmd-prose h1, .htmd-prose h2, .htmd-prose h3 { letter-spacing: -0.01em; line-height: 1.2; }
+.htmd-prose h1 { font-size: 2rem; margin: 1.5rem 0 0.75rem; }
+.htmd-prose h2 { font-size: 1.5rem; margin: 1.5rem 0 0.5rem; }
+.htmd-prose h3 { font-size: 1.2rem; margin: 1.25rem 0 0.5rem; }
+.htmd-prose p, .htmd-prose ul, .htmd-prose ol { margin: 0.75rem 0; }
+.htmd-prose pre {
+  background: var(--htmd-surface-2);
+  padding: 1rem;
+  border-radius: var(--htmd-radius-sm);
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+.htmd-prose code {
+  background: var(--htmd-surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.htmd-prose pre code { background: none; padding: 0; }
+.htmd-prose blockquote {
+  border-left: 3px solid var(--htmd-accent);
+  margin: 1rem 0;
+  padding: 0.25rem 1rem;
+  color: var(--htmd-fg-muted);
+}
+.htmd-prose table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+.htmd-prose th, .htmd-prose td {
+  border: 1px solid var(--htmd-border);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+}
+.htmd-prose th { background: var(--htmd-surface-2); }
+
+.htmd-block {
+  position: relative;
+  border-radius: var(--htmd-radius);
+  border: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.htmd-block > main:first-child,
+.htmd-block > section:first-child,
+.htmd-block > div:first-child { padding-top: 0; }
+.htmd-block::before {
+  content: attr(data-htmd-block);
+  position: absolute;
+  top: 0.6rem;
+  right: 0.85rem;
+  z-index: 5;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* In compose mode, per-template FABs (every interactive template has its
+   own bottom-right fixed-position copy button) would all stack at the same
+   viewport corner and overlap each other AND the global compose FAB. Hide
+   them — the compose-level "Copy all changes" button below aggregates every
+   block's export, so per-block FABs are redundant inside a composed page. */
+.htmd-block .fc-fab,
+.htmd-block .cl-fab,
+.htmd-block .qa-fab,
+.htmd-block .al-fab,
+.htmd-block .rk-fab,
+.htmd-block .tr-fab,
+.htmd-block .pm-fab,
+.htmd-block .dm-fab,
+.htmd-block .cmp-fab,
+.htmd-block .ed-fab,
+.htmd-block .cr-fab {
+  display: none !important;
+}
+/* Their modals are hidden by default; hiding the FAB suffices. The transient
+   toasts these templates emit only fire on direct interaction with the FAB,
+   so they won't appear either. */
+
+/* The kanban-board's "Export Markdown" header buttons are NOT fixed-position
+   FABs — they live inside the card. Leave them alone (still useful in compose). */
+/* The data-table "Send edits back" button is in the card header, not a fixed
+   FAB — leave it visible (it has its own modal). */
+.htmd-block .dt-export-btn-edits { display: none !important; }
+/* Same reasoning: edits flow through the global FAB. */
+
+.htmd-block-error {
+  border: 1px solid var(--htmd-danger);
+  background: var(--htmd-danger-soft);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg);
+}
+.htmd-block-error header { font-size: var(--htmd-text-md); margin-bottom: 0.4rem; }
+.htmd-block-error pre {
+  background: var(--htmd-surface);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: 0.78rem;
+  overflow-x: auto;
+  margin-top: 0.4rem;
+}
+
+/* Compose-level export FAB */
+.htmd-cx-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  left: 1.1rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.65rem 1.1rem;
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+}
+.htmd-cx-fab:hover { transform: translateY(-1px); }
+.htmd-cx-fab:disabled, .htmd-cx-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.htmd-cx-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.htmd-cx-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.htmd-cx-modal[hidden] { display: none; }
+.htmd-cx-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.htmd-cx-modal-panel {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow-lg);
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.htmd-cx-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.htmd-cx-modal-head h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.htmd-cx-modal-x {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+.htmd-cx-modal-x:hover { background: var(--htmd-surface-2); }
+.htmd-cx-modal-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--htmd-fg);
+}
+.htmd-cx-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+}
+.htmd-cx-btn {
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.htmd-cx-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.htmd-cx-btn-ghost:hover { background: var(--htmd-surface-2); }
+.htmd-cx-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+.htmd-cx-btn-primary:hover { filter: brightness(1.05); }
+
+.htmd-cx-toast {
+  position: fixed;
+  bottom: 4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.55rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  box-shadow: var(--htmd-shadow-lg);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.18s;
+  pointer-events: none;
+}
+.htmd-cx-toast[hidden] { display: none; }
+.htmd-cx-toast.htmd-cx-toast-show { opacity: 1; }
+
+@media (max-width: 560px) {
+  .htmd-compose { padding: 1.25rem 0.85rem 7rem; gap: 1.25rem; }
+  .htmd-cx-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+
+@media print {
+  .htmd-cx-fab, .htmd-cx-modal, .htmd-cx-toast { display: none !important; }
+  .htmd-block { box-shadow: none; break-inside: avoid; }
+}
+
+.dm {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 6rem;
+}
+.dm-hint {
+  margin-top: 0.4rem;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+.dm-crit-name { font-weight: 600; }
+.dm-weight-input, .dm-cell-input {
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  background: transparent;
+  color: inherit;
+  border: 1px solid transparent;
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  -moz-appearance: textfield;
+}
+.dm-weight-input::-webkit-outer-spin-button,
+.dm-weight-input::-webkit-inner-spin-button,
+.dm-cell-input::-webkit-outer-spin-button,
+.dm-cell-input::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+.dm-weight-input:hover, .dm-cell-input:hover { border-color: var(--htmd-border); }
+.dm-weight-input:focus, .dm-cell-input:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.dm-rationale {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.dm-rationale-label {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+}
+.dm-rationale-input {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  background: var(--htmd-surface);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  resize: vertical; min-height: 50px;
+}
+.dm-rationale-input:focus { outline: none; border-color: var(--htmd-accent); }
+
+.dm-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.dm-fab:disabled, .dm-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.dm-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.dm-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.dm-modal[hidden] { display: none; }
+.dm-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.dm-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 720px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.dm-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.dm-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.dm-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.dm-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.dm-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.dm-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.dm-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.dm-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.dm-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.dm-toast[hidden] { display: none; }
+.dm-toast.dm-toast-show { opacity: 1; }
+.dm-head {
+  margin-bottom: 1.5rem;
+}
+.dm-eyebrow {
+  display: inline-block;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--htmd-accent);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.dm-question {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.dm-context {
+  margin-top: 0.5rem;
+  color: var(--htmd-fg-muted);
+  max-width: 70ch;
+}
+
+.dm-table-wrap {
+  overflow-x: auto;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+}
+.dm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--htmd-text-sm);
+}
+.dm-table th, .dm-table td {
+  padding: 0.7rem 0.85rem;
+  text-align: center;
+  border-bottom: 1px solid var(--htmd-border);
+  vertical-align: middle;
+}
+.dm-table thead th {
+  background: var(--htmd-surface-2);
+  font-weight: 600;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--htmd-fg-muted);
+}
+.dm-table thead .dm-winner {
+  background: var(--htmd-accent-soft);
+  color: var(--htmd-accent);
+}
+.dm-criteria-col, .dm-crit { text-align: left; min-width: 160px; }
+.dm-weight-col, .dm-weight { width: 70px; }
+
+.dm-crit-note {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--htmd-muted);
+  font-weight: normal;
+  margin-top: 0.15rem;
+}
+.dm-weight {
+  font-variant-numeric: tabular-nums;
+  color: var(--htmd-fg-muted);
+}
+
+.dm-cell {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  position: relative;
+  background: color-mix(in srgb, var(--htmd-accent) calc(var(--heat, 0) * 28%), var(--htmd-surface));
+}
+.dm-cell-low { color: var(--htmd-fg); }
+.dm-cell-mid { color: var(--htmd-fg); }
+.dm-cell-good { color: var(--htmd-fg); }
+.dm-cell-val { position: relative; z-index: 1; }
+.dm-empty { color: var(--htmd-muted); }
+
+.dm-total-row td { background: var(--htmd-surface-2); border-top: 2px solid var(--htmd-border); padding-top: 0.9rem; padding-bottom: 0.9rem; }
+.dm-total-label { text-align: right; text-transform: uppercase; font-size: var(--htmd-text-xs); letter-spacing: 0.06em; color: var(--htmd-fg-muted); font-weight: 600; }
+.dm-total {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.dm-total strong { font-size: 1.05rem; }
+.dm-total-bar {
+  height: 6px;
+  background: var(--htmd-border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 0.35rem;
+}
+.dm-total-bar span {
+  display: block;
+  height: 100%;
+  background: var(--htmd-accent);
+  border-radius: 3px;
+}
+.dm-total.dm-winner { background: var(--htmd-accent-soft); color: var(--htmd-accent); }
+.dm-total.dm-winner .dm-total-bar { background: rgba(0,0,0,0.06); }
+
+.dm-rec {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border-radius: var(--htmd-radius);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+  box-shadow: var(--htmd-shadow);
+}
+.dm-rec-pill {
+  background: rgba(255,255,255,0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+.dm-rec strong { font-size: var(--htmd-text-lg); }
+.dm-rec-score {
+  margin-left: auto;
+  font-size: var(--htmd-text-sm);
+  opacity: 0.85;
+}
+
+@media print {
+  body { background: white; }
+  .dm-table-wrap, .dm-rec { box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+}
+
+.cmp {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 6rem;
+}
+.cmp-suggested { margin-top: 0.4rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); }
+.cmp-suggested strong { color: var(--htmd-accent); }
+.cmp-col.cmp-chosen { border-color: var(--htmd-accent); box-shadow: 0 0 0 2px var(--htmd-accent-soft), var(--htmd-shadow); }
+.cmp-note {
+  margin: 0.85rem 1rem 1rem;
+  padding: 0.45rem 0.6rem;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  resize: vertical; min-height: 38px;
+}
+.cmp-note:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.cmp-decision {
+  margin-top: 1.25rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  box-shadow: var(--htmd-shadow);
+}
+.cmp-decision header {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.cmp-pick { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.65rem; }
+.cmp-pick-opt {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  background: var(--htmd-surface-2);
+  border: 1.5px solid var(--htmd-border);
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  cursor: pointer;
+}
+.cmp-pick-opt:hover { border-color: var(--htmd-accent); }
+.cmp-pick-opt input { accent-color: var(--htmd-accent); }
+.cmp-pick-opt:has(input:checked) {
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border-color: var(--htmd-accent);
+}
+.cmp-rat-label {
+  display: block;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+.cmp-rationale {
+  width: 100%;
+  padding: 0.55rem 0.7rem;
+  background: var(--htmd-surface-2);
+  color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius-sm);
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  resize: vertical; min-height: 50px;
+}
+.cmp-rationale:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.cmp-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.cmp-fab:disabled, .cmp-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+
+.cmp-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.cmp-modal[hidden] { display: none; }
+.cmp-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.cmp-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.cmp-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.cmp-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.cmp-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.cmp-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.cmp-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.cmp-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.cmp-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.cmp-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.cmp-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cmp-toast[hidden] { display: none; }
+.cmp-toast.cmp-toast-show { opacity: 1; }
+.cmp-head { margin-bottom: 1.5rem; }
+.cmp-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.cmp-subtitle {
+  margin-top: 0.5rem;
+  color: var(--htmd-fg-muted);
+}
+
+.cmp-grid {
+  display: grid;
+  gap: 1rem;
+}
+.cmp-grid[data-cols="2"] { grid-template-columns: repeat(2, 1fr); }
+.cmp-grid[data-cols="3"] { grid-template-columns: repeat(3, 1fr); }
+.cmp-grid[data-cols="4"] { grid-template-columns: repeat(4, 1fr); }
+@media (max-width: 900px) {
+  .cmp-grid[data-cols="3"], .cmp-grid[data-cols="4"] { grid-template-columns: 1fr; }
+  .cmp-grid[data-cols="2"] { grid-template-columns: 1fr; }
+}
+
+.cmp-col {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cmp-col-head {
+  padding: 1.1rem 1.25rem 1rem;
+  background: var(--htmd-surface-2);
+  border-bottom: 1px solid var(--htmd-border);
+  position: sticky;
+  top: 0;
+}
+.cmp-col-num {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--htmd-accent);
+  margin-bottom: 0.25rem;
+}
+.cmp-col-name {
+  font-size: var(--htmd-text-lg);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.5rem;
+}
+.cmp-summary {
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  line-height: 1.5;
+}
+
+.cmp-block {
+  padding: 0.9rem 1.25rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.cmp-col article:last-child { border-bottom: none; }
+.cmp-block h3 {
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--htmd-fg-muted);
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.cmp-block ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: var(--htmd-text-sm);
+}
+.cmp-block li {
+  padding-left: 1.25rem;
+  position: relative;
+  margin: 0.35rem 0;
+  line-height: 1.4;
+}
+.cmp-pros li::before {
+  content: "+";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--htmd-success);
+  font-weight: 700;
+}
+.cmp-cons li::before {
+  content: "−";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--htmd-danger);
+  font-weight: 700;
+}
+.cmp-pros { background: color-mix(in srgb, var(--htmd-success-soft) 50%, transparent); }
+.cmp-cons { background: color-mix(in srgb, var(--htmd-danger-soft) 50%, transparent); }
+
+.cmp-when p {
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg);
+  line-height: 1.55;
+}
+
+.cmp-code pre {
+  background: var(--htmd-bg);
+  padding: 0.75rem;
+  border-radius: var(--htmd-radius-sm);
+  overflow-x: auto;
+  font-size: 0.78rem;
+  border: 1px solid var(--htmd-border);
+}
+
+.cmp-verdict {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid var(--htmd-accent);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+}
+.cmp-verdict-pill {
+  display: inline-block;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  color: var(--htmd-accent);
+  margin-bottom: 0.5rem;
+}
+.cmp-verdict p { line-height: 1.6; }
+
+.qa {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 5rem;
+}
+.qa-head { margin-bottom: 1rem; }
+.qa-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.qa-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.qa-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.qa-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; counter-reset: qa; gap: 0.85rem; }
+.qa-item {
+  position: relative; counter-increment: qa;
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 1rem 1.1rem 1.1rem 2.6rem;
+  box-shadow: var(--htmd-shadow);
+}
+.qa-item::before {
+  content: counter(qa) ".";
+  position: absolute; left: 1rem; top: 0.95rem;
+  font-weight: 700; color: var(--htmd-accent); font-variant-numeric: tabular-nums;
+}
+.qa-q { font-weight: 600; line-height: 1.45; }
+.qa-context { margin-top: 0.3rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); line-height: 1.5; }
+.qa-text {
+  margin-top: 0.6rem; width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm); line-height: 1.5;
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 60px;
+}
+.qa-text:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+.qa-choices { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.qa-choice {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  cursor: pointer; transition: background 0.12s, border-color 0.12s;
+  min-height: 40px;
+}
+.qa-choice:hover { background: var(--htmd-surface-2); border-color: var(--htmd-accent); }
+.qa-choice input { margin: 0; }
+.qa-choice-text { font-size: var(--htmd-text-sm); }
+.qa-hint { color: var(--htmd-muted); font-size: var(--htmd-text-xs); margin-top: 0.15rem; }
+
+.qa-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px; font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.qa-fab:disabled, .qa-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.qa-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.qa-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.qa-modal[hidden] { display: none; }
+.qa-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.qa-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.qa-panel header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border);
+}
+.qa-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.qa-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.qa-x:hover { background: var(--htmd-surface-2); }
+.qa-pre {
+  margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.qa-panel footer {
+  padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border);
+  display: flex; justify-content: flex-end; gap: 0.5rem;
+}
+.qa-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.qa-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.qa-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.qa-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.qa-toast[hidden] { display: none; }
+.qa-toast.qa-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .qa { padding: 1rem 0.85rem 6rem; }
+  .qa-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .qa-fab, .qa-modal, .qa-toast { display: none !important; }
+  .qa-item { box-shadow: none; break-inside: avoid; }
+}
+
+.al { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.al-head { margin-bottom: 1rem; }
+.al-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.al-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.al-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.al-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+.al-item {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius); padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.al-item.al-decided { border-left-color: var(--al-color, var(--htmd-accent)); }
+.al-item-head { display: flex; gap: 0.75rem; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.al-item-meta { flex: 1 1 60%; min-width: 0; }
+.al-item-title { font-weight: 600; line-height: 1.35; word-break: break-word; }
+.al-item-subtitle { margin-top: 0.15rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); word-break: break-word; }
+.al-mini { font-size: 0.7rem; color: var(--htmd-muted); }
+.al-mini strong { color: var(--htmd-fg); }
+.al-kv { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.85rem; }
+.al-kv-row { display: inline-flex; gap: 0.3rem; font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); }
+.al-kv dt { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--htmd-muted); }
+.al-kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.al-body { margin-top: 0.55rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg); line-height: 1.55; }
+
+.al-actions {
+  margin-top: 0.85rem;
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+}
+.al-btn-action {
+  --al-color: var(--htmd-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 0.4rem 0.95rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border); border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.al-btn-action:hover { border-color: var(--al-color); }
+.al-btn-action[aria-checked="true"] {
+  background: var(--al-color);
+  color: #fff;
+  border-color: var(--al-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--al-color) 22%, transparent);
+}
+
+.al-reason {
+  margin-top: 0.65rem; width: 100%;
+  padding: 0.5rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 38px;
+}
+.al-reason:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.al-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.al-fab:disabled, .al-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.al-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.al-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.al-modal[hidden] { display: none; }
+.al-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.al-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.al-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.al-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.al-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.al-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.al-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.al-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.al-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.al-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.al-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.al-toast[hidden] { display: none; }
+.al-toast.al-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .al { padding: 1rem 0.85rem 6rem; }
+  .al-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .al-fab, .al-modal, .al-toast { display: none !important; }
+  .al-item { box-shadow: none; break-inside: avoid; }
+  .al-actions { display: none; }
+}
+
+</style>
+</head>
+<body data-htmd-template="compose">
+<main class="htmd-compose">
+<section class="htmd-prose"><h1>Tech decision: which database for v2?</h1>
+<p>The platform team needs to choose a database for the v2 backend by end of sprint. Below is the agent&#39;s analysis: a weighted decision matrix, a side-by-side comparison of the top three contenders, a few clarifying questions, and a list of follow-up tasks.</p>
+<p>You can edit any score/weight in the matrix, pick a winner from the comparison, answer the open questions, and decide which migration tasks are approved. The <strong>Copy all changes</strong> button at the bottom-left aggregates everything into one prompt to send back to the agent.</p>
+<h2>The matrix</h2>
+</section>
+<section class="htmd-block" data-htmd-block="decision-matrix" data-htmd-block-idx="0">
+    <main class="dm">
+      <header class="dm-head">
+        <span class="dm-eyebrow">Decision Matrix</span>
+        <h1 class="dm-question">Which database for the v2 backend?</h1>
+        <p class="dm-context">Need to support 100k+ concurrent connections, complex aggregations, ops team of 3. Decision needed by Friday.</p>
+        <p class="dm-hint">Click any score or weight to edit. The recommendation re-computes live.</p>
+      </header>
+
+      <div class="dm-table-wrap">
+        <table class="dm-table" data-dm-table>
+          <thead>
+            <tr>
+              <th class="dm-criteria-col">Criterion</th>
+              <th class="dm-weight-col">Weight</th>
+              
+                <th class="dm-option dm-winner" data-dm-opt="o0" data-dm-opt-idx="0">PostgreSQL (managed)</th>
+              
+                <th class="dm-option " data-dm-opt="o1" data-dm-opt-idx="1">ClickHouse Cloud</th>
+              
+                <th class="dm-option " data-dm-opt="o2" data-dm-opt-idx="2">DynamoDB</th>
+              
+                <th class="dm-option " data-dm-opt="o3" data-dm-opt-idx="3">Self-hosted Cassandra</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            
+    <tr data-dm-row="c0">
+      <td class="dm-crit">
+        <span class="dm-crit-name">Query performance</span>
+        <small class="dm-crit-note">at our 95p workload</small>
+      </td>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c0" value="5" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c0" style="--heat: 0.80">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c0" data-dm-criterion="Query performance" data-dm-option="o0" value="8" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o1:c0" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c0" data-dm-criterion="Query performance" data-dm-option="o1" value="10" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o2:c0" style="--heat: 0.70">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c0" data-dm-criterion="Query performance" data-dm-option="o2" value="7" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o3:c0" style="--heat: 0.80">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c0" data-dm-criterion="Query performance" data-dm-option="o3" value="8" placeholder="—" step="0.5">
+        </td>
+    </tr>
+  
+    <tr data-dm-row="c1">
+      <td class="dm-crit">
+        <span class="dm-crit-name">Operational simplicity</span>
+        
+      </td>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c1" value="4" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c1" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c1" data-dm-criterion="Operational simplicity" data-dm-option="o0" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o1:c1" style="--heat: 0.78">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c1" data-dm-criterion="Operational simplicity" data-dm-option="o1" value="7" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o2:c1" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c1" data-dm-criterion="Operational simplicity" data-dm-option="o2" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c1" style="--heat: 0.33">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c1" data-dm-criterion="Operational simplicity" data-dm-option="o3" value="3" placeholder="—" step="0.5">
+        </td>
+    </tr>
+  
+    <tr data-dm-row="c2">
+      <td class="dm-crit">
+        <span class="dm-crit-name">Cost ($/k req)</span>
+        
+      </td>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c2" value="3" min="0" step="1">
+         <small title="lower is better">↓</small>
+      </td>
+      <td class="dm-cell dm-cell-mid" data-dm-cell="o0:c2" style="--heat: 0.50">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c2" data-dm-criterion="Cost ($/k req)" data-dm-option="o0" value="4" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-low" data-dm-cell="o1:c2" style="--heat: 0.25">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c2" data-dm-criterion="Cost ($/k req)" data-dm-option="o1" value="6" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-low" data-dm-cell="o2:c2" style="--heat: 0.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c2" data-dm-criterion="Cost ($/k req)" data-dm-option="o2" value="8" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c2" style="--heat: 0.63">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c2" data-dm-criterion="Cost ($/k req)" data-dm-option="o3" value="3" placeholder="—" step="0.5">
+        </td>
+    </tr>
+  
+    <tr data-dm-row="c3">
+      <td class="dm-crit">
+        <span class="dm-crit-name">Team familiarity</span>
+        
+      </td>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c3" value="3" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c3" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c3" data-dm-criterion="Team familiarity" data-dm-option="o0" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o1:c3" style="--heat: 0.44">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c3" data-dm-criterion="Team familiarity" data-dm-option="o1" value="4" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o2:c3" style="--heat: 0.56">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c3" data-dm-criterion="Team familiarity" data-dm-option="o2" value="5" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c3" style="--heat: 0.33">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c3" data-dm-criterion="Team familiarity" data-dm-option="o3" value="3" placeholder="—" step="0.5">
+        </td>
+    </tr>
+  
+    <tr data-dm-row="c4">
+      <td class="dm-crit">
+        <span class="dm-crit-name">Ecosystem &amp; tooling</span>
+        
+      </td>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c4" value="2" min="0" step="1">
+        
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c4" style="--heat: 1.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o0" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o1:c4" style="--heat: 0.78">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o1" value="7" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o2:c4" style="--heat: 0.67">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o2" value="6" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o3:c4" style="--heat: 0.56">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c4" data-dm-criterion="Ecosystem &amp; tooling" data-dm-option="o3" value="5" placeholder="—" step="0.5">
+        </td>
+    </tr>
+  
+    <tr data-dm-row="c5">
+      <td class="dm-crit">
+        <span class="dm-crit-name">Vendor lock-in risk</span>
+        
+      </td>
+      <td class="dm-weight">
+        <input type="number" class="dm-weight-input" data-dm-weight="c5" value="2" min="0" step="1">
+         <small title="lower is better">↓</small>
+      </td>
+      <td class="dm-cell dm-cell-good" data-dm-cell="o0:c5" style="--heat: 0.78">
+          <input type="number" class="dm-cell-input" data-dm-score="o0:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o0" value="2" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-mid" data-dm-cell="o1:c5" style="--heat: 0.44">
+          <input type="number" class="dm-cell-input" data-dm-score="o1:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o1" value="5" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-low" data-dm-cell="o2:c5" style="--heat: 0.00">
+          <input type="number" class="dm-cell-input" data-dm-score="o2:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o2" value="9" placeholder="—" step="0.5">
+        </td><td class="dm-cell dm-cell-good" data-dm-cell="o3:c5" style="--heat: 0.89">
+          <input type="number" class="dm-cell-input" data-dm-score="o3:c5" data-dm-criterion="Vendor lock-in risk" data-dm-option="o3" value="1" placeholder="—" step="0.5">
+        </td>
+    </tr>
+  
+            <tr class="dm-total-row">
+              <td colspan="2" class="dm-total-label">Weighted total</td>
+              
+                <td class="dm-total dm-winner" data-dm-total="o0">
+                  <div class="dm-total-bar">
+                    <span data-dm-bar="o0" style="width: 84.5%"></span>
+                  </div>
+                  <strong data-dm-total-val="o0">84.5</strong>
+                </td>
+              
+                <td class="dm-total " data-dm-total="o1">
+                  <div class="dm-total-bar">
+                    <span data-dm-bar="o1" style="width: 66.5%"></span>
+                  </div>
+                  <strong data-dm-total-val="o1">66.5</strong>
+                </td>
+              
+                <td class="dm-total " data-dm-total="o2">
+                  <div class="dm-total-bar">
+                    <span data-dm-bar="o2" style="width: 55.3%"></span>
+                  </div>
+                  <strong data-dm-total-val="o2">55.3</strong>
+                </td>
+              
+                <td class="dm-total " data-dm-total="o3">
+                  <div class="dm-total-bar">
+                    <span data-dm-bar="o3" style="width: 58.4%"></span>
+                  </div>
+                  <strong data-dm-total-val="o3">58.4</strong>
+                </td>
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <aside class="dm-rec" data-dm-rec>
+        <span class="dm-rec-pill">Recommendation</span>
+        <strong data-dm-rec-name>PostgreSQL (managed)</strong>
+        <span class="dm-rec-score" data-dm-rec-score>score 84.5/100</span>
+      </aside>
+
+      <section class="dm-rationale">
+        <label class="dm-rationale-label" for="dm-rationale">Your rationale (optional)</label>
+        <textarea id="dm-rationale" class="dm-rationale-input" data-dm-rationale rows="2" placeholder="Why you'd pick this option (or a different one). Anything the matrix doesn't capture."></textarea>
+      </section>
+
+      <button type="button" class="dm-fab" data-dm-copy aria-label="Send revised matrix back">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send revised matrix back</span>
+        <span class="dm-fab-badge" data-dm-changed>0</span>
+      </button>
+
+      <div class="dm-modal" data-dm-modal hidden role="dialog" aria-modal="true">
+        <div class="dm-backdrop" data-dm-close></div>
+        <div class="dm-panel">
+          <header><h2>Revised matrix</h2><button type="button" class="dm-x" data-dm-close aria-label="Close">&#x2715;</button></header>
+          <pre class="dm-pre" data-dm-text></pre>
+          <footer>
+            <button type="button" class="dm-btn dm-btn-ghost" data-dm-close>Cancel</button>
+            <button type="button" class="dm-btn dm-btn-primary" data-dm-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="dm-toast" data-dm-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-dm-state data-htmd-state="decision-matrix">{"block_id":"","question":"Which database for the v2 backend?","prompt_intro":"My take on the database decision.","criteria":[{"name":"Query performance","weight":5,"direction":"higher_better","note":"at our 95p workload","cid":"c0","original_weight":5},{"name":"Operational simplicity","weight":4,"direction":"higher_better","note":"","cid":"c1","original_weight":4},{"name":"Cost ($/k req)","weight":3,"direction":"lower_better","note":"","cid":"c2","original_weight":3},{"name":"Team familiarity","weight":3,"direction":"higher_better","note":"","cid":"c3","original_weight":3},{"name":"Ecosystem & tooling","weight":2,"direction":"higher_better","note":"","cid":"c4","original_weight":2},{"name":"Vendor lock-in risk","weight":2,"direction":"lower_better","note":"","cid":"c5","original_weight":2}],"options":[{"oid":"o0","name":"PostgreSQL (managed)","scores":{"Query performance":8,"Operational simplicity":9,"Cost ($/k req)":4,"Team familiarity":9,"Ecosystem & tooling":9,"Vendor lock-in risk":2},"original_scores":{"Query performance":8,"Operational simplicity":9,"Cost ($/k req)":4,"Team familiarity":9,"Ecosystem & tooling":9,"Vendor lock-in risk":2}},{"oid":"o1","name":"ClickHouse Cloud","scores":{"Query performance":10,"Operational simplicity":7,"Cost ($/k req)":6,"Team familiarity":4,"Ecosystem & tooling":7,"Vendor lock-in risk":5},"original_scores":{"Query performance":10,"Operational simplicity":7,"Cost ($/k req)":6,"Team familiarity":4,"Ecosystem & tooling":7,"Vendor lock-in risk":5}},{"oid":"o2","name":"DynamoDB","scores":{"Query performance":7,"Operational simplicity":9,"Cost ($/k req)":8,"Team familiarity":5,"Ecosystem & tooling":6,"Vendor lock-in risk":9},"original_scores":{"Query performance":7,"Operational simplicity":9,"Cost ($/k req)":8,"Team familiarity":5,"Ecosystem & tooling":6,"Vendor lock-in risk":9}},{"oid":"o3","name":"Self-hosted Cassandra","scores":{"Query performance":8,"Operational simplicity":3,"Cost ($/k req)":3,"Team familiarity":3,"Ecosystem & tooling":5,"Vendor lock-in risk":1},"original_scores":{"Query performance":8,"Operational simplicity":3,"Cost ($/k req)":3,"Team familiarity":3,"Ecosystem & tooling":5,"Vendor lock-in risk":1}}],"original_recommendation":"PostgreSQL (managed)"}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Side-by-side of the top 3</h2>
+</section>
+<section class="htmd-block" data-htmd-block="comparison-3-up" data-htmd-block-idx="1">
+    <main class="cmp">
+      <header class="cmp-head">
+        <h1 class="cmp-title">Top three options</h1>
+        <p class="cmp-subtitle">Same three options as in the matrix, but with the qualitative reasoning the matrix can&#39;t capture.</p>
+        <p class="cmp-suggested">Agent suggests: <strong>PostgreSQL (managed)</strong></p>
+      </header>
+      <div class="cmp-grid" data-cols="3">
+        
+    <article class="cmp-col" data-cmp-col="a0" data-idx="0">
+      <header class="cmp-col-head">
+        <span class="cmp-col-num">01</span>
+        <h2 class="cmp-col-name">PostgreSQL (managed)</h2>
+        <p class="cmp-summary">A boring, well-understood relational database. Managed by AWS RDS or Cloud SQL.</p>
+      </header>
+      <section class="cmp-block cmp-pros">
+        <h3>Pros</h3>
+        <ul><li>Team has 10+ years of operational experience</li><li>Single source of truth for both OLTP and OLAP via partitioning</li><li>Lowest migration risk</li></ul>
+      </section>
+      <section class="cmp-block cmp-cons">
+        <h3>Cons</h3>
+        <ul><li>May need partitioning + read replicas at our peak</li><li>Aggregations on large tables are slower than columnar</li></ul>
+      </section>
+      
+        <section class="cmp-block cmp-when">
+          <h3>When to use</h3>
+          <p>When team familiarity and operational risk dominate.</p>
+        </section>
+      
+      
+      <textarea class="cmp-note" data-cmp-note="a0" rows="1" placeholder="Note on PostgreSQL (managed)…"></textarea>
+    </article>
+  
+    <article class="cmp-col" data-cmp-col="a1" data-idx="1">
+      <header class="cmp-col-head">
+        <span class="cmp-col-num">02</span>
+        <h2 class="cmp-col-name">ClickHouse Cloud</h2>
+        <p class="cmp-summary">Columnar, optimized for aggregations. Hosted by ClickHouse Inc.</p>
+      </header>
+      <section class="cmp-block cmp-pros">
+        <h3>Pros</h3>
+        <ul><li>10x faster for analytical queries at our shape</li><li>Compression makes storage near-free</li><li>Native S3 integration for cold tier</li></ul>
+      </section>
+      <section class="cmp-block cmp-cons">
+        <h3>Cons</h3>
+        <ul><li>Team has zero ops experience with it</li><li>Joins between tables remain expensive</li><li>Vendor lock-in (their cloud, their pricing)</li></ul>
+      </section>
+      
+        <section class="cmp-block cmp-when">
+          <h3>When to use</h3>
+          <p>When analytical queries dominate the workload.</p>
+        </section>
+      
+      
+      <textarea class="cmp-note" data-cmp-note="a1" rows="1" placeholder="Note on ClickHouse Cloud…"></textarea>
+    </article>
+  
+    <article class="cmp-col" data-cmp-col="a2" data-idx="2">
+      <header class="cmp-col-head">
+        <span class="cmp-col-num">03</span>
+        <h2 class="cmp-col-name">DynamoDB</h2>
+        <p class="cmp-summary">Managed key-value store with global tables.</p>
+      </header>
+      <section class="cmp-block cmp-pros">
+        <h3>Pros</h3>
+        <ul><li>Single-digit ms latency at any scale</li><li>Zero ops, fully managed</li><li>Pay-per-request pricing scales linearly</li></ul>
+      </section>
+      <section class="cmp-block cmp-cons">
+        <h3>Cons</h3>
+        <ul><li>No SQL — every query needs a pre-built index</li><li>Aggregations require export to a separate system</li><li>Hard lock-in to AWS</li></ul>
+      </section>
+      
+        <section class="cmp-block cmp-when">
+          <h3>When to use</h3>
+          <p>When access patterns are simple and predictable.</p>
+        </section>
+      
+      
+      <textarea class="cmp-note" data-cmp-note="a2" rows="1" placeholder="Note on DynamoDB…"></textarea>
+    </article>
+  
+      </div>
+      
+        <aside class="cmp-verdict">
+          <span class="cmp-verdict-pill">Agent's verdict</span>
+          <p><p>Postgres is boring and that&#39;s exactly why I&#39;d pick it. ClickHouse is faster for the ~30% of our workload that&#39;s analytical, but adopting a new database for that fraction risks the rest. Re-evaluate in 12 months when the analytical workload may dominate.</p>
+</p>
+        </aside>
+      
+
+      <section class="cmp-decision">
+        <header>Your decision</header>
+        <div class="cmp-pick" role="radiogroup" aria-label="Pick the option you'd choose">
+          
+            <label class="cmp-pick-opt">
+              <input type="radio" name="cmp-pick" value="a0" data-cmp-pick>
+              <span class="cmp-pick-text">PostgreSQL (managed)</span>
+            </label>
+          
+            <label class="cmp-pick-opt">
+              <input type="radio" name="cmp-pick" value="a1" data-cmp-pick>
+              <span class="cmp-pick-text">ClickHouse Cloud</span>
+            </label>
+          
+            <label class="cmp-pick-opt">
+              <input type="radio" name="cmp-pick" value="a2" data-cmp-pick>
+              <span class="cmp-pick-text">DynamoDB</span>
+            </label>
+          
+          <label class="cmp-pick-opt">
+            <input type="radio" name="cmp-pick" value="__none__" data-cmp-pick>
+            <span class="cmp-pick-text">None / something else</span>
+          </label>
+        </div>
+        <label class="cmp-rat-label" for="cmp-rationale">Rationale (optional)</label>
+        <textarea id="cmp-rationale" class="cmp-rationale" data-cmp-rationale rows="2" placeholder="Why this option (or why none of them)?"></textarea>
+      </section>
+
+      <button type="button" class="cmp-fab" data-cmp-copy aria-label="Send decision back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send decision back</span>
+      </button>
+
+      <div class="cmp-modal" data-cmp-modal hidden role="dialog" aria-modal="true">
+        <div class="cmp-backdrop" data-cmp-close></div>
+        <div class="cmp-panel">
+          <header><h2>Decision</h2><button type="button" class="cmp-x" data-cmp-close aria-label="Close">&#x2715;</button></header>
+          <pre class="cmp-pre" data-cmp-text></pre>
+          <footer>
+            <button type="button" class="cmp-btn cmp-btn-ghost" data-cmp-close>Cancel</button>
+            <button type="button" class="cmp-btn cmp-btn-primary" data-cmp-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="cmp-toast" data-cmp-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-cmp-state data-htmd-state="comparison-3-up">{"block_id":"","title":"Top three options","prompt_intro":"My pick from the comparison.","suggested":"PostgreSQL (managed)","approaches":[{"aid":"a0","name":"PostgreSQL (managed)","note":""},{"aid":"a1","name":"ClickHouse Cloud","note":""},{"aid":"a2","name":"DynamoDB","note":""}],"chosen":"","rationale":""}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Questions I need answered before locking this in</h2>
+</section>
+<section class="htmd-block" data-htmd-block="q-and-a" data-htmd-block-idx="2">
+    <main class="qa">
+      <header class="qa-head">
+        <h1 class="qa-title">Open questions</h1>
+        
+        <div class="qa-progress" data-qa-progress aria-live="polite">
+          <span data-qa-answered>0</span> of <span>3</span> answered
+        </div>
+      </header>
+
+      <ol class="qa-list">
+        
+    <li class="qa-item" data-qa-item="q1">
+      <div class="qa-q">Will the analytical workload (currently ~30% of queries) likely grow to &gt;50% in the next 12 months?</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="radio" name="qa-q1" value="Yes — likely &gt;50%" data-qa-input="q1" data-qa-kind="single">
+              <span class="qa-choice-text">Yes — likely &gt;50%</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q1" value="No — staying around 30%" data-qa-input="q1" data-qa-kind="single">
+              <span class="qa-choice-text">No — staying around 30%</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q1" value="Don&#39;t know" data-qa-input="q1" data-qa-kind="single">
+              <span class="qa-choice-text">Don&#39;t know</span>
+            </label>
+          
+        
+      </div>
+    
+    </li>
+  
+    <li class="qa-item" data-qa-item="q2">
+      <div class="qa-q">Is on-call burden a hard constraint? (i.e., would adding ops complexity kill this)</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="radio" name="qa-q2" value="Hard constraint — must not add ops burden" data-qa-input="q2" data-qa-kind="single">
+              <span class="qa-choice-text">Hard constraint — must not add ops burden</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q2" value="Soft — willing to add ops if perf wins" data-qa-input="q2" data-qa-kind="single">
+              <span class="qa-choice-text">Soft — willing to add ops if perf wins</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q2" value="No constraint" data-qa-input="q2" data-qa-kind="single">
+              <span class="qa-choice-text">No constraint</span>
+            </label>
+          
+        
+      </div>
+    
+    </li>
+  
+    <li class="qa-item" data-qa-item="q3">
+      <div class="qa-q">Are there compliance / data-residency requirements that exclude any of the cloud-hosted options?</div>
+      
+      
+    <textarea class="qa-text" rows="2" data-qa-input="q3" data-qa-kind="free" placeholder="GDPR, HIPAA, anything else?"></textarea>
+  
+    </li>
+  
+      </ol>
+
+      <button type="button" class="qa-fab" data-qa-copy aria-label="Copy answers as prompt">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send answers back</span>
+        <span class="qa-fab-badge" data-qa-count>0</span>
+      </button>
+
+      <div class="qa-modal" data-qa-modal hidden role="dialog" aria-modal="true">
+        <div class="qa-backdrop" data-qa-close></div>
+        <div class="qa-panel">
+          <header><h2>Answer prompt</h2><button type="button" class="qa-x" data-qa-close aria-label="Close">&#x2715;</button></header>
+          <pre class="qa-pre" data-qa-text></pre>
+          <footer>
+            <button type="button" class="qa-btn qa-btn-ghost" data-qa-close>Cancel</button>
+            <button type="button" class="qa-btn qa-btn-primary" data-qa-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="qa-toast" data-qa-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-qa-state data-htmd-state="q-and-a">{"block_id":"","title":"Open questions","prompt_intro":"Answers to the open database-decision questions.","questions":[{"id":"q1","prompt":"Will the analytical workload (currently ~30% of queries) likely grow to >50% in the next 12 months?","kind":"single","answer":"","original_answer":""},{"id":"q2","prompt":"Is on-call burden a hard constraint? (i.e., would adding ops complexity kill this)","kind":"single","answer":"","original_answer":""},{"id":"q3","prompt":"Are there compliance / data-residency requirements that exclude any of the cloud-hosted options?","kind":"free","answer":"","original_answer":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Migration plan — please approve / hold per task</h2>
+<p>If we go with Postgres, here are the work items I&#39;d queue. Pick approve / reject / hold per item.</p>
+</section>
+<section class="htmd-block" data-htmd-block="approval-list" data-htmd-block-idx="3">
+    <main class="al">
+      <header class="al-head">
+        <h1 class="al-title">Migration tasks (assuming Postgres is the choice)</h1>
+        
+        <div class="al-progress" data-al-progress aria-live="polite"><span data-al-decided>0</span> of <span>6</span> decided</div>
+      </header>
+
+      <style>[data-al-color="approve"]{--al-color:#16a34a;}[data-al-color="reject"]{--al-color:#dc2626;}[data-al-color="hold"]{--al-color:#d97706;}</style>
+
+      <ol class="al-list">
+        
+    <li class="al-item" data-al-item="m1">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">Set up RDS Postgres in staging with a 50% prod data dump</div>
+          
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">One-week effort, no production risk.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="m1" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="m1" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="m1" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="m1" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="m2">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">Build the dual-write layer (writes to both old DB and Postgres)</div>
+          
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">2-3 weeks. Critical path. Requires a feature flag.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="m2" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="m2" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="m2" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="m2" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="m3">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">Backfill historical data with throttled batch job</div>
+          
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">Runs over 2-3 days off-peak.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="m3" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="m3" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="m3" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="m3" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="m4">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">Migrate the analytical queries to materialized views</div>
+          
+          
+        </div>
+        <span class="al-mini">suggested: <strong>hold</strong></span>
+      </header>
+      <p class="al-body">Could wait until after cutover; risks scope creep.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="m4" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="m4" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="m4" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="m4" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="m5">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">Cut over reads (10%, then 50%, then 100%)</div>
+          
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">Requires the dual-write to be solid first.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="m5" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="m5" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="m5" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="m5" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="m6">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">Decommission the old DB and reclaim the budget line</div>
+          
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">Final cleanup; saves ~$1.8k/mo.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="m6" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="m6" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="m6" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="m6" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+      </ol>
+
+      <button type="button" class="al-fab" data-al-copy aria-label="Send decisions back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send decisions back</span>
+        <span class="al-fab-badge" data-al-count>0</span>
+      </button>
+
+      <div class="al-modal" data-al-modal hidden role="dialog" aria-modal="true">
+        <div class="al-backdrop" data-al-close></div>
+        <div class="al-panel">
+          <header><h2>Decisions</h2><button type="button" class="al-x" data-al-close aria-label="Close">&#x2715;</button></header>
+          <pre class="al-pre" data-al-text></pre>
+          <footer>
+            <button type="button" class="al-btn al-btn-ghost" data-al-close>Cancel</button>
+            <button type="button" class="al-btn al-btn-primary" data-al-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="al-toast" data-al-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-al-state data-htmd-state="approval-list">{"block_id":"","title":"Migration tasks (assuming Postgres is the choice)","prompt_intro":"Decisions on the migration tasks.","actions":[{"value":"approve","label":"Approve","color":"#16a34a"},{"value":"reject","label":"Reject","color":"#dc2626"},{"value":"hold","label":"Hold","color":"#d97706"}],"items":[{"id":"m1","title":"Set up RDS Postgres in staging with a 50% prod data dump","decision":"","reason":""},{"id":"m2","title":"Build the dual-write layer (writes to both old DB and Postgres)","decision":"","reason":""},{"id":"m3","title":"Backfill historical data with throttled batch job","decision":"","reason":""},{"id":"m4","title":"Migrate the analytical queries to materialized views","decision":"","reason":""},{"id":"m5","title":"Cut over reads (10%, then 50%, then 100%)","decision":"","reason":""},{"id":"m6","title":"Decommission the old DB and reclaim the budget line","decision":"","reason":""}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><hr>
+<p>When you&#39;re done, hit <strong>Copy all changes</strong> at the bottom-left to send the revised matrix, your decision, the answers, and the approved task list back as one prompt.</p>
+</section>
+
+<button type="button" class="htmd-cx-fab" data-htmd-cx-export aria-label="Copy all changes back to agent">
+  <span aria-hidden="true">&#x21B5;</span>
+  <span>Copy all changes</span>
+  <span class="htmd-cx-fab-badge" data-htmd-cx-count>0</span>
+</button>
+<div class="htmd-cx-modal" data-htmd-cx-modal hidden role="dialog" aria-modal="true" aria-labelledby="htmd-cx-title">
+  <div class="htmd-cx-modal-backdrop" data-htmd-cx-close></div>
+  <div class="htmd-cx-modal-panel">
+    <header class="htmd-cx-modal-head">
+      <h2 id="htmd-cx-title">Aggregated agent prompt</h2>
+      <button type="button" class="htmd-cx-modal-x" data-htmd-cx-close aria-label="Close">&#x2715;</button>
+    </header>
+    <pre class="htmd-cx-modal-pre" data-htmd-cx-text></pre>
+    <footer class="htmd-cx-modal-foot">
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-ghost" data-htmd-cx-close>Cancel</button>
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-primary" data-htmd-cx-confirm>Copy</button>
+    </footer>
+  </div>
+</div>
+<div class="htmd-cx-toast" data-htmd-cx-toast hidden role="status" aria-live="polite"></div>
+
+</main>
+<script>
+(function () {
+  const root = document.querySelector('main.dm');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-dm-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const fab = root.querySelector('[data-dm-copy]');
+  const changedEl = root.querySelector('[data-dm-changed]');
+  const modal = root.querySelector('[data-dm-modal]');
+  const modalText = root.querySelector('[data-dm-text]');
+  const toast = root.querySelector('[data-dm-toast]');
+  const recName = root.querySelector('[data-dm-rec-name]');
+  const recScore = root.querySelector('[data-dm-rec-score]');
+  const rationale = root.querySelector('[data-dm-rationale]');
+
+  const critByCid = new Map();
+  const critByName = new Map();
+  state.criteria.forEach((c) => { critByCid.set(c.cid, c); critByName.set(c.name, c); });
+  const optByOid = new Map();
+  state.options.forEach((o) => optByOid.set(o.oid, o));
+
+  function computeTotals() {
+    return state.options.map((opt) => {
+      let total = 0; let wSum = 0;
+      for (const c of state.criteria) {
+        const raw = opt.scores[c.name];
+        if (typeof raw !== 'number' || !isFinite(raw)) continue;
+        const all = state.options.map((o) => o.scores[c.name]).filter((x) => typeof x === 'number' && isFinite(x));
+        if (!all.length) continue;
+        const max = Math.max(...all, 1);
+        const min = Math.min(...all, 0);
+        const range = max - min || 1;
+        const norm = c.direction === 'lower_better' ? 1 - (raw - min) / range : (raw - min) / range;
+        total += norm * (c.weight || 1);
+        wSum += c.weight || 1;
+      }
+      return wSum > 0 ? total / wSum : 0;
+    });
+  }
+  function heatFor(rawVal, criterionName) {
+    const c = critByName.get(criterionName); if (!c) return null;
+    const all = state.options.map((o) => o.scores[criterionName]).filter((x) => typeof x === 'number' && isFinite(x));
+    if (!all.length || typeof rawVal !== 'number') return null;
+    const max = Math.max(...all, 1); const min = Math.min(...all, 0); const range = max - min || 1;
+    const norm = c.direction === 'lower_better' ? 1 - (rawVal - min) / range : (rawVal - min) / range;
+    return Math.max(0, Math.min(1, norm));
+  }
+  function toneFor(heat) {
+    if (heat == null) return 'empty';
+    if (heat >= 0.66) return 'good';
+    if (heat >= 0.33) return 'mid';
+    return 'low';
+  }
+
+  function changes() {
+    const c = [];
+    state.criteria.forEach((cr) => {
+      if (cr.weight !== cr.original_weight) c.push({ kind: 'weight', criterion: cr.name, was: cr.original_weight, now: cr.weight });
+    });
+    state.options.forEach((o) => {
+      Object.keys({ ...o.scores, ...o.original_scores }).forEach((k) => {
+        const a = o.original_scores[k]; const b = o.scores[k];
+        if ((typeof a !== 'number' && typeof b !== 'number')) return;
+        if (a !== b) c.push({ kind: 'score', option: o.name, criterion: k, was: a, now: b });
+      });
+    });
+    if (rationale && rationale.value.trim()) c.push({ kind: 'rationale', text: rationale.value.trim() });
+    return c;
+  }
+
+  function refresh() {
+    const totals = computeTotals();
+    let winnerIdx = -1;
+    let max = -Infinity;
+    totals.forEach((t, i) => { if (t > max) { max = t; winnerIdx = i; } });
+
+    state.options.forEach((o, i) => {
+      const bar = root.querySelector(`[data-dm-bar="${cssEscape(o.oid)}"]`);
+      const val = root.querySelector(`[data-dm-total-val="${cssEscape(o.oid)}"]`);
+      const head = root.querySelector(`[data-dm-opt="${cssEscape(o.oid)}"]`);
+      const totalCell = root.querySelector(`[data-dm-total="${cssEscape(o.oid)}"]`);
+      if (bar) bar.style.width = (totals[i] * 100).toFixed(1) + '%';
+      if (val) val.textContent = (totals[i] * 100).toFixed(1);
+      if (head) head.classList.toggle('dm-winner', i === winnerIdx);
+      if (totalCell) totalCell.classList.toggle('dm-winner', i === winnerIdx);
+    });
+    if (recName) recName.textContent = winnerIdx >= 0 ? state.options[winnerIdx].name : '—';
+    if (recScore) recScore.textContent = winnerIdx >= 0 ? `score ${(totals[winnerIdx] * 100).toFixed(1)}/100` : '';
+
+    // Update cell heat colors
+    root.querySelectorAll('[data-dm-cell]').forEach((cell) => {
+      const [oid, cid] = cell.dataset.dmCell.split(':');
+      const c = critByCid.get(cid); const o = optByOid.get(oid);
+      if (!c || !o) return;
+      const h = heatFor(o.scores[c.name], c.name);
+      cell.style.setProperty('--heat', h == null ? 0 : h.toFixed(2));
+      cell.className = `dm-cell dm-cell-${toneFor(h)}`;
+    });
+
+    const ch = changes();
+    if (changedEl) changedEl.textContent = ch.length;
+    if (fab) { fab.disabled = ch.length === 0; fab.setAttribute('aria-disabled', ch.length === 0 ? 'true' : 'false'); }
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Revised decision matrix for: "${state.question}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    const totals = computeTotals();
+    let winnerIdx = -1; let max = -Infinity;
+    totals.forEach((t, i) => { if (t > max) { max = t; winnerIdx = i; } });
+    lines.push(`Original recommendation: ${state.original_recommendation || '(none)'}`);
+    lines.push(`My recommendation: ${winnerIdx >= 0 ? state.options[winnerIdx].name : '(none)'} (score ${winnerIdx >= 0 ? (totals[winnerIdx] * 100).toFixed(1) : '—'}/100)`);
+    lines.push('');
+    const ch = changes();
+    if (ch.length === 0) { lines.push('No changes to scores or weights.'); return lines.join('\n'); }
+    lines.push('Changes:');
+    ch.forEach((c, i) => {
+      if (c.kind === 'weight') lines.push(`${i + 1}. Weight for "${c.criterion}": ${c.was} → ${c.now}`);
+      else if (c.kind === 'score') lines.push(`${i + 1}. Score for "${c.option}" / "${c.criterion}": ${c.was ?? '—'} → ${c.now ?? '—'}`);
+      else if (c.kind === 'rationale') {
+        lines.push(`${i + 1}. Rationale:`);
+        c.text.split('\n').forEach((l) => lines.push(`   ${l}`));
+      }
+    });
+    lines.push(''); lines.push('Full revised scoring:'); lines.push('');
+    lines.push('| Criterion | Weight | ' + state.options.map((o) => o.name).join(' | ') + ' |');
+    lines.push('|---|---:|' + state.options.map(() => '---:').join('|') + '|');
+    state.criteria.forEach((c) => {
+      lines.push(`| ${c.name}${c.direction === 'lower_better' ? ' (↓)' : ''} | ${c.weight} | ` +
+        state.options.map((o) => o.scores[c.name] ?? '').join(' | ') + ' |');
+    });
+    lines.push(`| **Total** |  | ${totals.map((t) => `**${(t * 100).toFixed(1)}**`).join(' | ')} |`);
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('dm-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('dm-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (changes().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_:-]/g, (c) => '\\' + c);
+  }
+
+  // Score edits
+  root.querySelectorAll('[data-dm-score]').forEach((inp) => {
+    inp.addEventListener('input', () => {
+      const [oid, cid] = inp.dataset.dmScore.split(':');
+      const c = critByCid.get(cid); const o = optByOid.get(oid);
+      if (!c || !o) return;
+      const v = inp.value.trim();
+      o.scores[c.name] = v === '' ? null : parseFloat(v);
+      if (typeof o.scores[c.name] === 'number' && !isFinite(o.scores[c.name])) o.scores[c.name] = null;
+      refresh();
+    });
+  });
+  // Weight edits
+  root.querySelectorAll('[data-dm-weight]').forEach((inp) => {
+    inp.addEventListener('input', () => {
+      const c = critByCid.get(inp.dataset.dmWeight); if (!c) return;
+      const v = parseFloat(inp.value);
+      c.weight = isFinite(v) ? v : 0;
+      refresh();
+    });
+  });
+  if (rationale) rationale.addEventListener('input', refresh);
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-dm-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-dm-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'decision-matrix',
+    blockId: state.block_id || state.question,
+    hasChanges: () => changes().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.cmp');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-cmp-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const fab = root.querySelector('[data-cmp-copy]');
+  const modal = root.querySelector('[data-cmp-modal]');
+  const modalText = root.querySelector('[data-cmp-text]');
+  const toast = root.querySelector('[data-cmp-toast]');
+  const rationale = root.querySelector('[data-cmp-rationale]');
+
+  function aById(aid) { return state.approaches.find((a) => a.aid === aid); }
+
+  function isChanged() {
+    if (state.chosen) return true;
+    if ((state.rationale || '').trim()) return true;
+    return state.approaches.some((a) => (a.note || '').trim() !== '');
+  }
+  function refresh() {
+    if (fab) {
+      const ch = isChanged();
+      fab.disabled = !ch;
+      fab.setAttribute('aria-disabled', ch ? 'false' : 'true');
+    }
+    // Visually mark the chosen column
+    root.querySelectorAll('[data-cmp-col]').forEach((col) => col.classList.remove('cmp-chosen'));
+    if (state.chosen && state.chosen !== '__none__') {
+      const col = root.querySelector(`[data-cmp-col="${cssEscape(state.chosen)}"]`);
+      if (col) col.classList.add('cmp-chosen');
+    }
+  }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `My decision on "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    if (state.suggested) lines.push(`Agent suggested: ${state.suggested}`);
+    let chosenName = '(none picked)';
+    if (state.chosen === '__none__') chosenName = 'None of the above';
+    else if (state.chosen) {
+      const a = aById(state.chosen);
+      chosenName = a ? a.name : state.chosen;
+    }
+    lines.push(`I'd choose: ${chosenName}`);
+    if ((state.rationale || '').trim()) {
+      lines.push(''); lines.push('Rationale:'); state.rationale.split('\n').forEach((l) => lines.push(`  ${l}`));
+    }
+    const notes = state.approaches.filter((a) => (a.note || '').trim() !== '');
+    if (notes.length) {
+      lines.push(''); lines.push('Per-option notes:');
+      notes.forEach((a) => { lines.push(`  ${a.name}:`); a.note.split('\n').forEach((l) => lines.push(`    ${l}`)); });
+    }
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('cmp-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('cmp-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (!isChanged()) { showToast('Pick an option or add a note first'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-cmp-pick]').forEach((r) => {
+    r.addEventListener('change', () => { state.chosen = r.value; refresh(); });
+  });
+  root.querySelectorAll('[data-cmp-note]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const a = aById(ta.dataset.cmpNote); if (!a) return;
+      a.note = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+      refresh();
+    });
+  });
+  if (rationale) rationale.addEventListener('input', () => { state.rationale = rationale.value; refresh(); });
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-cmp-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-cmp-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'comparison-3-up',
+    blockId: state.block_id || state.title,
+    hasChanges: () => isChanged(),
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.qa');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-qa-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch (e) { return; }
+
+  const idx = new Map();
+  state.questions.forEach((q) => idx.set(q.id, q));
+
+  const fab = root.querySelector('[data-qa-copy]');
+  const countEl = root.querySelector('[data-qa-count]');
+  const ansEl = root.querySelector('[data-qa-answered]');
+  const modal = root.querySelector('[data-qa-modal]');
+  const modalText = root.querySelector('[data-qa-text]');
+  const toast = root.querySelector('[data-qa-toast]');
+
+  function isAnswered(q) {
+    if (q.kind === 'multi') return Array.isArray(q.answer) && q.answer.length > 0;
+    return (q.answer || '').toString().trim() !== '';
+  }
+  function answeredCount() { return state.questions.filter(isAnswered).length; }
+
+  function refresh() {
+    const n = answeredCount();
+    if (countEl) countEl.textContent = n;
+    if (ansEl) ansEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Here are answers to the clarifying questions for "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const q of state.questions) {
+      n++;
+      lines.push(`${n}. ${q.prompt}`);
+      if (!isAnswered(q)) { lines.push('   Answer: (skipped)'); }
+      else if (Array.isArray(q.answer)) { lines.push(`   Answer: ${q.answer.join(', ')}`); }
+      else { lines.push(`   Answer: ${q.answer}`); }
+      lines.push('');
+    }
+    lines.push('Please proceed using these answers.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('qa-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('qa-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (answeredCount() === 0) { showToast('No answers yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-qa-input]').forEach((el) => {
+    const evt = el.tagName === 'TEXTAREA' || el.type === 'text' ? 'input' : 'change';
+    el.addEventListener(evt, () => {
+      const id = el.dataset.qaInput;
+      const q = idx.get(id); if (!q) return;
+      const kind = el.dataset.qaKind || q.kind;
+      if (kind === 'multi') {
+        const all = root.querySelectorAll(`[data-qa-input="${id}"]:checked`);
+        q.answer = Array.from(all).map((n) => n.value);
+      } else if (kind === 'single') {
+        q.answer = el.value;
+      } else {
+        q.answer = el.value;
+      }
+      refresh();
+    });
+  });
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-qa-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-qa-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'q-and-a',
+    blockId: state.block_id || state.title,
+    hasChanges: () => answeredCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.al');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-al-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+  const actionByValue = new Map();
+  state.actions.forEach((a) => actionByValue.set(a.value, a));
+
+  const fab = root.querySelector('[data-al-copy]');
+  const countEl = root.querySelector('[data-al-count]');
+  const decEl = root.querySelector('[data-al-decided]');
+  const modal = root.querySelector('[data-al-modal]');
+  const modalText = root.querySelector('[data-al-text]');
+  const toast = root.querySelector('[data-al-toast]');
+
+  function decided(it) { return !!it.decision; }
+  function decidedCount() { return state.items.filter(decided).length; }
+
+  function refresh() {
+    const n = decidedCount();
+    if (countEl) countEl.textContent = n;
+    if (decEl) decEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function updateItemUi(itemId) {
+    const it = idx.get(itemId); if (!it) return;
+    const card = root.querySelector(`[data-al-item="${cssEscape(itemId)}"]`);
+    if (!card) return;
+    card.classList.toggle('al-decided', decided(it));
+    const action = actionByValue.get(it.decision);
+    if (action) card.style.setProperty('--al-color', action.color || 'var(--htmd-accent)');
+    card.querySelectorAll('[data-al-decision]').forEach((btn) => {
+      const sel = btn.dataset.alDecision === it.decision;
+      btn.setAttribute('aria-checked', sel ? 'true' : 'false');
+    });
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Decisions on "${state.title}":`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const it of state.items) {
+      if (!decided(it)) continue;
+      n++;
+      const action = actionByValue.get(it.decision);
+      lines.push(`${n}. ${it.title}`);
+      lines.push(`   Decision: ${action ? action.label : it.decision}`);
+      const r = (it.reason || '').trim();
+      if (r) lines.push(`   Reason: ${r}`);
+      lines.push('');
+    }
+    if (n === 0) lines.push('(no decisions made)');
+    else lines.push('Please proceed accordingly.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('al-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('al-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (decidedCount() === 0) { showToast('No decisions yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  root.querySelectorAll('[data-al-decision]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.alDecisionItem;
+      const value = btn.dataset.alDecision;
+      const it = idx.get(itemId); if (!it) return;
+      it.decision = it.decision === value ? '' : value;
+      updateItemUi(itemId);
+      refresh();
+    });
+  });
+  root.querySelectorAll('[data-al-reason]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.alReason); if (!it) return;
+      it.reason = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-al-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-al-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'approval-list',
+    blockId: state.block_id || state.title,
+    hasChanges: () => decidedCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+
+(function () {
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  const reg = window.__htmd;
+  const fab = document.querySelector('[data-htmd-cx-export]');
+  const countEl = document.querySelector('[data-htmd-cx-count]');
+  const modal = document.querySelector('[data-htmd-cx-modal]');
+  const modalText = document.querySelector('[data-htmd-cx-text]');
+  const toast = document.querySelector('[data-htmd-cx-toast]');
+  if (!fab) return;
+
+  function changedBlocks() {
+    return reg.blocks.filter((b) => {
+      try { return typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; }
+      catch { return false; }
+    });
+  }
+
+  function refresh() {
+    const n = changedBlocks().length;
+    if (countEl) countEl.textContent = n;
+    fab.disabled = n === 0;
+    fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+  }
+
+  function buildAggregatePrompt() {
+    const parts = [];
+    parts.push('I reviewed your output in the browser and have the following changes/answers across multiple blocks. Please proceed accordingly.');
+    parts.push('');
+    let n = 0;
+    for (const b of reg.blocks) {
+      let changes = false;
+      try { changes = typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; } catch { changes = false; }
+      if (!changes) continue;
+      let promptText = '';
+      try { promptText = b.getPrompt ? b.getPrompt() : ''; } catch (e) { promptText = '(error generating prompt: ' + e.message + ')'; }
+      if (!promptText) continue;
+      n++;
+      parts.push('---');
+      parts.push('Block ' + n + ' (' + (b.template || 'unknown') + (b.blockId ? ' #' + b.blockId : '') + '):');
+      parts.push('');
+      parts.push(promptText.trim());
+      parts.push('');
+    }
+    if (n === 0) parts.push('(no changes recorded)');
+    return parts.join('\n');
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    void toast.offsetWidth;
+    toast.classList.add('htmd-cx-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.classList.remove('htmd-cx-toast-show');
+      setTimeout(() => toast.setAttribute('hidden', ''), 220);
+    }, 1800);
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function open() {
+    if (changedBlocks().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return;
+    if (modalText) modalText.textContent = buildAggregatePrompt();
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  fab.addEventListener('click', open);
+  document.querySelectorAll('[data-htmd-cx-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = document.querySelector('[data-htmd-cx-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildAggregatePrompt();
+    const ok = await copyText(text);
+    close();
+    showToast(ok ? 'Copied to clipboard' : 'Copy failed — see console');
+    if (!ok) console.log(text);
+  });
+
+  // Poll for changes (cheap; covers the case where a block doesn't dispatch events).
+  setInterval(refresh, 800);
+  refresh();
+})();
+
+</script>
+</body>
+</html>

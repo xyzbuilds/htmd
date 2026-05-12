@@ -1,0 +1,21 @@
+title: Sprint backlog — please confirm story points and owner
+subtitle: "Edit any cell that needs updating. Sort/filter as you like. The yellow Send-edits button appears once you make changes."
+prompt_intro: Updates to the sprint backlog after planning.
+editable: true
+row_key: title
+columns:
+  - { key: ticket,   label: Ticket,    type: mono, editable: false, width: "9rem" }
+  - { key: title,    label: Title,     editable: false }
+  - { key: priority, label: Priority,  type: badge, align: center, width: "6rem" }
+  - { key: points,   label: Points,    type: number, align: right, width: "5rem" }
+  - { key: owner,    label: Owner,     align: center, width: "8rem" }
+  - { key: status,   label: Status,    type: badge, align: center, width: "8rem" }
+rows:
+  - { ticket: "ENG-1421", title: "Compose multi-block render",        priority: P0, points: 5,  owner: alice, status: in_progress }
+  - { ticket: "ENG-1422", title: "Detect heuristics for kanban",      priority: P1, points: 3,  owner: alice, status: todo }
+  - { ticket: "ENG-1423", title: "Extract — handle malformed JSON",   priority: P1, points: 2,  owner: bob,   status: todo }
+  - { ticket: "ENG-1424", title: "Decision-matrix edit loop",         priority: P0, points: 5,  owner: alice, status: in_progress }
+  - { ticket: "ENG-1425", title: "Email-digest action chooser",       priority: P1, points: 3,  owner: bob,   status: todo }
+  - { ticket: "ENG-1426", title: "Refactor html-tag escape rules",    priority: P2, points: 2,  owner: bob,   status: todo }
+  - { ticket: "ENG-1427", title: "iOS Safari smoke-test compose",     priority: P1, points: 1,  owner: cara,  status: todo }
+  - { ticket: "ENG-1428", title: "Tag v0.2 + npm publish",            priority: P2, points: 1,  owner: alice, status: blocked }

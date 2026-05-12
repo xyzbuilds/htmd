@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "data-table",
+  "type": "object",
+  "required": ["title", "columns", "rows"],
+  "properties": {
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "block_id": { "type": "string" },
+    "editable": { "type": "boolean", "description": "If true, ALL data cells become editable. Per-column override via column.editable=false." },
+    "row_key": { "type": "string", "description": "Column key to use as the human-readable row label in the export diff (default: first column)" },
+    "prompt_intro": { "type": "string" },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["key"],
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "type": { "type": "string", "enum": ["text", "number", "currency", "percent", "date", "badge", "mono"] },
+          "align": { "type": "string", "enum": ["left", "center", "right"] },
+          "currency": { "type": "string" },
+          "width": { "type": "string" },
+          "editable": { "type": "boolean", "description": "Override for this column (defaults to top-level `editable`)" }
+        }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": { "type": "object" }
+    }
+  }
+}

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="htmd v0.1.0">
+<meta name="generator" content="htmd v0.2.0">
 <title>htmd v0.2 roadmap</title>
 <style>
 /* htmd minimal reset */
@@ -402,7 +402,7 @@ code, pre, kbd, samp {
         
       </div>
       <div class="kb-toast" data-kb-toast hidden></div>
-      <script type="application/json" data-kb-state>{&quot;columns&quot;:[{&quot;key&quot;:&quot;now&quot;,&quot;name&quot;:&quot;Now&quot;},{&quot;key&quot;:&quot;next&quot;,&quot;name&quot;:&quot;Next&quot;},{&quot;key&quot;:&quot;later&quot;,&quot;name&quot;:&quot;Later&quot;},{&quot;key&quot;:&quot;cut&quot;,&quot;name&quot;:&quot;Cut&quot;}],&quot;tickets&quot;:[{&quot;id&quot;:&quot;HMD-12&quot;,&quot;title&quot;:&quot;Theme system (light/dark/custom)&quot;,&quot;body&quot;:&quot;CSS custom property override mechanism + 3 starter themes.&quot;,&quot;owner&quot;:&quot;xy&quot;,&quot;tags&quot;:[&quot;foundation&quot;],&quot;column&quot;:&quot;now&quot;},{&quot;id&quot;:&quot;HMD-15&quot;,&quot;title&quot;:&quot;Hot-reload dev server&quot;,&quot;body&quot;:&quot;Watch templates/ and re-render on save in browser.&quot;,&quot;owner&quot;:&quot;claude&quot;,&quot;tags&quot;:[&quot;DX&quot;],&quot;column&quot;:&quot;now&quot;},{&quot;id&quot;:&quot;HMD-18&quot;,&quot;title&quot;:&quot;Plugin SDK reference template&quot;,&quot;body&quot;:&quot;Full example npm package showing how to publish htmd-template-*&quot;,&quot;tags&quot;:[&quot;docs&quot;],&quot;column&quot;:&quot;next&quot;},{&quot;id&quot;:&quot;HMD-22&quot;,&quot;title&quot;:&quot;Web playground (htmd.dev)&quot;,&quot;body&quot;:&quot;Browser-based template editor with live render.&quot;,&quot;owner&quot;:&quot;xy&quot;,&quot;tags&quot;:[&quot;marketing&quot;],&quot;column&quot;:&quot;next&quot;},{&quot;id&quot;:&quot;HMD-25&quot;,&quot;title&quot;:&quot;Gantt chart template&quot;,&quot;tags&quot;:[&quot;template&quot;],&quot;column&quot;:&quot;later&quot;},{&quot;id&quot;:&quot;HMD-26&quot;,&quot;title&quot;:&quot;Org chart template&quot;,&quot;tags&quot;:[&quot;template&quot;],&quot;column&quot;:&quot;later&quot;},{&quot;id&quot;:&quot;HMD-30&quot;,&quot;title&quot;:&quot;Server-side React renderer&quot;,&quot;body&quot;:&quot;Considered, but adds dependency weight without clear value over JS modules.&quot;,&quot;tags&quot;:[&quot;arch&quot;],&quot;column&quot;:&quot;cut&quot;}]}</script>
+      <script type="application/json" data-kb-state data-htmd-state="kanban-board">{"title":"htmd v0.2 roadmap","columns":[{"key":"now","name":"Now"},{"key":"next","name":"Next"},{"key":"later","name":"Later"},{"key":"cut","name":"Cut"}],"tickets":[{"id":"HMD-12","title":"Theme system (light/dark/custom)","body":"CSS custom property override mechanism + 3 starter themes.","owner":"xy","tags":["foundation"],"column":"now"},{"id":"HMD-15","title":"Hot-reload dev server","body":"Watch templates/ and re-render on save in browser.","owner":"claude","tags":["DX"],"column":"now"},{"id":"HMD-18","title":"Plugin SDK reference template","body":"Full example npm package showing how to publish htmd-template-*","tags":["docs"],"column":"next"},{"id":"HMD-22","title":"Web playground (htmd.dev)","body":"Browser-based template editor with live render.","owner":"xy","tags":["marketing"],"column":"next"},{"id":"HMD-25","title":"Gantt chart template","tags":["template"],"column":"later"},{"id":"HMD-26","title":"Org chart template","tags":["template"],"column":"later"},{"id":"HMD-30","title":"Server-side React renderer","body":"Considered, but adds dependency weight without clear value over JS modules.","tags":["arch"],"column":"cut"}]}</script>
     </main>
   
 <script>
@@ -540,6 +540,42 @@ code, pre, kbd, samp {
     } catch {
       showToast(location.href);
     }
+  });
+
+  // ---- compose-level export bridge ----
+  // Capture initial column placement so we can detect whether the human moved cards.
+  const initialOrder = state.tickets.map((t) => `${t.id}:${t.column}`).join(',');
+  function buildPrompt() {
+    syncStateFromDOM();
+    const lines = [];
+    lines.push(`Updated kanban for "${state.title || 'board'}":`);
+    lines.push('');
+    state.columns.forEach((c) => {
+      lines.push(`## ${c.name}`); lines.push('');
+      const items = state.tickets.filter((t) => t.column === c.key);
+      if (items.length === 0) lines.push('_(none)_');
+      items.forEach((t) => {
+        const tags = (t.tags || []).map((x) => `\`${x}\``).join(' ');
+        const owner = t.owner ? ` — @${t.owner}` : '';
+        lines.push(`- **[${t.id}]** ${t.title}${owner}${tags ? ' ' + tags : ''}`);
+        if (t.body) lines.push(`  ${t.body}`);
+      });
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+  function hasChanges() {
+    syncStateFromDOM();
+    const cur = state.tickets.map((t) => `${t.id}:${t.column}`).join(',');
+    return cur !== initialOrder;
+  }
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'kanban-board',
+    blockId: state.title || '',
+    hasChanges,
+    getPrompt: buildPrompt
   });
 
   applyHash();

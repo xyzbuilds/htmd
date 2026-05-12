@@ -134,6 +134,42 @@
     }
   });
 
+  // ---- compose-level export bridge ----
+  // Capture initial column placement so we can detect whether the human moved cards.
+  const initialOrder = state.tickets.map((t) => `${t.id}:${t.column}`).join(',');
+  function buildPrompt() {
+    syncStateFromDOM();
+    const lines = [];
+    lines.push(`Updated kanban for "${state.title || 'board'}":`);
+    lines.push('');
+    state.columns.forEach((c) => {
+      lines.push(`## ${c.name}`); lines.push('');
+      const items = state.tickets.filter((t) => t.column === c.key);
+      if (items.length === 0) lines.push('_(none)_');
+      items.forEach((t) => {
+        const tags = (t.tags || []).map((x) => `\`${x}\``).join(' ');
+        const owner = t.owner ? ` — @${t.owner}` : '';
+        lines.push(`- **[${t.id}]** ${t.title}${owner}${tags ? ' ' + tags : ''}`);
+        if (t.body) lines.push(`  ${t.body}`);
+      });
+      lines.push('');
+    });
+    return lines.join('\n');
+  }
+  function hasChanges() {
+    syncStateFromDOM();
+    const cur = state.tickets.map((t) => `${t.id}:${t.column}`).join(',');
+    return cur !== initialOrder;
+  }
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'kanban-board',
+    blockId: state.title || '',
+    hasChanges,
+    getPrompt: buildPrompt
+  });
+
   applyHash();
   recountAll();
   initSortable();

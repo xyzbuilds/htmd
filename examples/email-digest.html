@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="htmd v0.1.0">
+<meta name="generator" content="htmd v0.2.0">
 <title>email-digest</title>
 <style>
 /* htmd minimal reset */
@@ -101,8 +101,88 @@ code, pre, kbd, samp {
 .ed {
   max-width: 760px;
   margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
+  padding: 2rem 1.25rem 6rem;
 }
+.ed-suggested {
+  margin-top: 0.45rem;
+  font-size: var(--htmd-text-xs);
+  color: var(--htmd-fg-muted);
+}
+.ed-suggested strong { color: var(--htmd-fg); }
+.ed-actions {
+  margin-top: 0.55rem;
+  display: flex; gap: 0.35rem; flex-wrap: wrap;
+}
+.ed-action-btn {
+  --ed-action-color: var(--htmd-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 36px; padding: 0.35rem 0.85rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border); border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.ed-action-btn:hover { border-color: var(--ed-action-color); }
+.ed-action-btn[aria-checked="true"] {
+  background: var(--ed-action-color);
+  color: #fff; border-color: var(--ed-action-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ed-action-color) 22%, transparent);
+}
+.ed-item.ed-decided { background: color-mix(in srgb, var(--htmd-accent) 4%, transparent); }
+.ed-note {
+  margin-top: 0.55rem; width: 100%;
+  padding: 0.45rem 0.6rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 38px;
+}
+.ed-note:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.ed-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.ed-fab:disabled, .ed-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.ed-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.ed-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.ed-modal[hidden] { display: none; }
+.ed-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.ed-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.ed-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.ed-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.ed-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.ed-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.ed-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.ed-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.ed-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.ed-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.ed-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.ed-toast[hidden] { display: none; }
+.ed-toast.ed-toast-show { opacity: 1; }
 .ed-head {
   margin-bottom: 1.5rem;
 }
@@ -235,6 +315,8 @@ code, pre, kbd, samp {
         </div>
       </header>
 
+      <style>[data-ed-action-color="reply"]{--ed-action-color:#0284c7;}[data-ed-action-color="archive"]{--ed-action-color:#94a3b8;}[data-ed-action-color="keep"]{--ed-action-color:#16a34a;}[data-ed-action-color="forward"]{--ed-action-color:#d97706;}</style>
+
       
     <section class="ed-section ed-urgent">
       <header class="ed-sec-head">
@@ -243,34 +325,106 @@ code, pre, kbd, samp {
       </header>
       <ul class="ed-list">
         
-          <li class="ed-item">
+          <li class="ed-item" data-ed-item="e1">
             <div class="ed-item-meta">
               <span class="ed-from">Stripe</span>
               <time class="ed-ts">9:14 AM</time>
             </div>
             <div class="ed-subject">Action required — verify business address by May 12</div>
             <p class="ed-snippet">Stripe needs business address re-verified within 3 days or payouts pause. Has form link.</p>
-            <div class="ed-action"><span class="ed-action-pill">Verify address</span></div>
+            <div class="ed-suggested">Agent suggests: <strong>Verify address</strong></div>
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e1" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e1" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e1" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e1" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e1" placeholder="Reply draft / note (optional)" hidden></textarea>
           </li>
         
-          <li class="ed-item">
+          <li class="ed-item" data-ed-item="e2">
             <div class="ed-item-meta">
               <span class="ed-from">Sarah Chen (Acme Co)</span>
               <time class="ed-ts">8:02 AM</time>
             </div>
             <div class="ed-subject">Re: Q3 contract — needs your signature today</div>
             <p class="ed-snippet">Contract redlines accepted; Sarah is waiting on your signature before EOD to lock the rate.</p>
-            <div class="ed-action"><span class="ed-action-pill">Sign DocuSign</span></div>
+            <div class="ed-suggested">Agent suggests: <strong>Sign DocuSign</strong></div>
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e2" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e2" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e2" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e2" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e2" placeholder="Reply draft / note (optional)" hidden></textarea>
           </li>
         
-          <li class="ed-item">
+          <li class="ed-item" data-ed-item="e3">
             <div class="ed-item-meta">
               <span class="ed-from">GitHub</span>
               <time class="ed-ts">6:44 AM</time>
             </div>
             <div class="ed-subject">[security] Critical CVE in turndown — update available</div>
             <p class="ed-snippet">turndown@7.1.x has an XSS vector via crafted HTML input. 7.2.0 patches it. Affects 2 of your repos.</p>
-            <div class="ed-action"><span class="ed-action-pill">Update dependency</span></div>
+            <div class="ed-suggested">Agent suggests: <strong>Update dependency</strong></div>
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e3" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e3" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e3" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e3" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e3" placeholder="Reply draft / note (optional)" hidden></textarea>
           </li>
         
       </ul>
@@ -284,7 +438,7 @@ code, pre, kbd, samp {
       </header>
       <ul class="ed-list">
         
-          <li class="ed-item">
+          <li class="ed-item" data-ed-item="e4">
             <div class="ed-item-meta">
               <span class="ed-from">Anthropic</span>
               <time class="ed-ts">7:30 AM</time>
@@ -292,9 +446,33 @@ code, pre, kbd, samp {
             <div class="ed-subject">Claude 4.7 release notes</div>
             <p class="ed-snippet">New extended thinking mode, 50% lower batch pricing, MCP improvements. Worth a 5-min read.</p>
             
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e4" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e4" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e4" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e4" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e4" placeholder="Reply draft / note (optional)" hidden></textarea>
           </li>
         
-          <li class="ed-item">
+          <li class="ed-item" data-ed-item="e5">
             <div class="ed-item-meta">
               <span class="ed-from">Lenny&#39;s Newsletter</span>
               <time class="ed-ts">6:00 AM</time>
@@ -302,9 +480,33 @@ code, pre, kbd, samp {
             <div class="ed-subject">How great PMs interview their candidates</div>
             <p class="ed-snippet">Long-form post; the 4-question framework (signal, scope, speed, sticking) is the takeaway.</p>
             
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e5" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e5" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e5" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e5" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e5" placeholder="Reply draft / note (optional)" hidden></textarea>
           </li>
         
-          <li class="ed-item">
+          <li class="ed-item" data-ed-item="e6">
             <div class="ed-item-meta">
               <span class="ed-from">Hacker News</span>
               <time class="ed-ts">6:00 AM</time>
@@ -312,9 +514,33 @@ code, pre, kbd, samp {
             <div class="ed-subject">Daily digest — top 5 (May 9)</div>
             <p class="ed-snippet">Linear&#39;s CEO on writing as a thinking tool, postgres LISTEN/NOTIFY tricks, new SQLite WAL2 mode.</p>
             
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e6" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e6" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e6" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e6" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e6" placeholder="Reply draft / note (optional)" hidden></textarea>
           </li>
         
-          <li class="ed-item">
+          <li class="ed-item" data-ed-item="e7">
             <div class="ed-item-meta">
               <span class="ed-from">AWS</span>
               <time class="ed-ts">5:55 AM</time>
@@ -322,6 +548,30 @@ code, pre, kbd, samp {
             <div class="ed-subject">Your Lambda costs dropped 18% MoM</div>
             <p class="ed-snippet">Memory tuning recommendations active; estimated $340 saved this month.</p>
             
+            <div class="ed-actions" role="radiogroup" aria-label="What to do with this email">
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="reply" data-ed-action-item="e7" data-ed-action-color="reply">
+                  Reply
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="archive" data-ed-action-item="e7" data-ed-action-color="archive">
+                  Archive
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="keep" data-ed-action-item="e7" data-ed-action-color="keep">
+                  Keep
+                </button>
+              
+                <button type="button" class="ed-action-btn" role="radio" aria-checked="false"
+                        data-ed-action="forward" data-ed-action-item="e7" data-ed-action-color="forward">
+                  Forward
+                </button>
+              
+            </div>
+            <textarea class="ed-note" rows="1" data-ed-note="e7" placeholder="Reply draft / note (optional)" hidden></textarea>
           </li>
         
       </ul>
@@ -337,7 +587,157 @@ code, pre, kbd, samp {
           <p class="ed-noise-text">78 promotional / list emails. Top senders to consider unsubscribing from this week — Substack digest (12), Medium daily (9), LinkedIn news (8), random SaaS newsletters (40+).</p>
         </section>
       
+
+      <button type="button" class="ed-fab" data-ed-copy aria-label="Send actions back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send actions back</span>
+        <span class="ed-fab-badge" data-ed-count>0</span>
+      </button>
+
+      <div class="ed-modal" data-ed-modal hidden role="dialog" aria-modal="true">
+        <div class="ed-backdrop" data-ed-close></div>
+        <div class="ed-panel">
+          <header><h2>Inbox actions</h2><button type="button" class="ed-x" data-ed-close aria-label="Close">&#x2715;</button></header>
+          <pre class="ed-pre" data-ed-text></pre>
+          <footer>
+            <button type="button" class="ed-btn ed-btn-ghost" data-ed-close>Cancel</button>
+            <button type="button" class="ed-btn ed-btn-primary" data-ed-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="ed-toast" data-ed-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-ed-state data-htmd-state="email-digest">{"block_id":"","date":"2026-05-09","prompt_intro":"","actions":[{"value":"reply","label":"Reply","color":"#0284c7"},{"value":"archive","label":"Archive","color":"#94a3b8"},{"value":"keep","label":"Keep","color":"#16a34a"},{"value":"forward","label":"Forward","color":"#d97706"}],"items":[{"id":"e1","section":"urgent","from":"Stripe","subject":"Action required — verify business address by May 12","agent_action":"Verify address","action":"","note":""},{"id":"e2","section":"urgent","from":"Sarah Chen (Acme Co)","subject":"Re: Q3 contract — needs your signature today","agent_action":"Sign DocuSign","action":"","note":""},{"id":"e3","section":"urgent","from":"GitHub","subject":"[security] Critical CVE in turndown — update available","agent_action":"Update dependency","action":"","note":""},{"id":"e4","section":"useful","from":"Anthropic","subject":"Claude 4.7 release notes","agent_action":"","action":"","note":""},{"id":"e5","section":"useful","from":"Lenny's Newsletter","subject":"How great PMs interview their candidates","agent_action":"","action":"","note":""},{"id":"e6","section":"useful","from":"Hacker News","subject":"Daily digest — top 5 (May 9)","agent_action":"","action":"","note":""},{"id":"e7","section":"useful","from":"AWS","subject":"Your Lambda costs dropped 18% MoM","agent_action":"","action":"","note":""}]}</script>
     </main>
   
+<script>
+(function () {
+  const root = document.querySelector('main.ed');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-ed-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+  const actByVal = new Map();
+  state.actions.forEach((a) => actByVal.set(a.value, a));
+
+  const fab = root.querySelector('[data-ed-copy]');
+  const countEl = root.querySelector('[data-ed-count]');
+  const modal = root.querySelector('[data-ed-modal]');
+  const modalText = root.querySelector('[data-ed-text]');
+  const toast = root.querySelector('[data-ed-toast]');
+
+  function decided() { return state.items.filter((it) => !!it.action); }
+  function refresh() {
+    const n = decided().length;
+    if (countEl) countEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+  function updateUi(itemId) {
+    const it = idx.get(itemId); if (!it) return;
+    const li = root.querySelector(`[data-ed-item="${cssEscape(itemId)}"]`);
+    if (!li) return;
+    li.classList.toggle('ed-decided', !!it.action);
+    li.querySelectorAll('[data-ed-action]').forEach((b) => {
+      const sel = b.dataset.edAction === it.action;
+      b.setAttribute('aria-checked', sel ? 'true' : 'false');
+    });
+    const note = li.querySelector('[data-ed-note]');
+    if (note) {
+      if (it.action === 'reply' || it.action === 'forward') note.removeAttribute('hidden');
+      else note.setAttribute('hidden', '');
+    }
+  }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Inbox actions for ${state.date || 'today'}:`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const it of state.items) {
+      if (!it.action) continue;
+      n++;
+      const action = actByVal.get(it.action);
+      lines.push(`${n}. [${it.section}] ${it.from} — ${it.subject}`);
+      lines.push(`   Action: ${action ? action.label : it.action}`);
+      if (it.agent_action && it.action !== it.agent_action.toLowerCase()) {
+        lines.push(`   (agent suggested: ${it.agent_action})`);
+      }
+      const note = (it.note || '').trim();
+      if (note) lines.push(`   Note: ${note}`);
+      lines.push('');
+    }
+    if (n === 0) lines.push('(no actions taken)');
+    else lines.push('Please process these actions.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('ed-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('ed-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (decided().length === 0) { showToast('Pick an action on at least one email'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-ed-action]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.edActionItem;
+      const value = btn.dataset.edAction;
+      const it = idx.get(itemId); if (!it) return;
+      it.action = it.action === value ? '' : value;
+      updateUi(itemId); refresh();
+    });
+  });
+  root.querySelectorAll('[data-ed-note]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.edNote); if (!it) return;
+      it.note = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-ed-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-ed-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'email-digest',
+    blockId: state.block_id || state.date,
+    hasChanges: () => decided().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
 </body>
 </html>

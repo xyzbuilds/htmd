@@ -1,0 +1,39 @@
+title: Pre-deploy checklist
+subtitle: Tick items as you complete them. Add notes for anything that needs follow-up.
+prompt_intro: I went through the pre-deploy checklist; here's where I am.
+items:
+  - id: c1
+    title: All tests passing in CI
+    owner: alice
+    priority: high
+    tags: [ci, blocking]
+  - id: c2
+    title: Migration script reviewed by DBA
+    owner: bob
+    priority: high
+    due: today
+    tags: [db]
+  - id: c3
+    title: Rollback plan written and shared
+    priority: med
+    tags: [ops]
+  - id: c4
+    title: Feature flag set to 5% in prod config
+    owner: alice
+    priority: med
+    tags: [flags]
+  - id: c5
+    title: PagerDuty schedule confirmed for tonight
+    owner: oncall
+    priority: low
+    tags: [ops]
+  - id: c6
+    title: Staging smoke test on iOS Safari
+    priority: med
+    done: true
+    tags: [qa]
+  - id: c7
+    title: Slack #releases announcement drafted
+    owner: pm
+    priority: low
+    tags: [comms]

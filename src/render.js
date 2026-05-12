@@ -49,7 +49,9 @@ const helpers = {
   }
 };
 
-export async function renderTemplate(name, data, opts = {}) {
+// Render template body + collect its CSS/JS without wrapping in a full HTML doc.
+// Used by compose to interleave multiple template instances into one page.
+export async function renderTemplateParts(name, data, opts = {}) {
   const tpl = await loadTemplate(name);
   if (tpl.schema && opts.validate !== false) {
     const result = validate(tpl.schema, data);
@@ -63,12 +65,22 @@ export async function renderTemplate(name, data, opts = {}) {
     }
   }
   const body = tpl.render(data, helpers);
-  const bodyHtml = toString(body);
-  return wrapShell({
+  return {
+    name,
     title: opts.title || data?.title || name,
-    body: bodyHtml,
-    css: tpl.css,
-    js: tpl.js,
+    body: toString(body),
+    css: tpl.css || '',
+    js: tpl.js || ''
+  };
+}
+
+export async function renderTemplate(name, data, opts = {}) {
+  const parts = await renderTemplateParts(name, data, opts);
+  return wrapShell({
+    title: parts.title,
+    body: parts.body,
+    css: parts.css,
+    js: parts.js,
     template: name,
     lang: opts.lang || 'en'
   });
@@ -84,7 +96,7 @@ export function wrapShell({ title, body, css, js, template, lang }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="htmd v0.1.0">
+<meta name="generator" content="htmd v0.2.0">
 <title>${safeTitle}</title>
 <style>
 ${styles}

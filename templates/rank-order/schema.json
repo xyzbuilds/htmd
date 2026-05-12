@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "rank-order",
+  "type": "object",
+  "required": ["title", "items"],
+  "properties": {
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "block_id": { "type": "string" },
+    "prompt_intro": { "type": "string" },
+    "items": {
+      "type": "array",
+      "minItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["title"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "subtitle": { "type": "string" },
+          "body": { "type": "string" }
+        }
+      }
+    }
+  }
+}

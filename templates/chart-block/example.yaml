@@ -1,0 +1,8 @@
+title: Weekly active users
+subtitle: Past 12 weeks
+caption: Up 18% over the last quarter — sustained organic growth.
+kind: line
+series:
+  - name: WAU
+    values: [38000, 39200, 41100, 42800, 43900, 46100, 47300, 48000, 48720, 49100, 50200, 51500]
+show_table: true

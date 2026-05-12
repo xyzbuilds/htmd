@@ -1,0 +1,12 @@
+title: Triage these for this sprint
+subtitle: "Drop each card into the right quadrant. Default: Eisenhower (urgent × important)."
+prompt_intro: I triaged the proposed work into the priority matrix.
+items:
+  - { id: t1, title: "Fix the OAuth refresh bug" }
+  - { id: t2, title: "Refactor the legacy billing webhook" }
+  - { id: t3, title: "Reply to vendor security questionnaire" }
+  - { id: t4, title: "Write Q3 planning doc" }
+  - { id: t5, title: "Update the brand guidelines deck" }
+  - { id: t6, title: "Investigate the p99 latency spike on /search" }
+  - { id: t7, title: "Schedule team offsite venue" }
+  - { id: t8, title: "Add tracing to the kafka consumer" }

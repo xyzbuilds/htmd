@@ -1,141 +1,139 @@
 # Using htmd from an AI agent
 
-This is the long-form version of [`SKILL.md`](../SKILL.md). Read this if you want the why; read SKILL.md if you just want the what.
+Long-form companion to [`SKILL.md`](../SKILL.md). Read this if you want the *why*; SKILL.md if you just want the *what*.
 
 ## The premise
 
 Your job as an agent often ends with "produce some output for the user." The user wants:
 
-- **Information density** — they don't want a wall of text.
+- **Information density** — not a wall of text.
 - **Visual structure** — colors, hierarchy, scanability.
-- **Interactivity, sometimes** — if you're showing a comparison, drag-drop or toggling helps.
-- **Portability** — they want to email it, save it, share a URL.
+- **Interactivity, sometimes** — pick, drag, check, comment, redline.
+- **Portability** — email it, save it, share a URL.
+- **A path back** — when they make a decision in the browser, you (the agent) need to learn what they decided.
 
-You have three choices for that output:
+That last bit is what htmd is *really* about. The output isn't terminal — it's a checkpoint in a loop. The human sees the artifact, makes choices, hits a button, the structured output comes back to you as a fresh prompt. You stay in the loop; the loop gets tighter.
 
-1. **Markdown.** Cheap, but flat — no charts, no color, no interactivity.
-2. **Raw HTML.** Rich, but each line of HTML costs ~2.5× the equivalent line of Markdown. And you'll skip dark mode, accessibility, print styles, etc., because each one costs more tokens.
-3. **htmd template.** Cheapest of all (you emit just the data), and the result is *better* than what you'd produce by hand because the template author already solved dark mode + a11y + print + sparklines + responsive layout once.
+## Three ways to use htmd
 
-## The decision rule
+### 1. `htmd render` — single template
 
-```
-Is the output prose or a simple list?
-  YES → Markdown.
-  NO  ↓
-Does the output fit one of the htmd template shapes?
-  YES → htmd template.
-  NO  ↓
-Is it a one-off complex visual you need full control of?
-  YES → Raw HTML.
-  NO  → Reconsider whether you actually need rich output.
-```
-
-## Workflow
-
-### 1. Discover what's available
+The classic API. One YAML in, one HTML out.
 
 ```bash
-htmd templates
+htmd render dashboard --data /tmp/metrics.yaml --out /tmp/dashboard.html
 ```
 
-If a plugin has been installed (e.g. `htmd-template-gantt`), it shows up here too.
+Use when you have **one** widget to show.
 
-### 2. Get the schema
+### 2. `htmd compose` — multi-block markdown ⇒ one HTML page
+
+You author **one Markdown file** with prose + multiple ` ```htmd:<template> ` fenced blocks. htmd renders prose with `marked`, renders each block via the named template, dedupes shared CSS/JS, and wraps everything in one shell with one **global "Copy all changes" floating action button** that aggregates *every* interactive block's state into one prompt for the human to send back to you.
 
 ```bash
-htmd schema dashboard
+htmd compose /tmp/sprint-review.md --out /tmp/review.html
 ```
 
-This returns JSON Schema. Two things to look for:
+Use this whenever the user wants a single shareable artifact mixing narrative + interaction. **This is the headline feature.**
 
-- **`required`** — fields you must include.
-- **`properties.*.enum`** — for fields with constrained values (e.g. `format: number|currency|percent`).
+The compose markdown looks like:
 
-### 3. Construct data
+````markdown
+# Sprint review
 
-Prefer YAML over JSON — it's more token-efficient. Use multi-line strings for body text.
+A few sentences of context here.
 
-### 4. Render
+```htmd:status-report
+title: Week 19
+sections: { shipped: [{ title: foo }] }
+```
+
+More prose between blocks.
+
+```htmd:approval-list
+title: PRs to decide
+items: [...]
+```
+````
+
+What the human sees:
+- The prose, beautifully styled.
+- Each fence becomes a real interactive widget (status report, approval list, …).
+- A global "Copy all changes" button at the bottom-left. Clicking it opens a modal with the aggregated prompt and a Copy button.
+
+### 3. `htmd detect` — suggest what to compose
+
+Given a plain Markdown file (no fences), `htmd detect` heuristically suggests which sections would benefit from being rendered as widgets.
 
 ```bash
-htmd render dashboard --data /tmp/data.yaml --out /tmp/dashboard.html
+htmd detect /tmp/notes.md --json
 ```
 
-Or:
+Returns:
+
+```json
+[
+  {
+    "template": "status-report",
+    "confidence": 0.85,
+    "line_start": 4,
+    "line_end": 19,
+    "reason": "Found status-style headings: Shipped, In Progress, Blocked",
+    "sample_data_yaml": "title: ...\nsections: ..."
+  }
+]
+```
+
+Use this when the user gives you *plain markdown* and you want to decide which parts to swap for widgets.
+
+### 4. `htmd extract` — close the loop
+
+The Copy-back button is the primary path. But if the user *saves the HTML file* and sends it to you, you can recover their state:
 
 ```bash
-htmd render dashboard --inline '{"title":"...", "metrics":[...]}'
+htmd extract /tmp/review.html
 ```
 
-Or pipe via stdin:
+Outputs YAML (or `--json`) of every embedded `data-htmd-state` block. Works for kanban moves, label corrections, checked items, ranked orders, redlined paragraphs, etc.
 
-```bash
-cat <<'EOF' | htmd render dashboard --data -
-title: Q2 metrics
-metrics:
-  - { label: MAU, value: 4820 }
-EOF
-```
+## Workflow recipes
 
-### 5. Tell the user about the output
+### Composing a multi-widget review
 
-Don't dump the HTML in chat — that wastes tokens. Tell the user something like:
+1. Author a Markdown file. Use ` ```htmd:<template> ` fences for each interactive section.
+2. Validate cheaply: `htmd schema <template>` to confirm your data shape, or just run compose and read any per-block error messages from stderr.
+3. `htmd compose file.md --out file.html`.
+4. Tell the user: *"I generated `<path>`. Open it in a browser, make any changes, then click "Copy all changes" at the bottom-left and paste the result back to me."*
+5. When their pasted prompt arrives, parse the per-block sections (each is delimited by `--- Block N (template):`) and act.
 
-> I've generated a dashboard at `/tmp/dashboard.html` — open it in a browser. It's self-contained (no external assets), so you can email or share it as-is.
+### Receiving a markdown brief from the user
 
-## Token cost comparison
+1. `htmd detect file.md --json` → list of suggestions.
+2. Decide which to convert to widgets.
+3. Write a new compose markdown that combines the original prose with the proposed widgets.
+4. `htmd compose new.md --out new.html`.
+5. Send back to the user.
 
-| Approach | Input tokens | Output tokens | Total |
-|---|---:|---:|---:|
-| Write MD inline | 0 | ~400 | 400 |
-| Write HTML inline | 0 | ~1,000 | 1,000 |
-| **htmd template** | **~150 (data)** | **~30 (the "I rendered it" message)** | **~180** |
+### Re-ingesting a saved artifact
 
-For a status report. For a dashboard with 8 KPI cards and sparklines, the gap is even wider — roughly 5-10× saving over inline HTML.
+1. User saves `review.html` after editing.
+2. `htmd extract review.html` → YAML of all states.
+3. Parse + act.
 
-## When NOT to use a template
+## Token-cost intuition
 
-- The user asks for plain text or Markdown explicitly.
-- The output is a single sentence or short list.
-- The shape doesn't fit any template and you need it once. (Don't force-fit.)
-- The target is a chat surface that doesn't render HTML well.
+| Approach | Tokens (one weekly review) |
+|---|--:|
+| Write Markdown inline | ~400 |
+| Write HTML inline | ~1000 |
+| `htmd render` | ~150 (data) + ~30 (your "I rendered it" message) |
+| `htmd compose` (5 widgets in one MD file) | ~600 (one composed MD file) + ~30 |
 
-## Choosing the right template
+The relative win grows with widget count.
 
-| If you're producing... | Use |
-|---|---|
-| Weekly status, sprint update, ship review | `status-report` |
-| Executive metrics, KPI snapshot, OKR | `dashboard` |
-| Tech selection, vendor evaluation, weighted decision | `decision-matrix` |
-| Architecture options, build-vs-buy, framework picks | `comparison-3-up` |
-| Inbox triage output, daily digest | `email-digest` |
-| A short presentation, demo deck | `slide-deck` |
-| Iterating on a prompt with a colleague | `prompt-tuner` |
-| Roadmap, backlog, sprint plan | `kanban-board` |
-| Onboarding doc, technical explainer, RFC summary | `concept-explainer` |
+## What htmd is NOT
 
-## Validating before rendering
-
-If you construct data programmatically and want to validate without rendering:
-
-```js
-import { compile } from 'htmd/src/schema.js';
-import { loadTemplate } from 'htmd/src/templates.js';
-
-const tpl = await loadTemplate('dashboard');
-const validate = compile(tpl.schema);
-if (!validate(data)) {
-  console.error(validate.errors);
-}
-```
-
-The CLI does this automatically. `--no-validate` skips it.
-
-## What htmd is not
-
-- **Not a static site generator.** No multi-page output, no routing.
-- **Not a chart library.** It has 4 chart types because templates need them; if you want serious dataviz, use Vega.
-- **Not a CMS.** No content database, no auth, no multi-user editing.
-
-It's a focused tool: turn data into one beautiful HTML file. That's it.
+- Not a static-site generator. No multi-page output, no routing.
+- Not a chart library. There are 4 chart helpers because templates need them.
+- Not a CMS, not a backend. One markdown in, one HTML out.
+- Not a framework. Templates are plain ESM modules with a `html\`\`` tagged literal.

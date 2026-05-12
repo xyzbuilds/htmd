@@ -1,5 +1,7 @@
 title: How should we deploy our LLM service?
 subtitle: Three approaches for serving Claude in production at our scale (~50 RPS, mostly bursty)
+suggested: Self-hosted proxy + cache
+prompt_intro: My take on the LLM deployment options.
 approaches:
   - name: Direct API calls
     summary: Each request hits Anthropic's API directly. Zero infrastructure on our side.

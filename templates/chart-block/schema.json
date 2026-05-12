@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "chart-block",
+  "type": "object",
+  "required": ["title", "kind"],
+  "properties": {
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "caption": { "type": "string" },
+    "kind": { "type": "string", "enum": ["line", "bar", "sparkline", "donut"] },
+    "width": { "type": "number" },
+    "height": { "type": "number" },
+    "values": { "type": "array", "items": { "type": "number" } },
+    "series": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["values"],
+        "properties": {
+          "name": { "type": "string" },
+          "values": { "type": "array", "items": { "type": "number" } }
+        }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "number" },
+          "color": { "type": "string" }
+        }
+      }
+    },
+    "slices": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["label", "value"],
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "number" },
+          "color": { "type": "string" }
+        }
+      }
+    },
+    "show_table": { "type": "boolean" }
+  }
+}

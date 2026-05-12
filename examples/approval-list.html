@@ -1,0 +1,522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>PRs awaiting your approval</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.al { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.al-head { margin-bottom: 1rem; }
+.al-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.al-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.al-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.al-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+.al-item {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius); padding: 0.95rem 1rem 1rem;
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.al-item.al-decided { border-left-color: var(--al-color, var(--htmd-accent)); }
+.al-item-head { display: flex; gap: 0.75rem; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; }
+.al-item-meta { flex: 1 1 60%; min-width: 0; }
+.al-item-title { font-weight: 600; line-height: 1.35; word-break: break-word; }
+.al-item-subtitle { margin-top: 0.15rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); word-break: break-word; }
+.al-mini { font-size: 0.7rem; color: var(--htmd-muted); }
+.al-mini strong { color: var(--htmd-fg); }
+.al-kv { margin: 0.4rem 0 0; display: flex; flex-wrap: wrap; gap: 0.3rem 0.85rem; }
+.al-kv-row { display: inline-flex; gap: 0.3rem; font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); }
+.al-kv dt { font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--htmd-muted); }
+.al-kv dd { margin: 0; font-variant-numeric: tabular-nums; }
+.al-body { margin-top: 0.55rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg); line-height: 1.55; }
+
+.al-actions {
+  margin-top: 0.85rem;
+  display: flex; gap: 0.4rem; flex-wrap: wrap;
+}
+.al-btn-action {
+  --al-color: var(--htmd-muted);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 40px; padding: 0.4rem 0.95rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border); border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.al-btn-action:hover { border-color: var(--al-color); }
+.al-btn-action[aria-checked="true"] {
+  background: var(--al-color);
+  color: #fff;
+  border-color: var(--al-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--al-color) 22%, transparent);
+}
+
+.al-reason {
+  margin-top: 0.65rem; width: 100%;
+  padding: 0.5rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 38px;
+}
+.al-reason:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.al-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.al-fab:disabled, .al-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.al-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.al-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.al-modal[hidden] { display: none; }
+.al-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.al-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.al-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.al-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.al-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.al-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.al-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.al-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.al-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.al-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.al-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.al-toast[hidden] { display: none; }
+.al-toast.al-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .al { padding: 1rem 0.85rem 6rem; }
+  .al-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .al-fab, .al-modal, .al-toast { display: none !important; }
+  .al-item { box-shadow: none; break-inside: avoid; }
+  .al-actions { display: none; }
+}
+
+</style>
+</head>
+<body data-htmd-template="approval-list">
+
+    <main class="al">
+      <header class="al-head">
+        <h1 class="al-title">PRs awaiting your approval</h1>
+        <p class="al-subtitle">Pick approve / reject / hold for each. Add a reason where it matters. Then send the decisions back.</p>
+        <div class="al-progress" data-al-progress aria-live="polite"><span data-al-decided>0</span> of <span>4</span> decided</div>
+      </header>
+
+      <style>[data-al-color="approve"]{--al-color:#16a34a;}[data-al-color="reject"]{--al-color:#dc2626;}[data-al-color="hold"]{--al-color:#d97706;}</style>
+
+      <ol class="al-list">
+        
+    <li class="al-item" data-al-item="pr1421">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">feat: htmd compose command</div>
+          <div class="al-item-subtitle">alice — +612 / -38, 4 files</div>
+          
+            <dl class="al-kv">
+              <div class="al-kv-row"><dt>ci</dt><dd>passing</dd></div><div class="al-kv-row"><dt>reviewers</dt><dd>bob, cara</dd></div>
+            </dl>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">Adds the compose command + tests. Touches src/render.js (refactor to expose renderTemplateParts), src/cli.js (new subcommand), src/compose.js (new). Behind no feature flag.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1421" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1421" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1421" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1421" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr1419">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">fix: kanban iOS Safari drag</div>
+          <div class="al-item-subtitle">bob — +188 / -71, 2 files</div>
+          
+            <dl class="al-kv">
+              <div class="al-kv-row"><dt>ci</dt><dd>passing</dd></div><div class="al-kv-row"><dt>reviewers</dt><dd>alice</dd></div>
+            </dl>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">Switches native HTML5 drag-and-drop to embedded SortableJS. Larger bundle but iOS Safari now works.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1419" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1419" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1419" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1419" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr1404">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">feat: detect command (DRAFT)</div>
+          <div class="al-item-subtitle">alice — +356 / -2, 2 files</div>
+          
+            <dl class="al-kv">
+              <div class="al-kv-row"><dt>ci</dt><dd>failing</dd></div><div class="al-kv-row"><dt>reviewers</dt><dd>—</dd></div>
+            </dl>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>hold</strong></span>
+      </header>
+      <p class="al-body">Heuristic markdown scanner that suggests templates per region. Still missing: tests, the dashboard detector, and decision-matrix sample-yaml fidelity.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1404" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1404" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1404" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1404" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+    <li class="al-item" data-al-item="pr1399">
+      <header class="al-item-head">
+        <div class="al-item-meta">
+          <div class="al-item-title">test: round-trip md/html</div>
+          <div class="al-item-subtitle">bob — +92 / -0, 1 file</div>
+          
+            <dl class="al-kv">
+              <div class="al-kv-row"><dt>ci</dt><dd>passing</dd></div><div class="al-kv-row"><dt>reviewers</dt><dd>cara</dd></div>
+            </dl>
+          
+        </div>
+        <span class="al-mini">suggested: <strong>approve</strong></span>
+      </header>
+      <p class="al-body">Adds round-trip tests for headings, paragraphs, lists, emphasis, code fences.</p>
+      <div class="al-actions" role="radiogroup" aria-label="Decision">
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="approve" data-al-decision-item="pr1399" data-al-color="approve">
+            Approve
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="reject" data-al-decision-item="pr1399" data-al-color="reject">
+            Reject
+          </button>
+        
+          <button type="button" class="al-btn-action" role="radio" aria-checked="false"
+                  data-al-decision="hold" data-al-decision-item="pr1399" data-al-color="hold">
+            Hold
+          </button>
+        
+      </div>
+      <textarea class="al-reason" rows="1" data-al-reason="pr1399" placeholder="Reason (optional)"></textarea>
+    </li>
+  
+      </ol>
+
+      <button type="button" class="al-fab" data-al-copy aria-label="Send decisions back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send decisions back</span>
+        <span class="al-fab-badge" data-al-count>0</span>
+      </button>
+
+      <div class="al-modal" data-al-modal hidden role="dialog" aria-modal="true">
+        <div class="al-backdrop" data-al-close></div>
+        <div class="al-panel">
+          <header><h2>Decisions</h2><button type="button" class="al-x" data-al-close aria-label="Close">&#x2715;</button></header>
+          <pre class="al-pre" data-al-text></pre>
+          <footer>
+            <button type="button" class="al-btn al-btn-ghost" data-al-close>Cancel</button>
+            <button type="button" class="al-btn al-btn-primary" data-al-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="al-toast" data-al-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-al-state data-htmd-state="approval-list">{"block_id":"","title":"PRs awaiting your approval","prompt_intro":"I reviewed the PRs you proposed and made these decisions.","actions":[{"value":"approve","label":"Approve","color":"#16a34a"},{"value":"reject","label":"Reject","color":"#dc2626"},{"value":"hold","label":"Hold","color":"#d97706"}],"items":[{"id":"pr1421","title":"feat: htmd compose command","decision":"","reason":""},{"id":"pr1419","title":"fix: kanban iOS Safari drag","decision":"","reason":""},{"id":"pr1404","title":"feat: detect command (DRAFT)","decision":"","reason":""},{"id":"pr1399","title":"test: round-trip md/html","decision":"","reason":""}]}</script>
+    </main>
+  
+<script>
+(function () {
+  const root = document.querySelector('main.al');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-al-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+  const actionByValue = new Map();
+  state.actions.forEach((a) => actionByValue.set(a.value, a));
+
+  const fab = root.querySelector('[data-al-copy]');
+  const countEl = root.querySelector('[data-al-count]');
+  const decEl = root.querySelector('[data-al-decided]');
+  const modal = root.querySelector('[data-al-modal]');
+  const modalText = root.querySelector('[data-al-text]');
+  const toast = root.querySelector('[data-al-toast]');
+
+  function decided(it) { return !!it.decision; }
+  function decidedCount() { return state.items.filter(decided).length; }
+
+  function refresh() {
+    const n = decidedCount();
+    if (countEl) countEl.textContent = n;
+    if (decEl) decEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function updateItemUi(itemId) {
+    const it = idx.get(itemId); if (!it) return;
+    const card = root.querySelector(`[data-al-item="${cssEscape(itemId)}"]`);
+    if (!card) return;
+    card.classList.toggle('al-decided', decided(it));
+    const action = actionByValue.get(it.decision);
+    if (action) card.style.setProperty('--al-color', action.color || 'var(--htmd-accent)');
+    card.querySelectorAll('[data-al-decision]').forEach((btn) => {
+      const sel = btn.dataset.alDecision === it.decision;
+      btn.setAttribute('aria-checked', sel ? 'true' : 'false');
+    });
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Decisions on "${state.title}":`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const it of state.items) {
+      if (!decided(it)) continue;
+      n++;
+      const action = actionByValue.get(it.decision);
+      lines.push(`${n}. ${it.title}`);
+      lines.push(`   Decision: ${action ? action.label : it.decision}`);
+      const r = (it.reason || '').trim();
+      if (r) lines.push(`   Reason: ${r}`);
+      lines.push('');
+    }
+    if (n === 0) lines.push('(no decisions made)');
+    else lines.push('Please proceed accordingly.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('al-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('al-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (decidedCount() === 0) { showToast('No decisions yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  root.querySelectorAll('[data-al-decision]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const itemId = btn.dataset.alDecisionItem;
+      const value = btn.dataset.alDecision;
+      const it = idx.get(itemId); if (!it) return;
+      it.decision = it.decision === value ? '' : value;
+      updateItemUi(itemId);
+      refresh();
+    });
+  });
+  root.querySelectorAll('[data-al-reason]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.alReason); if (!it) return;
+      it.reason = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-al-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-al-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'approval-list',
+    blockId: state.block_id || state.title,
+    hasChanges: () => decidedCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
+</body>
+</html>

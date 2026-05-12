@@ -1,0 +1,1962 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Q2 retention research read-out</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+
+.htmd-compose {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+.htmd-prose { line-height: 1.65; }
+.htmd-prose > :first-child { margin-top: 0; }
+.htmd-prose h1, .htmd-prose h2, .htmd-prose h3 { letter-spacing: -0.01em; line-height: 1.2; }
+.htmd-prose h1 { font-size: 2rem; margin: 1.5rem 0 0.75rem; }
+.htmd-prose h2 { font-size: 1.5rem; margin: 1.5rem 0 0.5rem; }
+.htmd-prose h3 { font-size: 1.2rem; margin: 1.25rem 0 0.5rem; }
+.htmd-prose p, .htmd-prose ul, .htmd-prose ol { margin: 0.75rem 0; }
+.htmd-prose pre {
+  background: var(--htmd-surface-2);
+  padding: 1rem;
+  border-radius: var(--htmd-radius-sm);
+  overflow-x: auto;
+  font-size: 0.9em;
+}
+.htmd-prose code {
+  background: var(--htmd-surface-2);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+.htmd-prose pre code { background: none; padding: 0; }
+.htmd-prose blockquote {
+  border-left: 3px solid var(--htmd-accent);
+  margin: 1rem 0;
+  padding: 0.25rem 1rem;
+  color: var(--htmd-fg-muted);
+}
+.htmd-prose table { border-collapse: collapse; width: 100%; margin: 1rem 0; }
+.htmd-prose th, .htmd-prose td {
+  border: 1px solid var(--htmd-border);
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+}
+.htmd-prose th { background: var(--htmd-surface-2); }
+
+.htmd-block {
+  position: relative;
+  border-radius: var(--htmd-radius);
+  border: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+  box-shadow: var(--htmd-shadow);
+  overflow: hidden;
+}
+.htmd-block > main:first-child,
+.htmd-block > section:first-child,
+.htmd-block > div:first-child { padding-top: 0; }
+.htmd-block::before {
+  content: attr(data-htmd-block);
+  position: absolute;
+  top: 0.6rem;
+  right: 0.85rem;
+  z-index: 5;
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--htmd-muted);
+  font-weight: 700;
+  pointer-events: none;
+}
+
+/* In compose mode, per-template FABs (every interactive template has its
+   own bottom-right fixed-position copy button) would all stack at the same
+   viewport corner and overlap each other AND the global compose FAB. Hide
+   them — the compose-level "Copy all changes" button below aggregates every
+   block's export, so per-block FABs are redundant inside a composed page. */
+.htmd-block .fc-fab,
+.htmd-block .cl-fab,
+.htmd-block .qa-fab,
+.htmd-block .al-fab,
+.htmd-block .rk-fab,
+.htmd-block .tr-fab,
+.htmd-block .pm-fab,
+.htmd-block .dm-fab,
+.htmd-block .cmp-fab,
+.htmd-block .ed-fab,
+.htmd-block .cr-fab {
+  display: none !important;
+}
+/* Their modals are hidden by default; hiding the FAB suffices. The transient
+   toasts these templates emit only fire on direct interaction with the FAB,
+   so they won't appear either. */
+
+/* The kanban-board's "Export Markdown" header buttons are NOT fixed-position
+   FABs — they live inside the card. Leave them alone (still useful in compose). */
+/* The data-table "Send edits back" button is in the card header, not a fixed
+   FAB — leave it visible (it has its own modal). */
+.htmd-block .dt-export-btn-edits { display: none !important; }
+/* Same reasoning: edits flow through the global FAB. */
+
+.htmd-block-error {
+  border: 1px solid var(--htmd-danger);
+  background: var(--htmd-danger-soft);
+  border-radius: var(--htmd-radius);
+  padding: 1rem 1.1rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg);
+}
+.htmd-block-error header { font-size: var(--htmd-text-md); margin-bottom: 0.4rem; }
+.htmd-block-error pre {
+  background: var(--htmd-surface);
+  padding: 0.6rem 0.8rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: 0.78rem;
+  overflow-x: auto;
+  margin-top: 0.4rem;
+}
+
+/* Compose-level export FAB */
+.htmd-cx-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  left: 1.1rem;
+  z-index: 90;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.65rem 1.1rem;
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+  transition: transform 0.12s, opacity 0.12s;
+}
+.htmd-cx-fab:hover { transform: translateY(-1px); }
+.htmd-cx-fab:disabled, .htmd-cx-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.htmd-cx-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.htmd-cx-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.htmd-cx-modal[hidden] { display: none; }
+.htmd-cx-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(2px);
+}
+.htmd-cx-modal-panel {
+  position: relative;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow-lg);
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.htmd-cx-modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--htmd-border);
+}
+.htmd-cx-modal-head h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.htmd-cx-modal-x {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--htmd-fg-muted);
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+}
+.htmd-cx-modal-x:hover { background: var(--htmd-surface-2); }
+.htmd-cx-modal-pre {
+  margin: 0;
+  padding: 1rem 1.1rem;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-y: auto;
+  flex: 1;
+  color: var(--htmd-fg);
+}
+.htmd-cx-modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--htmd-border);
+  background: var(--htmd-surface);
+}
+.htmd-cx-btn {
+  min-height: 40px;
+  padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.htmd-cx-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.htmd-cx-btn-ghost:hover { background: var(--htmd-surface-2); }
+.htmd-cx-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+.htmd-cx-btn-primary:hover { filter: brightness(1.05); }
+
+.htmd-cx-toast {
+  position: fixed;
+  bottom: 4.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--htmd-fg);
+  color: var(--htmd-bg);
+  padding: 0.55rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+  font-weight: 600;
+  box-shadow: var(--htmd-shadow-lg);
+  z-index: 250;
+  opacity: 0;
+  transition: opacity 0.18s;
+  pointer-events: none;
+}
+.htmd-cx-toast[hidden] { display: none; }
+.htmd-cx-toast.htmd-cx-toast-show { opacity: 1; }
+
+@media (max-width: 560px) {
+  .htmd-compose { padding: 1.25rem 0.85rem 7rem; gap: 1.25rem; }
+  .htmd-cx-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+
+@media print {
+  .htmd-cx-fab, .htmd-cx-modal, .htmd-cx-toast { display: none !important; }
+  .htmd-block { box-shadow: none; break-inside: avoid; }
+}
+
+.dt {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem;
+}
+.dt-head { margin-bottom: 0.85rem; }
+.dt-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.dt-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.dt-controls {
+  display: flex; gap: 0.5rem; align-items: center;
+  margin-top: 0.75rem; flex-wrap: wrap;
+}
+.dt-search {
+  flex: 1 1 240px; min-width: 180px;
+  padding: 0.5rem 0.7rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+}
+.dt-search:focus { outline: none; border-color: var(--htmd-accent); }
+.dt-counter { font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.dt-export-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+}
+.dt-wrap {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius);
+  overflow: auto;
+  box-shadow: var(--htmd-shadow);
+}
+.dt-table {
+  width: 100%;
+  font-size: var(--htmd-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.dt-table th, .dt-table td {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--htmd-border);
+  vertical-align: top;
+}
+.dt-table thead th {
+  position: sticky; top: 0;
+  background: var(--htmd-surface-2);
+  text-align: left;
+  font-weight: 700;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--htmd-fg-muted);
+  cursor: pointer; user-select: none;
+}
+.dt-table thead th:hover { background: var(--htmd-border); }
+.dt-table thead th .dt-arrow { display: inline-block; width: 0.7rem; opacity: 0.4; }
+.dt-table thead th[data-dt-dir="asc"] .dt-arrow::before { content: '\\25B2'; }
+.dt-table thead th[data-dt-dir="desc"] .dt-arrow::before { content: '\\25BC'; }
+.dt-table thead th[data-dt-dir] .dt-arrow { opacity: 1; color: var(--htmd-accent); }
+.dt-table tbody tr:hover { background: var(--htmd-surface-2); }
+.dt-table tbody tr:last-child td { border-bottom: none; }
+.dt-cell-input {
+  width: 100%;
+  padding: 0.25rem 0.4rem;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid transparent;
+  border-radius: var(--htmd-radius-sm);
+  -moz-appearance: textfield;
+}
+.dt-cell-input::-webkit-outer-spin-button,
+.dt-cell-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dt-cell-input:hover { border-color: var(--htmd-border); background: var(--htmd-surface); }
+.dt-cell-input:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.dt-export-btn-edits { background: var(--htmd-warn); }
+.dt-edit-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700; margin-left: 0.3rem;
+}
+
+.dt-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.dt-modal[hidden] { display: none; }
+.dt-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.dt-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 720px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.dt-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.dt-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.dt-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.dt-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.dt-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.dt-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.dt-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.dt-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.dt-badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  background: var(--htmd-accent-soft);
+  color: var(--htmd-accent);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 600;
+}
+.dt-empty { padding: 1.5rem; text-align: center; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); }
+
+.dt-toast {
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.dt-toast[hidden] { display: none; }
+.dt-toast.dt-toast-show { opacity: 1; }
+
+@media print {
+  .dt-controls, .dt-toast { display: none !important; }
+  .dt-wrap { overflow: visible; box-shadow: none; }
+}
+
+.cb { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem; }
+.cb-head { margin-bottom: 0.75rem; }
+.cb-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.cb-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.cb-figure {
+  margin: 0;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 1.25rem 1rem;
+  box-shadow: var(--htmd-shadow);
+}
+.cb-figure svg { width: 100%; height: auto; }
+.cb-caption {
+  margin-top: 0.65rem;
+  text-align: center;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  font-style: italic;
+}
+.cb-data { margin-top: 0.85rem; font-size: var(--htmd-text-sm); }
+.cb-data summary { cursor: pointer; color: var(--htmd-fg-muted); padding: 0.4rem 0; user-select: none; }
+.cb-data table { width: 100%; border-collapse: collapse; margin-top: 0.4rem; }
+.cb-data th, .cb-data td { border: 1px solid var(--htmd-border); padding: 0.4rem 0.6rem; text-align: left; }
+.cb-data th { background: var(--htmd-surface-2); }
+@media print {
+  .cb-figure { box-shadow: none; }
+}
+
+.tr { max-width: 760px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.tr-head { margin-bottom: 1rem; }
+.tr-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.tr-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.tr-hint { margin-top: 0.5rem; font-size: var(--htmd-text-xs); color: var(--htmd-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+.tr-doc {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 1.25rem 1.4rem;
+  box-shadow: var(--htmd-shadow); line-height: 1.7;
+  font-size: var(--htmd-text-md);
+}
+.tr-seg {
+  position: relative;
+  margin: 0.85rem 0;
+  padding: 0.4rem 0.5rem 0.4rem 0.6rem;
+  border-radius: var(--htmd-radius-sm);
+  transition: background 0.12s;
+}
+.tr-seg:hover { background: var(--htmd-surface-2); }
+.tr-seg.tr-edited { border-left: 3px solid var(--htmd-warn); padding-left: 0.55rem; background: var(--htmd-warn-soft); }
+.tr-seg.tr-rejected { border-left: 3px solid var(--htmd-danger); padding-left: 0.55rem; background: var(--htmd-danger-soft); }
+.tr-seg.tr-rejected .tr-seg-text { text-decoration: line-through; color: var(--htmd-fg-muted); }
+
+.tr-seg-actions {
+  position: absolute; top: 0.3rem; right: 0.4rem;
+  display: flex; gap: 0.2rem; opacity: 0; transition: opacity 0.12s;
+}
+.tr-seg:hover .tr-seg-actions, .tr-seg:focus-within .tr-seg-actions { opacity: 1; }
+.tr-seg-btn {
+  width: 26px; height: 26px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--htmd-surface); color: var(--htmd-fg-muted);
+  border: 1px solid var(--htmd-border); border-radius: 4px;
+  font-size: 0.75rem; cursor: pointer;
+}
+.tr-seg-btn:hover { background: var(--htmd-surface-2); color: var(--htmd-fg); }
+.tr-seg-btn-reject:hover { color: var(--htmd-danger); border-color: var(--htmd-danger); }
+
+.tr-seg-text { outline: none; word-wrap: break-word; }
+.tr-seg-text:focus { background: rgba(255,255,255,0.04); }
+.tr-seg[contenteditable="false"] .tr-seg-text { color: var(--htmd-fg-muted); }
+.tr-seg-comment {
+  display: block; margin-top: 0.4rem; width: 100%;
+  padding: 0.4rem 0.55rem;
+  font-family: inherit; font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 32px;
+}
+
+.tr-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.tr-fab:disabled, .tr-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.tr-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.tr-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.tr-modal[hidden] { display: none; }
+.tr-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.tr-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 720px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.tr-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.tr-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.tr-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.tr-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.tr-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.tr-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.tr-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.tr-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.tr-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.tr-toast[hidden] { display: none; }
+.tr-toast.tr-toast-show { opacity: 1; }
+
+@media print {
+  .tr-fab, .tr-modal, .tr-toast, .tr-seg-actions, .tr-seg-comment { display: none !important; }
+  .tr-doc { box-shadow: none; }
+}
+
+.cl {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 5rem;
+}
+.cl-head { margin-bottom: 1rem; }
+.cl-title {
+  font-size: var(--htmd-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.cl-subtitle {
+  margin-top: 0.4rem;
+  color: var(--htmd-fg-muted);
+  font-size: var(--htmd-text-md);
+}
+.cl-progress {
+  margin-top: 0.5rem;
+  font-size: var(--htmd-text-sm);
+  color: var(--htmd-fg-muted);
+  font-variant-numeric: tabular-nums;
+}
+.cl-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.cl-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-left: 4px solid transparent;
+  border-radius: var(--htmd-radius);
+  box-shadow: var(--htmd-shadow);
+  transition: border-color 0.15s, opacity 0.15s;
+}
+.cl-item.cl-done { opacity: 0.65; border-left-color: var(--htmd-success); }
+.cl-item.cl-done .cl-text { text-decoration: line-through; color: var(--htmd-fg-muted); }
+.cl-check {
+  position: relative;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  margin-top: 2px;
+  cursor: pointer;
+}
+.cl-check input { position: absolute; opacity: 0; pointer-events: none; }
+.cl-check-box {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--htmd-border);
+  border-radius: 6px;
+  background: var(--htmd-surface);
+  transition: background 0.12s, border-color 0.12s;
+  position: relative;
+}
+.cl-check input:checked + .cl-check-box {
+  background: var(--htmd-success);
+  border-color: var(--htmd-success);
+}
+.cl-check input:checked + .cl-check-box::after {
+  content: '';
+  position: absolute;
+  left: 6px; top: 2px;
+  width: 6px; height: 12px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+.cl-body { flex: 1; min-width: 0; }
+.cl-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.cl-text { font-weight: 500; line-height: 1.4; word-break: break-word; }
+.cl-pri {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+.cl-pri-high { background: var(--htmd-danger-soft); color: var(--htmd-danger); }
+.cl-pri-med { background: var(--htmd-warn-soft); color: var(--htmd-warn); }
+.cl-pri-low { background: var(--htmd-info-soft); color: var(--htmd-info); }
+.cl-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+.cl-meta-pill {
+  font-size: 0.7rem;
+  color: var(--htmd-fg-muted);
+  background: var(--htmd-surface-2);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.cl-note {
+  width: 100%;
+  margin-top: 0.4rem;
+  padding: 0.4rem 0.55rem;
+  font-family: inherit;
+  font-size: var(--htmd-text-sm);
+  background: var(--htmd-surface-2);
+  border: 1px solid transparent;
+  border-radius: var(--htmd-radius-sm);
+  color: var(--htmd-fg);
+  resize: vertical;
+  min-height: 32px;
+}
+.cl-note:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+.cl-note:placeholder-shown { color: var(--htmd-fg-muted); }
+
+.cl-fab {
+  position: fixed;
+  bottom: 1.1rem;
+  right: 1.1rem;
+  z-index: 80;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 44px;
+  padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent);
+  color: var(--htmd-accent-fg);
+  border: none;
+  border-radius: 999px;
+  font-size: var(--htmd-text-sm);
+  font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg);
+  cursor: pointer;
+}
+.cl-fab:disabled, .cl-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.cl-fab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.4rem;
+  height: 1.4rem;
+  padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 700;
+}
+
+.cl-modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+}
+.cl-modal[hidden] { display: none; }
+.cl-modal-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.cl-modal-panel {
+  position: relative; background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius);
+  width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cl-modal-panel header {
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.cl-modal-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.cl-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.cl-x:hover { background: var(--htmd-surface-2); }
+.cl-modal-pre {
+  margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.cl-modal-panel footer {
+  padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border);
+  display: flex; justify-content: flex-end; gap: 0.5rem;
+}
+.cl-btn {
+  min-height: 40px; padding: 0.5rem 1rem;
+  border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  cursor: pointer; border: 1px solid transparent;
+}
+.cl-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.cl-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.cl-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cl-toast[hidden] { display: none; }
+.cl-toast.cl-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .cl { padding: 1rem 0.85rem 6rem; }
+  .cl-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .cl-fab, .cl-modal, .cl-toast { display: none !important; }
+  .cl-item { box-shadow: none; break-inside: avoid; }
+}
+
+</style>
+</head>
+<body data-htmd-template="compose">
+<main class="htmd-compose">
+<section class="htmd-prose"><h1>Q2 retention research read-out</h1>
+<p>Researcher: Cara · Reviewers: Alice, Bob · Draft: v3</p>
+<p>We ran a 4-week study on the new onboarding flow. Below is the headline KPI table, the engagement curve, the draft narrative for the share-out doc (please redline), and a checklist of follow-ups.</p>
+<h2>Headline metrics</h2>
+</section>
+<section class="htmd-block" data-htmd-block="data-table" data-htmd-block-idx="0">
+    <main class="dt">
+      <header class="dt-head">
+        <h1 class="dt-title">Cohort comparison — old vs new onboarding</h1>
+        <p class="dt-subtitle">Sample size: 12,400 users per cohort. Edit any cell if you&#39;d update the methodology or the framing.</p>
+        <div class="dt-controls">
+          <input type="search" class="dt-search" data-dt-search placeholder="Filter rows…" aria-label="Filter rows">
+          <span class="dt-counter" data-dt-counter></span>
+          <button type="button" class="dt-export-btn" data-dt-copy aria-label="Copy filtered rows as markdown table">
+            <span aria-hidden="true">&#x21B5;</span> Copy as markdown
+          </button>
+          
+            <button type="button" class="dt-export-btn dt-export-btn-edits" data-dt-copy-edits aria-label="Send my edits back to the agent" hidden>
+              <span aria-hidden="true">&#x21B5;</span> Send edits back <span class="dt-edit-badge" data-dt-edit-count>0</span>
+            </button>
+          
+        </div>
+      </header>
+
+      <div class="dt-wrap">
+        <table class="dt-table">
+          <thead>
+            <tr>
+              
+                <th data-dt-sort="metric" data-dt-type="text" style="text-align:left;">
+                  <span>Metric</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="old" data-dt-type="number" style="text-align:right;">
+                  <span>Old flow</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="new" data-dt-type="number" style="text-align:right;">
+                  <span>New flow</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="delta_pct" data-dt-type="percent" style="text-align:right;">
+                  <span>Δ %</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="confidence" data-dt-type="badge" style="text-align:center;">
+                  <span>Confidence</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="notes" data-dt-type="text" style="text-align:left;">
+                  <span>Notes</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+            </tr>
+          </thead>
+          <tbody data-dt-body>
+            
+    <tr data-dt-row="r1">
+      <td style="text-align:left;">Day-1 activation rate</td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r1:old"
+      value="0.412"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r1:new"
+      value="0.563"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r1:delta_pct"
+      value="0.366"
+      step="0.001"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r1:confidence"
+      value="high"
+      step="any"></td><td style="text-align:left;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r1:notes"
+      value="Largest single lift; statistically significant."
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r2">
+      <td style="text-align:left;">Day-7 retention</td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r2:old"
+      value="0.282"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r2:new"
+      value="0.341"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r2:delta_pct"
+      value="0.209"
+      step="0.001"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r2:confidence"
+      value="high"
+      step="any"></td><td style="text-align:left;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r2:notes"
+      value="Confirms the activation effect persists."
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r3">
+      <td style="text-align:left;">Day-30 retention</td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r3:old"
+      value="0.178"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r3:new"
+      value="0.198"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r3:delta_pct"
+      value="0.112"
+      step="0.001"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r3:confidence"
+      value="med"
+      step="any"></td><td style="text-align:left;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r3:notes"
+      value="Smaller lift; needs another month for confidence."
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r4">
+      <td style="text-align:left;">First-purchase rate</td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r4:old"
+      value="0.041"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r4:new"
+      value="0.058"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r4:delta_pct"
+      value="0.415"
+      step="0.001"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r4:confidence"
+      value="med"
+      step="any"></td><td style="text-align:left;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r4:notes"
+      value="Could be cohort skew; verify."
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r5">
+      <td style="text-align:left;">Support tickets/user</td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r5:old"
+      value="0.18"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r5:new"
+      value="0.11"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r5:delta_pct"
+      value="-0.389"
+      step="0.001"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r5:confidence"
+      value="high"
+      step="any"></td><td style="text-align:left;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r5:notes"
+      value="Fewer questions = clearer flow."
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r6">
+      <td style="text-align:left;">Avg time-to-activate (s)</td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r6:old"
+      value="184"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r6:new"
+      value="92"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r6:delta_pct"
+      value="-0.5"
+      step="0.001"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r6:confidence"
+      value="high"
+      step="any"></td><td style="text-align:left;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r6:notes"
+      value="Cut roughly in half."
+      step="any"></td>
+    </tr>
+  
+          </tbody>
+        </table>
+        <div class="dt-empty" data-dt-empty hidden>No rows match.</div>
+      </div>
+
+      <div class="dt-modal" data-dt-modal hidden role="dialog" aria-modal="true">
+        <div class="dt-backdrop" data-dt-close></div>
+        <div class="dt-panel">
+          <header><h2>Edits</h2><button type="button" class="dt-x" data-dt-close aria-label="Close">&#x2715;</button></header>
+          <pre class="dt-pre" data-dt-text></pre>
+          <footer>
+            <button type="button" class="dt-btn dt-btn-ghost" data-dt-close>Cancel</button>
+            <button type="button" class="dt-btn dt-btn-primary" data-dt-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+
+      <div class="dt-toast" data-dt-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-dt-state data-htmd-state="data-table">{"block_id":"","title":"Cohort comparison — old vs new onboarding","prompt_intro":"Updates to the headline metrics table.","editable":true,"row_key":"metric","columns":[{"key":"metric","label":"Metric","type":"text","align":"left","width":"","editable":false},{"key":"old","label":"Old flow","type":"number","align":"right","width":"","editable":true},{"key":"new","label":"New flow","type":"number","align":"right","width":"","editable":true},{"key":"delta_pct","label":"Δ %","type":"percent","align":"right","width":"","editable":true},{"key":"confidence","label":"Confidence","type":"badge","align":"center","width":"","editable":true},{"key":"notes","label":"Notes","type":"text","align":"left","width":"","editable":true}],"rows":[{"metric":"Day-1 activation rate","old":0.412,"new":0.563,"delta_pct":0.366,"confidence":"high","notes":"Largest single lift; statistically significant.","_id":"r1"},{"metric":"Day-7 retention","old":0.282,"new":0.341,"delta_pct":0.209,"confidence":"high","notes":"Confirms the activation effect persists.","_id":"r2"},{"metric":"Day-30 retention","old":0.178,"new":0.198,"delta_pct":0.112,"confidence":"med","notes":"Smaller lift; needs another month for confidence.","_id":"r3"},{"metric":"First-purchase rate","old":0.041,"new":0.058,"delta_pct":0.415,"confidence":"med","notes":"Could be cohort skew; verify.","_id":"r4"},{"metric":"Support tickets/user","old":0.18,"new":0.11,"delta_pct":-0.389,"confidence":"high","notes":"Fewer questions = clearer flow.","_id":"r5"},{"metric":"Avg time-to-activate (s)","old":184,"new":92,"delta_pct":-0.5,"confidence":"high","notes":"Cut roughly in half.","_id":"r6"}],"original_rows":[{"metric":"Day-1 activation rate","old":0.412,"new":0.563,"delta_pct":0.366,"confidence":"high","notes":"Largest single lift; statistically significant.","_id":"r1"},{"metric":"Day-7 retention","old":0.282,"new":0.341,"delta_pct":0.209,"confidence":"high","notes":"Confirms the activation effect persists.","_id":"r2"},{"metric":"Day-30 retention","old":0.178,"new":0.198,"delta_pct":0.112,"confidence":"med","notes":"Smaller lift; needs another month for confidence.","_id":"r3"},{"metric":"First-purchase rate","old":0.041,"new":0.058,"delta_pct":0.415,"confidence":"med","notes":"Could be cohort skew; verify.","_id":"r4"},{"metric":"Support tickets/user","old":0.18,"new":0.11,"delta_pct":-0.389,"confidence":"high","notes":"Fewer questions = clearer flow.","_id":"r5"},{"metric":"Avg time-to-activate (s)","old":184,"new":92,"delta_pct":-0.5,"confidence":"high","notes":"Cut roughly in half.","_id":"r6"}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Engagement curve</h2>
+</section>
+<section class="htmd-block" data-htmd-block="chart-block" data-htmd-block-idx="1">
+    <main class="cb">
+      <header class="cb-head">
+        <h1 class="cb-title">Day-1 activation rate by cohort week</h1>
+        <p class="cb-subtitle">4-week rolling cohorts; both flows running in parallel since week 14.</p>
+      </header>
+      <figure class="cb-figure">
+        <svg class="htmd-line" viewBox="0 0 640 240" width="100%" preserveAspectRatio="xMidYMid meet" role="img"><line x1="36" y1="12" x2="36" y2="216" stroke="var(--htmd-muted, #94a3b8)" stroke-width="0.5"/><line x1="36" y1="216" x2="628" y2="216" stroke="var(--htmd-muted, #94a3b8)" stroke-width="0.5"/><text x="32" y="16" font-size="10" text-anchor="end" fill="var(--htmd-fg, #0f172a)" opacity="0.7">0.57</text><text x="32" y="216" font-size="10" text-anchor="end" fill="var(--htmd-fg, #0f172a)" opacity="0.7">0.40</text><path d="M36.00,216.00 L89.82,204.00 L143.64,204.00 L197.45,216.00 L251.27,192.00 L305.09,204.00 L358.91,192.00 L412.73,216.00 L466.55,204.00 L520.36,192.00 L574.18,204.00 L628.00,192.00" fill="none" stroke="var(--htmd-accent, #4f46e5)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="36.00" cy="216.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="89.82" cy="204.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="143.64" cy="204.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="197.45" cy="216.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="251.27" cy="192.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="305.09" cy="204.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="358.91" cy="192.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="412.73" cy="216.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="466.55" cy="204.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="520.36" cy="192.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="574.18" cy="204.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><circle cx="628.00" cy="192.00" r="2.5" fill="var(--htmd-accent, #4f46e5)"/><path d="M36.00,180.00 L89.82,144.00 L143.64,108.00 L197.45,72.00 L251.27,48.00 L305.09,36.00 L358.91,24.00 L412.73,24.00 L466.55,12.00 L520.36,24.00 L574.18,24.00 L628.00,12.00" fill="none" stroke="#10b981" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="36.00" cy="180.00" r="2.5" fill="#10b981"/><circle cx="89.82" cy="144.00" r="2.5" fill="#10b981"/><circle cx="143.64" cy="108.00" r="2.5" fill="#10b981"/><circle cx="197.45" cy="72.00" r="2.5" fill="#10b981"/><circle cx="251.27" cy="48.00" r="2.5" fill="#10b981"/><circle cx="305.09" cy="36.00" r="2.5" fill="#10b981"/><circle cx="358.91" cy="24.00" r="2.5" fill="#10b981"/><circle cx="412.73" cy="24.00" r="2.5" fill="#10b981"/><circle cx="466.55" cy="12.00" r="2.5" fill="#10b981"/><circle cx="520.36" cy="24.00" r="2.5" fill="#10b981"/><circle cx="574.18" cy="24.00" r="2.5" fill="#10b981"/><circle cx="628.00" cy="12.00" r="2.5" fill="#10b981"/><rect x="36" y="228" width="8" height="8" fill="var(--htmd-accent, #4f46e5)"/><text x="48" y="235" font-size="10" fill="var(--htmd-fg, #0f172a)">Old flow</text><rect x="108" y="228" width="8" height="8" fill="#10b981"/><text x="120" y="235" font-size="10" fill="var(--htmd-fg, #0f172a)">New flow</text></svg>
+        <figcaption class="cb-caption">The new flow&#39;s activation rate stabilized around 56% after week 16, ~15 pts above the old flow.</figcaption>
+      </figure>
+      
+    <details class="cb-data">
+      <summary>Underlying data</summary>
+      <table>
+        <thead><tr><th>Label</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Old flow[0]</td><td>0.4</td></tr><tr><td>Old flow[1]</td><td>0.41</td></tr><tr><td>Old flow[2]</td><td>0.41</td></tr><tr><td>Old flow[3]</td><td>0.4</td></tr><tr><td>Old flow[4]</td><td>0.42</td></tr><tr><td>Old flow[5]</td><td>0.41</td></tr><tr><td>Old flow[6]</td><td>0.42</td></tr><tr><td>Old flow[7]</td><td>0.4</td></tr><tr><td>Old flow[8]</td><td>0.41</td></tr><tr><td>Old flow[9]</td><td>0.42</td></tr><tr><td>Old flow[10]</td><td>0.41</td></tr><tr><td>Old flow[11]</td><td>0.42</td></tr><tr><td>New flow[0]</td><td>0.43</td></tr><tr><td>New flow[1]</td><td>0.46</td></tr><tr><td>New flow[2]</td><td>0.49</td></tr><tr><td>New flow[3]</td><td>0.52</td></tr><tr><td>New flow[4]</td><td>0.54</td></tr><tr><td>New flow[5]</td><td>0.55</td></tr><tr><td>New flow[6]</td><td>0.56</td></tr><tr><td>New flow[7]</td><td>0.56</td></tr><tr><td>New flow[8]</td><td>0.57</td></tr><tr><td>New flow[9]</td><td>0.56</td></tr><tr><td>New flow[10]</td><td>0.56</td></tr><tr><td>New flow[11]</td><td>0.57</td></tr>
+        </tbody>
+      </table>
+    </details>
+  
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Draft executive summary — please redline</h2>
+</section>
+<section class="htmd-block" data-htmd-block="text-redline" data-htmd-block-idx="2">
+    <main class="tr">
+      <header class="tr-head">
+        <h1 class="tr-title">Draft of the share-out doc</h1>
+        <p class="tr-subtitle">Edit any paragraph. Use the &amp;times; button to reject one entirely.</p>
+        <p class="tr-hint">Click any paragraph to edit. The "&times;" button rejects a paragraph; the &#x270E; reveals a comment field.</p>
+      </header>
+
+      <article class="tr-doc">
+        
+    <div class="tr-seg" data-tr-seg="s1">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s1" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s1" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s1" spellcheck="true">We ran a 4-week experiment comparing the legacy onboarding flow to a redesigned version that emphasizes immediate value-delivery in the first three screens. The redesigned flow won every metric we tracked, with the largest effect on day-1 activation.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s1" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s2">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s2" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s2" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s2" spellcheck="true">Day-1 activation rose from 41% to 56% (+37%, p &lt; 0.001) — the largest lift of any onboarding change in the past two years. Day-7 retention followed, rising from 28% to 34% (+21%, p &lt; 0.001), which suggests the activation gain isn&#39;t a one-day mirage.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s2" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s3">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s3" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s3" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s3" spellcheck="true">Operationally, the new flow generated ~40% fewer support tickets per user. Together with the activation lift, this implies the new flow is both more effective and cheaper to operate.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s3" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s4">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s4" aria-label="Comment" title="Comment">&#x270E;</button>
+        <button type="button" class="tr-seg-btn tr-seg-btn-reject" data-tr-reject="s4" aria-label="Reject paragraph" title="Reject">&times;</button>
+      </div>
+      <div class="tr-seg-text" contenteditable="true" data-tr-text="s4" spellcheck="true">Recommendation: ship the new flow to 100% of new users by end of the next sprint. Keep the old flow available behind a feature flag for one month in case rollback is needed.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s4" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+    <div class="tr-seg" data-tr-seg="s5">
+      <div class="tr-seg-actions">
+        <button type="button" class="tr-seg-btn" data-tr-comment="s5" aria-label="Comment" title="Comment">&#x270E;</button>
+        
+      </div>
+      <div class="tr-seg-text" contenteditable="false" data-tr-text="s5" spellcheck="true">Caveats: day-30 retention lift (+11%) is smaller and would benefit from another month of data. First-purchase rate jumped 42% but the absolute number is small; we should verify with another month before claiming this as a revenue lever.</div>
+      <textarea class="tr-seg-comment" rows="1" data-tr-comment-input="s5" placeholder="Comment for the agent (optional)" hidden></textarea>
+    </div>
+  
+      </article>
+
+      <button type="button" class="tr-fab" data-tr-copy aria-label="Send redlined draft back to agent">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send redlined draft</span>
+        <span class="tr-fab-badge" data-tr-changed>0</span>
+      </button>
+
+      <div class="tr-modal" data-tr-modal hidden role="dialog" aria-modal="true">
+        <div class="tr-backdrop" data-tr-close></div>
+        <div class="tr-panel">
+          <header><h2>Redlined draft</h2><button type="button" class="tr-x" data-tr-close aria-label="Close">&#x2715;</button></header>
+          <pre class="tr-pre" data-tr-text></pre>
+          <footer>
+            <button type="button" class="tr-btn tr-btn-ghost" data-tr-close>Cancel</button>
+            <button type="button" class="tr-btn tr-btn-primary" data-tr-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="tr-toast" data-tr-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-tr-state data-htmd-state="text-redline">{"block_id":"","title":"Draft of the share-out doc","prompt_intro":"Redlined exec summary for the retention readout.","segments":[{"id":"s1","original":"We ran a 4-week experiment comparing the legacy onboarding flow to a redesigned version that emphasizes immediate value-delivery in the first three screens. The redesigned flow won every metric we tracked, with the largest effect on day-1 activation.","edited":"We ran a 4-week experiment comparing the legacy onboarding flow to a redesigned version that emphasizes immediate value-delivery in the first three screens. The redesigned flow won every metric we tracked, with the largest effect on day-1 activation.","comment":"","accepted":true,"locked":false},{"id":"s2","original":"Day-1 activation rose from 41% to 56% (+37%, p < 0.001) — the largest lift of any onboarding change in the past two years. Day-7 retention followed, rising from 28% to 34% (+21%, p < 0.001), which suggests the activation gain isn't a one-day mirage.","edited":"Day-1 activation rose from 41% to 56% (+37%, p < 0.001) — the largest lift of any onboarding change in the past two years. Day-7 retention followed, rising from 28% to 34% (+21%, p < 0.001), which suggests the activation gain isn't a one-day mirage.","comment":"","accepted":true,"locked":false},{"id":"s3","original":"Operationally, the new flow generated ~40% fewer support tickets per user. Together with the activation lift, this implies the new flow is both more effective and cheaper to operate.","edited":"Operationally, the new flow generated ~40% fewer support tickets per user. Together with the activation lift, this implies the new flow is both more effective and cheaper to operate.","comment":"","accepted":true,"locked":false},{"id":"s4","original":"Recommendation: ship the new flow to 100% of new users by end of the next sprint. Keep the old flow available behind a feature flag for one month in case rollback is needed.","edited":"Recommendation: ship the new flow to 100% of new users by end of the next sprint. Keep the old flow available behind a feature flag for one month in case rollback is needed.","comment":"","accepted":true,"locked":false},{"id":"s5","original":"Caveats: day-30 retention lift (+11%) is smaller and would benefit from another month of data. First-purchase rate jumped 42% but the absolute number is small; we should verify with another month before claiming this as a revenue lever.","edited":"Caveats: day-30 retention lift (+11%) is smaller and would benefit from another month of data. First-purchase rate jumped 42% but the absolute number is small; we should verify with another month before claiming this as a revenue lever.","comment":"","accepted":false,"locked":true}]}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><h2>Follow-ups</h2>
+</section>
+<section class="htmd-block" data-htmd-block="checklist" data-htmd-block-idx="3">
+    <main class="cl">
+      <header class="cl-head">
+        <h1 class="cl-title">Follow-up tasks for the readout</h1>
+        
+        <div class="cl-progress" data-cl-progress aria-live="polite">
+          <span data-cl-done>0</span> of <span>5</span> complete
+        </div>
+      </header>
+
+      <ol class="cl-list">
+        
+    <li class="cl-item" data-cl-item="f1">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="f1" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Reframe day-30 number with the &#39;needs another month&#39; caveat in the deck</span>
+          <span class="cl-pri cl-pri-high">high</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="f1" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="f2">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="f2" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Verify the first-purchase number against the finance dashboard</span>
+          <span class="cl-pri cl-pri-high">high</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@cara</span>
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="f2" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="f3">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="f3" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Re-run the chart with the &#39;mobile only&#39; segment to check parity</span>
+          <span class="cl-pri cl-pri-med">med</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@cara</span>
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="f3" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="f4">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="f4" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Slack #product with the headline numbers + link to this doc</span>
+          <span class="cl-pri cl-pri-low">low</span>
+        </div>
+        <div class="cl-meta">
+          <span class="cl-meta-pill">@alice</span>
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="f4" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+    <li class="cl-item" data-cl-item="f5">
+      <label class="cl-check">
+        <input type="checkbox" data-cl-check="f5" >
+        <span class="cl-check-box" aria-hidden="true"></span>
+      </label>
+      <div class="cl-body">
+        <div class="cl-title-row">
+          <span class="cl-text">Schedule the all-hands read-out for Tuesday</span>
+          <span class="cl-pri cl-pri-low">low</span>
+        </div>
+        <div class="cl-meta">
+          
+          
+          
+        </div>
+        <textarea class="cl-note" rows="1" data-cl-note="f5" placeholder="Add a note (optional)"></textarea>
+      </div>
+    </li>
+  
+      </ol>
+
+      <button type="button" class="cl-fab" data-cl-copy aria-label="Copy progress as prompt">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Copy progress as prompt</span>
+        <span class="cl-fab-badge" data-cl-changed>0</span>
+      </button>
+
+      <div class="cl-modal" data-cl-modal hidden role="dialog" aria-modal="true">
+        <div class="cl-modal-backdrop" data-cl-close></div>
+        <div class="cl-modal-panel">
+          <header><h2>Progress prompt</h2><button type="button" class="cl-x" data-cl-close aria-label="Close">&#x2715;</button></header>
+          <pre class="cl-modal-pre" data-cl-text></pre>
+          <footer>
+            <button type="button" class="cl-btn cl-btn-ghost" data-cl-close>Cancel</button>
+            <button type="button" class="cl-btn cl-btn-primary" data-cl-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="cl-toast" data-cl-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-cl-state data-htmd-state="checklist">{"items":[{"id":"f1","original_done":false,"done":false,"original_note":"","note":"","title":"Reframe day-30 number with the 'needs another month' caveat in the deck"},{"id":"f2","original_done":false,"done":false,"original_note":"","note":"","title":"Verify the first-purchase number against the finance dashboard"},{"id":"f3","original_done":false,"done":false,"original_note":"","note":"","title":"Re-run the chart with the 'mobile only' segment to check parity"},{"id":"f4","original_done":false,"done":false,"original_note":"","note":"","title":"Slack #product with the headline numbers + link to this doc"},{"id":"f5","original_done":false,"done":false,"original_note":"","note":"","title":"Schedule the all-hands read-out for Tuesday"}],"title":"Follow-up tasks for the readout","block_id":"","prompt_intro":"Status of the readout follow-up tasks."}</script>
+    </main>
+  </section>
+<section class="htmd-prose"><p>When you&#39;re done editing the table, redlining the draft, and ticking off any tasks you&#39;ve already done, hit <strong>Copy all changes</strong> to send everything back to the agent in one prompt.</p>
+</section>
+
+<button type="button" class="htmd-cx-fab" data-htmd-cx-export aria-label="Copy all changes back to agent">
+  <span aria-hidden="true">&#x21B5;</span>
+  <span>Copy all changes</span>
+  <span class="htmd-cx-fab-badge" data-htmd-cx-count>0</span>
+</button>
+<div class="htmd-cx-modal" data-htmd-cx-modal hidden role="dialog" aria-modal="true" aria-labelledby="htmd-cx-title">
+  <div class="htmd-cx-modal-backdrop" data-htmd-cx-close></div>
+  <div class="htmd-cx-modal-panel">
+    <header class="htmd-cx-modal-head">
+      <h2 id="htmd-cx-title">Aggregated agent prompt</h2>
+      <button type="button" class="htmd-cx-modal-x" data-htmd-cx-close aria-label="Close">&#x2715;</button>
+    </header>
+    <pre class="htmd-cx-modal-pre" data-htmd-cx-text></pre>
+    <footer class="htmd-cx-modal-foot">
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-ghost" data-htmd-cx-close>Cancel</button>
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-primary" data-htmd-cx-confirm>Copy</button>
+    </footer>
+  </div>
+</div>
+<div class="htmd-cx-toast" data-htmd-cx-toast hidden role="status" aria-live="polite"></div>
+
+</main>
+<script>
+(function () {
+  const root = document.querySelector('main.dt');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-dt-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const body = root.querySelector('[data-dt-body]');
+  const search = root.querySelector('[data-dt-search]');
+  const counter = root.querySelector('[data-dt-counter]');
+  const empty = root.querySelector('[data-dt-empty]');
+  const toast = root.querySelector('[data-dt-toast]');
+  const heads = root.querySelectorAll('[data-dt-sort]');
+
+  let filter = '';
+  let sortKey = null;
+  let sortDir = null;
+
+  // -------- helpers --------
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function compare(a, b, type) {
+    if (type === 'number' || type === 'currency' || type === 'percent') {
+      const an = parseFloat(a); const bn = parseFloat(b);
+      if (isNaN(an) && isNaN(bn)) return 0;
+      if (isNaN(an)) return 1; if (isNaN(bn)) return -1;
+      return an - bn;
+    }
+    if (type === 'date') {
+      const ad = new Date(a).getTime(); const bd = new Date(b).getTime();
+      return (isNaN(ad) ? 0 : ad) - (isNaN(bd) ? 0 : bd);
+    }
+    return String(a ?? '').localeCompare(String(b ?? ''));
+  }
+  function visibleRows() {
+    let rows = state.rows.slice();
+    if (filter) {
+      const f = filter.toLowerCase();
+      rows = rows.filter((r) => state.columns.some((c) => String(r[c.key] ?? '').toLowerCase().includes(f)));
+    }
+    if (sortKey && sortDir) {
+      const col = state.columns.find((c) => c.key === sortKey);
+      const type = col ? col.type : 'text';
+      rows.sort((a, b) => compare(a[sortKey], b[sortKey], type));
+      if (sortDir === 'desc') rows.reverse();
+    }
+    return rows;
+  }
+  function fmtCell(val, col) {
+    if (val == null || val === '') return '';
+    switch (col.type) {
+      case 'number': return typeof val === 'number' ? new Intl.NumberFormat('en-US').format(val) : String(val);
+      case 'currency': return typeof val === 'number' ? new Intl.NumberFormat('en-US', { style: 'currency', currency: col.currency || 'USD' }).format(val) : String(val);
+      case 'percent': return typeof val === 'number' ? new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(val) : String(val);
+      case 'date': { try { const d = new Date(val); return isNaN(d.getTime()) ? String(val) : d.toLocaleDateString('en-US'); } catch { return String(val); } }
+      default: return String(val);
+    }
+  }
+  function originalById(id) { return state.original_rows.find((r) => r._id === id); }
+  function rowLabel(r) { return r[state.row_key] ?? r._id; }
+
+  // -------- editing diff --------
+  function changes() {
+    const out = [];
+    state.rows.forEach((r) => {
+      const orig = originalById(r._id) || {};
+      state.columns.forEach((c) => {
+        if (!c.editable) return;
+        const a = orig[c.key]; const b = r[c.key];
+        const changed = (a ?? '') !== (b ?? '');
+        if (changed) out.push({ row: rowLabel(r), col: c.label, was: a, now: b });
+      });
+    });
+    return out;
+  }
+  function refreshEditState() {
+    const editsBtn = root.querySelector('[data-dt-copy-edits]');
+    const badge = root.querySelector('[data-dt-edit-count]');
+    const ch = changes();
+    if (badge) badge.textContent = ch.length;
+    if (editsBtn) {
+      if (ch.length > 0) editsBtn.removeAttribute('hidden');
+      else editsBtn.setAttribute('hidden', '');
+    }
+  }
+
+  // -------- render --------
+  function render() {
+    const rows = visibleRows();
+    body.innerHTML = rows.map((r) => `<tr data-dt-row="${escapeHtml(r._id)}">${rowHtml(r)}</tr>`).join('');
+    if (empty) {
+      if (rows.length === 0) empty.removeAttribute('hidden'); else empty.setAttribute('hidden', '');
+    }
+    if (counter) counter.textContent = `${rows.length} of ${state.rows.length} rows`;
+    heads.forEach((th) => {
+      const k = th.dataset.dtSort;
+      if (k === sortKey && sortDir) th.dataset.dtDir = sortDir; else th.removeAttribute('data-dt-dir');
+    });
+    wireCellInputs();
+  }
+  function rowHtml(r) {
+    return state.columns.map((c) => {
+      let inner;
+      if (c.editable) {
+        const v = r[c.key];
+        const inputType = (c.type === 'number' || c.type === 'currency' || c.type === 'percent') ? 'number' : 'text';
+        inner = `<input type="${inputType}" class="dt-cell-input" data-dt-cell="${escapeHtml(r._id)}:${escapeHtml(c.key)}" value="${escapeHtml(v == null ? '' : v)}" step="any">`;
+      } else {
+        const text = fmtCell(r[c.key], c);
+        let html = escapeHtml(text);
+        if (c.type === 'badge' && text) html = `<span class="dt-badge">${escapeHtml(text)}</span>`;
+        if (c.type === 'mono' && text) html = `<code>${escapeHtml(text)}</code>`;
+        inner = html;
+      }
+      return `<td style="text-align:${c.align};">${inner}</td>`;
+    }).join('');
+  }
+  function wireCellInputs() {
+    body.querySelectorAll('[data-dt-cell]').forEach((inp) => {
+      inp.addEventListener('input', () => {
+        const [rid, key] = inp.dataset.dtCell.split(':');
+        const row = state.rows.find((r) => r._id === rid);
+        const col = state.columns.find((c) => c.key === key);
+        if (!row || !col) return;
+        if (col.type === 'number' || col.type === 'currency' || col.type === 'percent') {
+          const v = inp.value === '' ? null : parseFloat(inp.value);
+          row[key] = isFinite(v) ? v : null;
+        } else {
+          row[key] = inp.value;
+        }
+        refreshEditState();
+      });
+    });
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('dt-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('dt-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function buildMarkdown() {
+    const rows = visibleRows();
+    const cols = state.columns;
+    const head = '| ' + cols.map((c) => c.label).join(' | ') + ' |';
+    const sep = '| ' + cols.map(() => '---').join(' | ') + ' |';
+    const lines = [head, sep];
+    for (const r of rows) {
+      lines.push('| ' + cols.map((c) => String(r[c.key] ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ')).join(' | ') + ' |');
+    }
+    return lines.join('\n');
+  }
+  function buildEditsPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Edits to "${state.title}":`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    const ch = changes();
+    if (ch.length === 0) lines.push('(no edits)');
+    else {
+      lines.push('Cell changes:');
+      ch.forEach((c, i) => {
+        lines.push(`${i + 1}. Row "${c.row}" / column "${c.col}": ${c.was ?? '(empty)'} → ${c.now ?? '(empty)'}`);
+      });
+    }
+    lines.push(''); lines.push('Full table after edits:'); lines.push(''); lines.push(buildMarkdown());
+    return lines.join('\n');
+  }
+
+  // -------- modal --------
+  const modal = root.querySelector('[data-dt-modal]');
+  const modalText = root.querySelector('[data-dt-text]');
+  function openModal(text) {
+    if (!modal) return;
+    if (modalText) modalText.textContent = text;
+    modal.removeAttribute('hidden');
+  }
+  function closeModal() { if (modal) modal.setAttribute('hidden', ''); }
+
+  // -------- wire UI --------
+  search?.addEventListener('input', () => { filter = search.value; render(); });
+  heads.forEach((th) => th.addEventListener('click', () => {
+    const k = th.dataset.dtSort;
+    if (sortKey !== k) { sortKey = k; sortDir = 'asc'; }
+    else if (sortDir === 'asc') sortDir = 'desc';
+    else if (sortDir === 'desc') { sortKey = null; sortDir = null; }
+    render();
+  }));
+  const copyBtn = root.querySelector('[data-dt-copy]');
+  if (copyBtn) copyBtn.addEventListener('click', async () => {
+    const text = buildMarkdown();
+    const ok = await copyText(text);
+    showToast(ok ? 'Copied as markdown' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+  const editsBtn = root.querySelector('[data-dt-copy-edits]');
+  if (editsBtn) editsBtn.addEventListener('click', () => openModal(buildEditsPrompt()));
+  root.querySelectorAll('[data-dt-close]').forEach((el) => el.addEventListener('click', closeModal));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) closeModal(); });
+  const confirmBtn = root.querySelector('[data-dt-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildEditsPrompt();
+    const ok = await copyText(text);
+    closeModal(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'data-table',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changes().length > 0 || filter !== '' || sortKey !== null,
+    getPrompt: () => {
+      if (changes().length > 0) return buildEditsPrompt();
+      const lines = [`Filtered/sorted view of "${state.title}":`];
+      if (filter) lines.push(`Filter: "${filter}"`);
+      if (sortKey && sortDir) lines.push(`Sort: ${sortKey} ${sortDir}`);
+      lines.push(''); lines.push(buildMarkdown());
+      return lines.join('\n');
+    }
+  });
+
+  render();
+  refreshEditState();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.tr');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-tr-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const idx = new Map();
+  state.segments.forEach((s) => idx.set(s.id, s));
+
+  const fab = root.querySelector('[data-tr-copy]');
+  const changedEl = root.querySelector('[data-tr-changed]');
+  const modal = root.querySelector('[data-tr-modal]');
+  const modalText = root.querySelector('[data-tr-text]');
+  const toast = root.querySelector('[data-tr-toast]');
+
+  function isChanged(s) {
+    return s.edited.trim() !== s.original.trim() || (s.comment || '').trim() !== '' || s.accepted === false;
+  }
+  function changedCount() { return state.segments.filter(isChanged).length; }
+  function refresh() {
+    const n = changedCount();
+    if (changedEl) changedEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+  function updateUi(id) {
+    const s = idx.get(id); if (!s) return;
+    const seg = root.querySelector(`[data-tr-seg="${cssEscape(id)}"]`);
+    if (!seg) return;
+    seg.classList.toggle('tr-rejected', s.accepted === false);
+    seg.classList.toggle('tr-edited', s.accepted !== false && s.edited.trim() !== s.original.trim());
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `I redlined the draft "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    lines.push('Final text (with rejections removed and edits applied):'); lines.push('');
+    for (const s of state.segments) {
+      if (s.accepted === false) continue;
+      lines.push(s.edited.trim());
+      lines.push('');
+    }
+    const ch = state.segments.filter(isChanged);
+    if (ch.length) {
+      lines.push('---'); lines.push(''); lines.push('Change log:'); lines.push('');
+      let n = 0;
+      for (const s of ch) {
+        n++;
+        if (s.accepted === false) {
+          lines.push(`${n}. REJECTED — "${s.original.trim().slice(0, 100)}…"`);
+        } else if (s.edited.trim() !== s.original.trim()) {
+          lines.push(`${n}. EDITED`);
+          lines.push(`   Was: ${s.original.trim()}`);
+          lines.push(`   Now: ${s.edited.trim()}`);
+        } else {
+          lines.push(`${n}. COMMENT on: "${s.original.trim().slice(0, 100)}…"`);
+        }
+        const c = (s.comment || '').trim();
+        if (c) lines.push(`   Comment: ${c}`);
+        lines.push('');
+      }
+    }
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('tr-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('tr-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (changedCount() === 0) { showToast('No edits yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+  function cssEscape(v) {
+    if (window.CSS && window.CSS.escape) return window.CSS.escape(v);
+    return String(v).replace(/[^a-zA-Z0-9_-]/g, (c) => '\\' + c);
+  }
+
+  root.querySelectorAll('[data-tr-text]').forEach((el) => {
+    el.addEventListener('input', () => {
+      const s = idx.get(el.dataset.trText); if (!s) return;
+      s.edited = el.innerText.replace(/ /g, ' ');
+      updateUi(s.id); refresh();
+    });
+  });
+  root.querySelectorAll('[data-tr-reject]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.trReject;
+      const s = idx.get(id); if (!s) return;
+      s.accepted = !(s.accepted === false) ? false : true;
+      updateUi(id); refresh();
+    });
+  });
+  root.querySelectorAll('[data-tr-comment]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.trComment;
+      const ta = root.querySelector(`[data-tr-comment-input="${cssEscape(id)}"]`);
+      if (!ta) return;
+      ta.toggleAttribute('hidden');
+      if (!ta.hasAttribute('hidden')) ta.focus();
+    });
+  });
+  root.querySelectorAll('[data-tr-comment-input]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const s = idx.get(ta.dataset.trCommentInput); if (!s) return;
+      s.comment = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+      refresh();
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-tr-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-tr-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'text-redline',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changedCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+(function () {
+  const root = document.querySelector('main.cl');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-cl-state]');
+  if (!stateNode) return;
+  let state;
+  try { state = JSON.parse(stateNode.textContent); } catch (e) { return; }
+
+  const idx = new Map();
+  state.items.forEach((it) => idx.set(it.id, it));
+
+  const fab = root.querySelector('[data-cl-copy]');
+  const changedEl = root.querySelector('[data-cl-changed]');
+  const doneEl = root.querySelector('[data-cl-done]');
+  const modal = root.querySelector('[data-cl-modal]');
+  const modalText = root.querySelector('[data-cl-text]');
+  const toast = root.querySelector('[data-cl-toast]');
+
+  function changedItems() {
+    return state.items.filter((it) =>
+      it.done !== it.original_done || (it.note || '').trim() !== (it.original_note || '').trim()
+    );
+  }
+  function doneCount() { return state.items.filter((it) => it.done).length; }
+
+  function refresh() {
+    const ch = changedItems().length;
+    if (changedEl) changedEl.textContent = ch;
+    if (fab) { fab.disabled = ch === 0; fab.setAttribute('aria-disabled', ch === 0 ? 'true' : 'false'); }
+    if (doneEl) doneEl.textContent = doneCount();
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `I worked through the "${state.title}" checklist; here is the resulting state.`);
+    lines.push('');
+    lines.push(`Date: ${new Date().toISOString()}`);
+    lines.push(`Progress: ${doneCount()} of ${state.items.length} complete`);
+    lines.push('');
+    const ch = changedItems();
+    if (ch.length === 0) {
+      lines.push('No items changed since the agent generated this checklist.');
+      return lines.join('\n');
+    }
+    lines.push('Changes:');
+    let n = 0;
+    for (const it of ch) {
+      n++;
+      const becameDone = it.done && !it.original_done;
+      const becameUndone = !it.done && it.original_done;
+      const noteChanged = (it.note || '').trim() !== (it.original_note || '').trim();
+      lines.push(`${n}. ${it.title}`);
+      if (becameDone) lines.push('   - Completed');
+      if (becameUndone) lines.push('   - Re-opened (was previously marked done)');
+      if (noteChanged) lines.push(`   - Note: ${(it.note || '').trim() || '(cleared)'}`);
+      lines.push('');
+    }
+    lines.push('Please continue from here.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) {
+      try { await navigator.clipboard.writeText(text); return true; } catch {}
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('cl-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('cl-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+
+  function open() {
+    if (changedItems().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return;
+    if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-cl-check]').forEach((cb) => {
+    cb.addEventListener('change', () => {
+      const it = idx.get(cb.dataset.clCheck); if (!it) return;
+      it.done = cb.checked;
+      const li = cb.closest('.cl-item'); if (li) li.classList.toggle('cl-done', cb.checked);
+      refresh();
+    });
+  });
+  root.querySelectorAll('[data-cl-note]').forEach((ta) => {
+    ta.addEventListener('input', () => {
+      const it = idx.get(ta.dataset.clNote); if (!it) return;
+      it.note = ta.value;
+      ta.style.height = 'auto'; ta.style.height = Math.min(ta.scrollHeight, 240) + 'px';
+      refresh();
+    });
+  });
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-cl-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-cl-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close();
+    showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  // Register with the compose-level export bridge so a parent compose page can
+  // include this block's prompt in an aggregate "Copy all changes" action.
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'checklist',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changedItems().length > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+;
+
+(function () {
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  const reg = window.__htmd;
+  const fab = document.querySelector('[data-htmd-cx-export]');
+  const countEl = document.querySelector('[data-htmd-cx-count]');
+  const modal = document.querySelector('[data-htmd-cx-modal]');
+  const modalText = document.querySelector('[data-htmd-cx-text]');
+  const toast = document.querySelector('[data-htmd-cx-toast]');
+  if (!fab) return;
+
+  function changedBlocks() {
+    return reg.blocks.filter((b) => {
+      try { return typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; }
+      catch { return false; }
+    });
+  }
+
+  function refresh() {
+    const n = changedBlocks().length;
+    if (countEl) countEl.textContent = n;
+    fab.disabled = n === 0;
+    fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false');
+  }
+
+  function buildAggregatePrompt() {
+    const parts = [];
+    parts.push('I reviewed your output in the browser and have the following changes/answers across multiple blocks. Please proceed accordingly.');
+    parts.push('');
+    let n = 0;
+    for (const b of reg.blocks) {
+      let changes = false;
+      try { changes = typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; } catch { changes = false; }
+      if (!changes) continue;
+      let promptText = '';
+      try { promptText = b.getPrompt ? b.getPrompt() : ''; } catch (e) { promptText = '(error generating prompt: ' + e.message + ')'; }
+      if (!promptText) continue;
+      n++;
+      parts.push('---');
+      parts.push('Block ' + n + ' (' + (b.template || 'unknown') + (b.blockId ? ' #' + b.blockId : '') + '):');
+      parts.push('');
+      parts.push(promptText.trim());
+      parts.push('');
+    }
+    if (n === 0) parts.push('(no changes recorded)');
+    return parts.join('\n');
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.removeAttribute('hidden');
+    void toast.offsetWidth;
+    toast.classList.add('htmd-cx-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => {
+      toast.classList.remove('htmd-cx-toast-show');
+      setTimeout(() => toast.setAttribute('hidden', ''), 220);
+    }, 1800);
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try { await navigator.clipboard.writeText(text); return true; } catch (e) {}
+    }
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus(); ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  function open() {
+    if (changedBlocks().length === 0) { showToast('No changes yet'); return; }
+    if (!modal) return;
+    if (modalText) modalText.textContent = buildAggregatePrompt();
+    modal.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  function close() {
+    if (!modal) return;
+    modal.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+  }
+
+  fab.addEventListener('click', open);
+  document.querySelectorAll('[data-htmd-cx-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = document.querySelector('[data-htmd-cx-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildAggregatePrompt();
+    const ok = await copyText(text);
+    close();
+    showToast(ok ? 'Copied to clipboard' : 'Copy failed — see console');
+    if (!ok) console.log(text);
+  });
+
+  // Poll for changes (cheap; covers the case where a block doesn't dispatch events).
+  setInterval(refresh, 800);
+  refresh();
+})();
+
+</script>
+</body>
+</html>

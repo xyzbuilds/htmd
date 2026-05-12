@@ -9,40 +9,57 @@ import { renderTemplate } from '../src/render.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 
+const ALL_TEMPLATES = [
+  'status-report',
+  'dashboard',
+  'decision-matrix',
+  'comparison-3-up',
+  'email-digest',
+  'slide-deck',
+  'prompt-tuner',
+  'kanban-board',
+  'concept-explainer',
+  'feedback-corrector',
+  'checklist',
+  'q-and-a',
+  'data-table',
+  'approval-list',
+  'rank-order',
+  'text-redline',
+  'priority-matrix',
+  'chart-block',
+  'code-review'
+];
+
+const INTERACTIVE_TEMPLATES = new Set([
+  'slide-deck',
+  'prompt-tuner',
+  'kanban-board',
+  'concept-explainer',
+  'feedback-corrector',
+  'checklist',
+  'q-and-a',
+  'data-table',
+  'approval-list',
+  'rank-order',
+  'text-redline',
+  'priority-matrix',
+  'code-review',
+  'decision-matrix',
+  'comparison-3-up',
+  'email-digest'
+]);
+
 describe('templates registry', () => {
-  it('lists all 10 built-in templates', async () => {
+  it('lists all built-in templates', async () => {
     const list = await listTemplates();
     const names = list.map((t) => t.name);
-    [
-      'status-report',
-      'dashboard',
-      'decision-matrix',
-      'comparison-3-up',
-      'email-digest',
-      'slide-deck',
-      'prompt-tuner',
-      'kanban-board',
-      'concept-explainer',
-      'feedback-corrector'
-    ].forEach((n) => expect(names).toContain(n));
+    ALL_TEMPLATES.forEach((n) => expect(names, `missing template: ${n}`).toContain(n));
   });
 });
 
 describe('each template renders its example', () => {
-  const templates = [
-    'status-report',
-    'dashboard',
-    'decision-matrix',
-    'comparison-3-up',
-    'email-digest',
-    'slide-deck',
-    'prompt-tuner',
-    'kanban-board',
-    'concept-explainer',
-    'feedback-corrector'
-  ];
-
-  for (const name of templates) {
+  for (const name of ALL_TEMPLATES) {
     it(`renders ${name}`, async () => {
       const tpl = await loadTemplate(name);
       const examplePath = join(tpl.dir, 'example.yaml');
@@ -52,11 +69,38 @@ describe('each template renders its example', () => {
       expect(html).toContain('<!doctype html>');
       expect(html).toContain('<style>');
       expect(html).toContain('</body>');
-      // Has the template attribute in body
       expect(html).toContain(`data-htmd-template="${name}"`);
-      // Tier B templates ship inline JS
-      const hasJs = ['slide-deck', 'prompt-tuner', 'kanban-board', 'concept-explainer', 'feedback-corrector'].includes(name);
-      if (hasJs) expect(html).toMatch(/<script>[\s\S]*<\/script>/);
+      if (INTERACTIVE_TEMPLATES.has(name)) {
+        expect(html).toMatch(/<script>[\s\S]*<\/script>/);
+      }
+    });
+  }
+});
+
+describe('export protocol convention', () => {
+  // Every interactive template should embed its initial state with
+  // data-htmd-state="<template>" so `htmd extract` can pick it up.
+  const STATEFUL = [
+    'feedback-corrector',
+    'kanban-board',
+    'checklist',
+    'q-and-a',
+    'data-table',
+    'approval-list',
+    'rank-order',
+    'text-redline',
+    'priority-matrix',
+    'code-review',
+    'decision-matrix',
+    'comparison-3-up',
+    'email-digest'
+  ];
+  for (const name of STATEFUL) {
+    it(`${name} exposes data-htmd-state`, async () => {
+      const tpl = await loadTemplate(name);
+      const data = YAML.parse(readFileSync(join(tpl.dir, 'example.yaml'), 'utf8'));
+      const html = await renderTemplate(name, data);
+      expect(html).toContain(`data-htmd-state="${name}"`);
     });
   }
 });

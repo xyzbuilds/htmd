@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Clarifying questions before I implement</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.qa {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 5rem;
+}
+.qa-head { margin-bottom: 1rem; }
+.qa-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.qa-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.qa-progress { margin-top: 0.5rem; font-size: var(--htmd-text-sm); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.qa-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; counter-reset: qa; gap: 0.85rem; }
+.qa-item {
+  position: relative; counter-increment: qa;
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); padding: 1rem 1.1rem 1.1rem 2.6rem;
+  box-shadow: var(--htmd-shadow);
+}
+.qa-item::before {
+  content: counter(qa) ".";
+  position: absolute; left: 1rem; top: 0.95rem;
+  font-weight: 700; color: var(--htmd-accent); font-variant-numeric: tabular-nums;
+}
+.qa-q { font-weight: 600; line-height: 1.45; }
+.qa-context { margin-top: 0.3rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); line-height: 1.5; }
+.qa-text {
+  margin-top: 0.6rem; width: 100%;
+  padding: 0.55rem 0.7rem;
+  font-family: inherit; font-size: var(--htmd-text-sm); line-height: 1.5;
+  background: var(--htmd-surface-2); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  resize: vertical; min-height: 60px;
+}
+.qa-text:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+.qa-choices { margin-top: 0.6rem; display: flex; flex-direction: column; gap: 0.3rem; }
+.qa-choice {
+  display: flex; align-items: center; gap: 0.55rem;
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  cursor: pointer; transition: background 0.12s, border-color 0.12s;
+  min-height: 40px;
+}
+.qa-choice:hover { background: var(--htmd-surface-2); border-color: var(--htmd-accent); }
+.qa-choice input { margin: 0; }
+.qa-choice-text { font-size: var(--htmd-text-sm); }
+.qa-hint { color: var(--htmd-muted); font-size: var(--htmd-text-xs); margin-top: 0.15rem; }
+
+.qa-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px; font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.qa-fab:disabled, .qa-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.qa-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+
+.qa-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.qa-modal[hidden] { display: none; }
+.qa-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.qa-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.qa-panel header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border);
+}
+.qa-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.qa-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.qa-x:hover { background: var(--htmd-surface-2); }
+.qa-pre {
+  margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto;
+  background: var(--htmd-surface-2);
+  font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5;
+  white-space: pre-wrap; word-wrap: break-word;
+}
+.qa-panel footer {
+  padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border);
+  display: flex; justify-content: flex-end; gap: 0.5rem;
+}
+.qa-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.qa-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.qa-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.qa-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.qa-toast[hidden] { display: none; }
+.qa-toast.qa-toast-show { opacity: 1; }
+
+@media (max-width: 480px) {
+  .qa { padding: 1rem 0.85rem 6rem; }
+  .qa-fab { left: 1rem; right: 1rem; justify-content: center; border-radius: var(--htmd-radius); }
+}
+@media print {
+  .qa-fab, .qa-modal, .qa-toast { display: none !important; }
+  .qa-item { box-shadow: none; break-inside: avoid; }
+}
+
+</style>
+</head>
+<body data-htmd-template="q-and-a">
+
+    <main class="qa">
+      <header class="qa-head">
+        <h1 class="qa-title">Clarifying questions before I implement</h1>
+        <p class="qa-subtitle">Answer what you can. Skip the rest. The &quot;Send answers back&quot; button copies a prompt you can paste back to the agent.</p>
+        <div class="qa-progress" data-qa-progress aria-live="polite">
+          <span data-qa-answered>0</span> of <span>4</span> answered
+        </div>
+      </header>
+
+      <ol class="qa-list">
+        
+    <li class="qa-item" data-qa-item="q1">
+      <div class="qa-q">Should the compose page validate every block, or render valid blocks and inline-error the invalid ones?</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="radio" name="qa-q1" value="validate_all" data-qa-input="q1" data-qa-kind="single">
+              <span class="qa-choice-text">Strict — fail the whole page if any block is invalid</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q1" value="lenient" data-qa-input="q1" data-qa-kind="single">
+              <span class="qa-choice-text">Lenient — render valid blocks, inline error cards for invalid ones</span>
+            </label>
+          
+        
+      </div>
+    
+    </li>
+  
+    <li class="qa-item" data-qa-item="q2">
+      <div class="qa-q">Which sources of state should &#96;htmd extract&#96; look for?</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q2" value="&lt;script type=application/json data-htmd-state&gt;" data-qa-input="q2" data-qa-kind="multi">
+              <span class="qa-choice-text">&lt;script type=application/json data-htmd-state&gt;</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q2" value="Legacy per-template attrs (data-fc-state, data-kb-state, …)" data-qa-input="q2" data-qa-kind="multi">
+              <span class="qa-choice-text">Legacy per-template attrs (data-fc-state, data-kb-state, …)</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q2" value="URL hash (kanban-board uses this for sharing)" data-qa-input="q2" data-qa-kind="multi">
+              <span class="qa-choice-text">URL hash (kanban-board uses this for sharing)</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="checkbox" name="qa-q2" value="localStorage" data-qa-input="q2" data-qa-kind="multi">
+              <span class="qa-choice-text">localStorage</span>
+            </label>
+          
+        <small class="qa-hint">Choose all that apply</small>
+      </div>
+    
+    </li>
+  
+    <li class="qa-item" data-qa-item="q3">
+      <div class="qa-q">Anything you&#39;d want changed about the compose-level &quot;Copy all changes&quot; button?</div>
+      
+      
+    <textarea class="qa-text" rows="2" data-qa-input="q3" data-qa-kind="free" placeholder="e.g. group by template, show diffs inline, etc."></textarea>
+  
+    </li>
+  
+    <li class="qa-item" data-qa-item="q4">
+      <div class="qa-q">Should the compose CLI auto-detect template suggestions when the input has no htmd fences?</div>
+      
+      
+      <div class="qa-choices">
+        
+            <label class="qa-choice">
+              <input type="radio" name="qa-q4" value="Yes — emit suggestions to stderr" data-qa-input="q4" data-qa-kind="single">
+              <span class="qa-choice-text">Yes — emit suggestions to stderr</span>
+            </label>
+          
+            <label class="qa-choice">
+              <input type="radio" name="qa-q4" value="No — keep detect as a separate command" data-qa-input="q4" data-qa-kind="single">
+              <span class="qa-choice-text">No — keep detect as a separate command</span>
+            </label>
+          
+        
+      </div>
+    
+    </li>
+  
+      </ol>
+
+      <button type="button" class="qa-fab" data-qa-copy aria-label="Copy answers as prompt">
+        <span aria-hidden="true">&#x21B5;</span>
+        <span>Send answers back</span>
+        <span class="qa-fab-badge" data-qa-count>0</span>
+      </button>
+
+      <div class="qa-modal" data-qa-modal hidden role="dialog" aria-modal="true">
+        <div class="qa-backdrop" data-qa-close></div>
+        <div class="qa-panel">
+          <header><h2>Answer prompt</h2><button type="button" class="qa-x" data-qa-close aria-label="Close">&#x2715;</button></header>
+          <pre class="qa-pre" data-qa-text></pre>
+          <footer>
+            <button type="button" class="qa-btn qa-btn-ghost" data-qa-close>Cancel</button>
+            <button type="button" class="qa-btn qa-btn-primary" data-qa-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+      <div class="qa-toast" data-qa-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-qa-state data-htmd-state="q-and-a">{"block_id":"","title":"Clarifying questions before I implement","prompt_intro":"Here are answers to your clarifying questions for the new compose feature.","questions":[{"id":"q1","prompt":"Should the compose page validate every block, or render valid blocks and inline-error the invalid ones?","kind":"single","answer":"","original_answer":""},{"id":"q2","prompt":"Which sources of state should `htmd extract` look for?","kind":"multi","answer":[],"original_answer":[]},{"id":"q3","prompt":"Anything you'd want changed about the compose-level \"Copy all changes\" button?","kind":"free","answer":"","original_answer":""},{"id":"q4","prompt":"Should the compose CLI auto-detect template suggestions when the input has no htmd fences?","kind":"single","answer":"","original_answer":""}]}</script>
+    </main>
+  
+<script>
+(function () {
+  const root = document.querySelector('main.qa');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-qa-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch (e) { return; }
+
+  const idx = new Map();
+  state.questions.forEach((q) => idx.set(q.id, q));
+
+  const fab = root.querySelector('[data-qa-copy]');
+  const countEl = root.querySelector('[data-qa-count]');
+  const ansEl = root.querySelector('[data-qa-answered]');
+  const modal = root.querySelector('[data-qa-modal]');
+  const modalText = root.querySelector('[data-qa-text]');
+  const toast = root.querySelector('[data-qa-toast]');
+
+  function isAnswered(q) {
+    if (q.kind === 'multi') return Array.isArray(q.answer) && q.answer.length > 0;
+    return (q.answer || '').toString().trim() !== '';
+  }
+  function answeredCount() { return state.questions.filter(isAnswered).length; }
+
+  function refresh() {
+    const n = answeredCount();
+    if (countEl) countEl.textContent = n;
+    if (ansEl) ansEl.textContent = n;
+    if (fab) { fab.disabled = n === 0; fab.setAttribute('aria-disabled', n === 0 ? 'true' : 'false'); }
+  }
+
+  function buildPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Here are answers to the clarifying questions for "${state.title}".`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    let n = 0;
+    for (const q of state.questions) {
+      n++;
+      lines.push(`${n}. ${q.prompt}`);
+      if (!isAnswered(q)) { lines.push('   Answer: (skipped)'); }
+      else if (Array.isArray(q.answer)) { lines.push(`   Answer: ${q.answer.join(', ')}`); }
+      else { lines.push(`   Answer: ${q.answer}`); }
+      lines.push('');
+    }
+    lines.push('Please proceed using these answers.');
+    return lines.join('\n');
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('qa-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('qa-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  function open() {
+    if (answeredCount() === 0) { showToast('No answers yet'); return; }
+    if (!modal) return; if (modalText) modalText.textContent = buildPrompt();
+    modal.removeAttribute('hidden');
+  }
+  function close() { if (modal) modal.setAttribute('hidden', ''); }
+
+  root.querySelectorAll('[data-qa-input]').forEach((el) => {
+    const evt = el.tagName === 'TEXTAREA' || el.type === 'text' ? 'input' : 'change';
+    el.addEventListener(evt, () => {
+      const id = el.dataset.qaInput;
+      const q = idx.get(id); if (!q) return;
+      const kind = el.dataset.qaKind || q.kind;
+      if (kind === 'multi') {
+        const all = root.querySelectorAll(`[data-qa-input="${id}"]:checked`);
+        q.answer = Array.from(all).map((n) => n.value);
+      } else if (kind === 'single') {
+        q.answer = el.value;
+      } else {
+        q.answer = el.value;
+      }
+      refresh();
+    });
+  });
+
+  if (fab) fab.addEventListener('click', open);
+  root.querySelectorAll('[data-qa-close]').forEach((el) => el.addEventListener('click', close));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
+  const confirmBtn = root.querySelector('[data-qa-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildPrompt();
+    const ok = await copyText(text);
+    close(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'q-and-a',
+    blockId: state.block_id || state.title,
+    hasChanges: () => answeredCount() > 0,
+    getPrompt: () => buildPrompt()
+  });
+
+  refresh();
+})();
+
+</script>
+</body>
+</html>

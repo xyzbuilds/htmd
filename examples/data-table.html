@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="htmd v0.2.0">
+<title>Sprint backlog — please confirm story points and owner</title>
+<style>
+/* htmd minimal reset */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; }
+table { border-collapse: collapse; }
+h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure { margin: 0; }
+ul, ol { padding-left: 1.25rem; }
+hr { border: none; }
+
+:root {
+  --htmd-bg: #f8fafc;
+  --htmd-surface: #ffffff;
+  --htmd-surface-2: #f1f5f9;
+  --htmd-border: #e2e8f0;
+  --htmd-fg: #0f172a;
+  --htmd-fg-muted: #475569;
+  --htmd-muted: #94a3b8;
+  --htmd-accent: #4f46e5;
+  --htmd-accent-soft: rgba(79, 70, 229, 0.12);
+  --htmd-accent-fg: #ffffff;
+  --htmd-success: #16a34a;
+  --htmd-success-soft: rgba(22, 163, 74, 0.12);
+  --htmd-warn: #d97706;
+  --htmd-warn-soft: rgba(217, 119, 6, 0.12);
+  --htmd-danger: #dc2626;
+  --htmd-danger-soft: rgba(220, 38, 38, 0.12);
+  --htmd-info: #0284c7;
+  --htmd-info-soft: rgba(2, 132, 199, 0.12);
+  --htmd-radius: 10px;
+  --htmd-radius-sm: 6px;
+  --htmd-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 4px 12px rgba(15, 23, 42, 0.06);
+  --htmd-shadow-lg: 0 4px 8px rgba(15, 23, 42, 0.06), 0 16px 32px rgba(15, 23, 42, 0.08);
+  --htmd-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  --htmd-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --htmd-text-xs: 0.75rem;
+  --htmd-text-sm: 0.875rem;
+  --htmd-text-md: 1rem;
+  --htmd-text-lg: 1.125rem;
+  --htmd-text-xl: 1.5rem;
+  --htmd-text-2xl: 2rem;
+  --htmd-text-3xl: 2.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --htmd-bg: #0b1220;
+    --htmd-surface: #111827;
+    --htmd-surface-2: #1f2937;
+    --htmd-border: #1f2937;
+    --htmd-fg: #e2e8f0;
+    --htmd-fg-muted: #94a3b8;
+    --htmd-muted: #475569;
+    --htmd-accent: #818cf8;
+    --htmd-accent-soft: rgba(129, 140, 248, 0.18);
+    --htmd-accent-fg: #0b1220;
+    --htmd-success: #4ade80;
+    --htmd-success-soft: rgba(74, 222, 128, 0.16);
+    --htmd-warn: #fbbf24;
+    --htmd-warn-soft: rgba(251, 191, 36, 0.16);
+    --htmd-danger: #f87171;
+    --htmd-danger-soft: rgba(248, 113, 113, 0.16);
+    --htmd-info: #38bdf8;
+    --htmd-info-soft: rgba(56, 189, 248, 0.16);
+    --htmd-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.35);
+    --htmd-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.35), 0 16px 32px rgba(0, 0, 0, 0.4);
+  }
+}
+
+body {
+  font-family: var(--htmd-font-sans);
+  background: var(--htmd-bg);
+  color: var(--htmd-fg);
+  font-size: var(--htmd-text-md);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--htmd-accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+code, pre, kbd, samp {
+  font-family: var(--htmd-font-mono);
+}
+
+.dt {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem;
+}
+.dt-head { margin-bottom: 0.85rem; }
+.dt-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.dt-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.dt-controls {
+  display: flex; gap: 0.5rem; align-items: center;
+  margin-top: 0.75rem; flex-wrap: wrap;
+}
+.dt-search {
+  flex: 1 1 240px; min-width: 180px;
+  padding: 0.5rem 0.7rem;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm);
+}
+.dt-search:focus { outline: none; border-color: var(--htmd-accent); }
+.dt-counter { font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); font-variant-numeric: tabular-nums; }
+.dt-export-btn {
+  display: inline-flex; align-items: center; gap: 0.4rem;
+  padding: 0.5rem 0.8rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer;
+}
+.dt-wrap {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border); border-radius: var(--htmd-radius);
+  overflow: auto;
+  box-shadow: var(--htmd-shadow);
+}
+.dt-table {
+  width: 100%;
+  font-size: var(--htmd-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+.dt-table th, .dt-table td {
+  padding: 0.55rem 0.85rem;
+  border-bottom: 1px solid var(--htmd-border);
+  vertical-align: top;
+}
+.dt-table thead th {
+  position: sticky; top: 0;
+  background: var(--htmd-surface-2);
+  text-align: left;
+  font-weight: 700;
+  font-size: var(--htmd-text-xs);
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--htmd-fg-muted);
+  cursor: pointer; user-select: none;
+}
+.dt-table thead th:hover { background: var(--htmd-border); }
+.dt-table thead th .dt-arrow { display: inline-block; width: 0.7rem; opacity: 0.4; }
+.dt-table thead th[data-dt-dir="asc"] .dt-arrow::before { content: '\\25B2'; }
+.dt-table thead th[data-dt-dir="desc"] .dt-arrow::before { content: '\\25BC'; }
+.dt-table thead th[data-dt-dir] .dt-arrow { opacity: 1; color: var(--htmd-accent); }
+.dt-table tbody tr:hover { background: var(--htmd-surface-2); }
+.dt-table tbody tr:last-child td { border-bottom: none; }
+.dt-cell-input {
+  width: 100%;
+  padding: 0.25rem 0.4rem;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-variant-numeric: tabular-nums;
+  border: 1px solid transparent;
+  border-radius: var(--htmd-radius-sm);
+  -moz-appearance: textfield;
+}
+.dt-cell-input::-webkit-outer-spin-button,
+.dt-cell-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.dt-cell-input:hover { border-color: var(--htmd-border); background: var(--htmd-surface); }
+.dt-cell-input:focus { outline: none; border-color: var(--htmd-accent); background: var(--htmd-surface); }
+
+.dt-export-btn-edits { background: var(--htmd-warn); }
+.dt-edit-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700; margin-left: 0.3rem;
+}
+
+.dt-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.dt-modal[hidden] { display: none; }
+.dt-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.dt-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 720px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.dt-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.dt-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.dt-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.dt-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.dt-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.dt-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.dt-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.dt-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.dt-badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  background: var(--htmd-accent-soft);
+  color: var(--htmd-accent);
+  border-radius: 999px;
+  font-size: var(--htmd-text-xs);
+  font-weight: 600;
+}
+.dt-empty { padding: 1.5rem; text-align: center; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); }
+
+.dt-toast {
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.dt-toast[hidden] { display: none; }
+.dt-toast.dt-toast-show { opacity: 1; }
+
+@media print {
+  .dt-controls, .dt-toast { display: none !important; }
+  .dt-wrap { overflow: visible; box-shadow: none; }
+}
+
+</style>
+</head>
+<body data-htmd-template="data-table">
+
+    <main class="dt">
+      <header class="dt-head">
+        <h1 class="dt-title">Sprint backlog — please confirm story points and owner</h1>
+        <p class="dt-subtitle">Edit any cell that needs updating. Sort/filter as you like. The yellow Send-edits button appears once you make changes.</p>
+        <div class="dt-controls">
+          <input type="search" class="dt-search" data-dt-search placeholder="Filter rows…" aria-label="Filter rows">
+          <span class="dt-counter" data-dt-counter></span>
+          <button type="button" class="dt-export-btn" data-dt-copy aria-label="Copy filtered rows as markdown table">
+            <span aria-hidden="true">&#x21B5;</span> Copy as markdown
+          </button>
+          
+            <button type="button" class="dt-export-btn dt-export-btn-edits" data-dt-copy-edits aria-label="Send my edits back to the agent" hidden>
+              <span aria-hidden="true">&#x21B5;</span> Send edits back <span class="dt-edit-badge" data-dt-edit-count>0</span>
+            </button>
+          
+        </div>
+      </header>
+
+      <div class="dt-wrap">
+        <table class="dt-table">
+          <thead>
+            <tr>
+              
+                <th data-dt-sort="ticket" data-dt-type="mono" style="width:9rem;text-align:left;">
+                  <span>Ticket</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="title" data-dt-type="text" style="text-align:left;">
+                  <span>Title</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="priority" data-dt-type="badge" style="width:6rem;text-align:center;">
+                  <span>Priority</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="points" data-dt-type="number" style="width:5rem;text-align:right;">
+                  <span>Points</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="owner" data-dt-type="text" style="width:8rem;text-align:center;">
+                  <span>Owner</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+                <th data-dt-sort="status" data-dt-type="badge" style="width:8rem;text-align:center;">
+                  <span>Status</span><span class="dt-arrow" aria-hidden="true"></span>
+                </th>
+              
+            </tr>
+          </thead>
+          <tbody data-dt-body>
+            
+    <tr data-dt-row="r1">
+      <td style="text-align:left;"><code>ENG-1421</code></td><td style="text-align:left;">Compose multi-block render</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r1:priority"
+      value="P0"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r1:points"
+      value="5"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r1:owner"
+      value="alice"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r1:status"
+      value="in_progress"
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r2">
+      <td style="text-align:left;"><code>ENG-1422</code></td><td style="text-align:left;">Detect heuristics for kanban</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r2:priority"
+      value="P1"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r2:points"
+      value="3"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r2:owner"
+      value="alice"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r2:status"
+      value="todo"
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r3">
+      <td style="text-align:left;"><code>ENG-1423</code></td><td style="text-align:left;">Extract — handle malformed JSON</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r3:priority"
+      value="P1"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r3:points"
+      value="2"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r3:owner"
+      value="bob"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r3:status"
+      value="todo"
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r4">
+      <td style="text-align:left;"><code>ENG-1424</code></td><td style="text-align:left;">Decision-matrix edit loop</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r4:priority"
+      value="P0"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r4:points"
+      value="5"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r4:owner"
+      value="alice"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r4:status"
+      value="in_progress"
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r5">
+      <td style="text-align:left;"><code>ENG-1425</code></td><td style="text-align:left;">Email-digest action chooser</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r5:priority"
+      value="P1"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r5:points"
+      value="3"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r5:owner"
+      value="bob"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r5:status"
+      value="todo"
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r6">
+      <td style="text-align:left;"><code>ENG-1426</code></td><td style="text-align:left;">Refactor html-tag escape rules</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r6:priority"
+      value="P2"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r6:points"
+      value="2"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r6:owner"
+      value="bob"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r6:status"
+      value="todo"
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r7">
+      <td style="text-align:left;"><code>ENG-1427</code></td><td style="text-align:left;">iOS Safari smoke-test compose</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r7:priority"
+      value="P1"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r7:points"
+      value="1"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r7:owner"
+      value="cara"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r7:status"
+      value="todo"
+      step="any"></td>
+    </tr>
+  
+    <tr data-dt-row="r8">
+      <td style="text-align:left;"><code>ENG-1428</code></td><td style="text-align:left;">Tag v0.2 + npm publish</td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r8:priority"
+      value="P2"
+      step="any"></td><td style="text-align:right;"><input type="number"
+      class="dt-cell-input"
+      data-dt-cell="r8:points"
+      value="1"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r8:owner"
+      value="alice"
+      step="any"></td><td style="text-align:center;"><input type="text"
+      class="dt-cell-input"
+      data-dt-cell="r8:status"
+      value="blocked"
+      step="any"></td>
+    </tr>
+  
+          </tbody>
+        </table>
+        <div class="dt-empty" data-dt-empty hidden>No rows match.</div>
+      </div>
+
+      <div class="dt-modal" data-dt-modal hidden role="dialog" aria-modal="true">
+        <div class="dt-backdrop" data-dt-close></div>
+        <div class="dt-panel">
+          <header><h2>Edits</h2><button type="button" class="dt-x" data-dt-close aria-label="Close">&#x2715;</button></header>
+          <pre class="dt-pre" data-dt-text></pre>
+          <footer>
+            <button type="button" class="dt-btn dt-btn-ghost" data-dt-close>Cancel</button>
+            <button type="button" class="dt-btn dt-btn-primary" data-dt-confirm>Copy</button>
+          </footer>
+        </div>
+      </div>
+
+      <div class="dt-toast" data-dt-toast hidden role="status" aria-live="polite"></div>
+
+      <script type="application/json" data-dt-state data-htmd-state="data-table">{"block_id":"","title":"Sprint backlog — please confirm story points and owner","prompt_intro":"Updates to the sprint backlog after planning.","editable":true,"row_key":"title","columns":[{"key":"ticket","label":"Ticket","type":"mono","align":"left","width":"9rem","editable":false},{"key":"title","label":"Title","type":"text","align":"left","width":"","editable":false},{"key":"priority","label":"Priority","type":"badge","align":"center","width":"6rem","editable":true},{"key":"points","label":"Points","type":"number","align":"right","width":"5rem","editable":true},{"key":"owner","label":"Owner","type":"text","align":"center","width":"8rem","editable":true},{"key":"status","label":"Status","type":"badge","align":"center","width":"8rem","editable":true}],"rows":[{"ticket":"ENG-1421","title":"Compose multi-block render","priority":"P0","points":5,"owner":"alice","status":"in_progress","_id":"r1"},{"ticket":"ENG-1422","title":"Detect heuristics for kanban","priority":"P1","points":3,"owner":"alice","status":"todo","_id":"r2"},{"ticket":"ENG-1423","title":"Extract — handle malformed JSON","priority":"P1","points":2,"owner":"bob","status":"todo","_id":"r3"},{"ticket":"ENG-1424","title":"Decision-matrix edit loop","priority":"P0","points":5,"owner":"alice","status":"in_progress","_id":"r4"},{"ticket":"ENG-1425","title":"Email-digest action chooser","priority":"P1","points":3,"owner":"bob","status":"todo","_id":"r5"},{"ticket":"ENG-1426","title":"Refactor html-tag escape rules","priority":"P2","points":2,"owner":"bob","status":"todo","_id":"r6"},{"ticket":"ENG-1427","title":"iOS Safari smoke-test compose","priority":"P1","points":1,"owner":"cara","status":"todo","_id":"r7"},{"ticket":"ENG-1428","title":"Tag v0.2 + npm publish","priority":"P2","points":1,"owner":"alice","status":"blocked","_id":"r8"}],"original_rows":[{"ticket":"ENG-1421","title":"Compose multi-block render","priority":"P0","points":5,"owner":"alice","status":"in_progress","_id":"r1"},{"ticket":"ENG-1422","title":"Detect heuristics for kanban","priority":"P1","points":3,"owner":"alice","status":"todo","_id":"r2"},{"ticket":"ENG-1423","title":"Extract — handle malformed JSON","priority":"P1","points":2,"owner":"bob","status":"todo","_id":"r3"},{"ticket":"ENG-1424","title":"Decision-matrix edit loop","priority":"P0","points":5,"owner":"alice","status":"in_progress","_id":"r4"},{"ticket":"ENG-1425","title":"Email-digest action chooser","priority":"P1","points":3,"owner":"bob","status":"todo","_id":"r5"},{"ticket":"ENG-1426","title":"Refactor html-tag escape rules","priority":"P2","points":2,"owner":"bob","status":"todo","_id":"r6"},{"ticket":"ENG-1427","title":"iOS Safari smoke-test compose","priority":"P1","points":1,"owner":"cara","status":"todo","_id":"r7"},{"ticket":"ENG-1428","title":"Tag v0.2 + npm publish","priority":"P2","points":1,"owner":"alice","status":"blocked","_id":"r8"}]}</script>
+    </main>
+  
+<script>
+(function () {
+  const root = document.querySelector('main.dt');
+  if (!root) return;
+  const stateNode = root.querySelector('[data-dt-state]');
+  if (!stateNode) return;
+  let state; try { state = JSON.parse(stateNode.textContent); } catch { return; }
+
+  const body = root.querySelector('[data-dt-body]');
+  const search = root.querySelector('[data-dt-search]');
+  const counter = root.querySelector('[data-dt-counter]');
+  const empty = root.querySelector('[data-dt-empty]');
+  const toast = root.querySelector('[data-dt-toast]');
+  const heads = root.querySelectorAll('[data-dt-sort]');
+
+  let filter = '';
+  let sortKey = null;
+  let sortDir = null;
+
+  // -------- helpers --------
+  function escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+  function compare(a, b, type) {
+    if (type === 'number' || type === 'currency' || type === 'percent') {
+      const an = parseFloat(a); const bn = parseFloat(b);
+      if (isNaN(an) && isNaN(bn)) return 0;
+      if (isNaN(an)) return 1; if (isNaN(bn)) return -1;
+      return an - bn;
+    }
+    if (type === 'date') {
+      const ad = new Date(a).getTime(); const bd = new Date(b).getTime();
+      return (isNaN(ad) ? 0 : ad) - (isNaN(bd) ? 0 : bd);
+    }
+    return String(a ?? '').localeCompare(String(b ?? ''));
+  }
+  function visibleRows() {
+    let rows = state.rows.slice();
+    if (filter) {
+      const f = filter.toLowerCase();
+      rows = rows.filter((r) => state.columns.some((c) => String(r[c.key] ?? '').toLowerCase().includes(f)));
+    }
+    if (sortKey && sortDir) {
+      const col = state.columns.find((c) => c.key === sortKey);
+      const type = col ? col.type : 'text';
+      rows.sort((a, b) => compare(a[sortKey], b[sortKey], type));
+      if (sortDir === 'desc') rows.reverse();
+    }
+    return rows;
+  }
+  function fmtCell(val, col) {
+    if (val == null || val === '') return '';
+    switch (col.type) {
+      case 'number': return typeof val === 'number' ? new Intl.NumberFormat('en-US').format(val) : String(val);
+      case 'currency': return typeof val === 'number' ? new Intl.NumberFormat('en-US', { style: 'currency', currency: col.currency || 'USD' }).format(val) : String(val);
+      case 'percent': return typeof val === 'number' ? new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(val) : String(val);
+      case 'date': { try { const d = new Date(val); return isNaN(d.getTime()) ? String(val) : d.toLocaleDateString('en-US'); } catch { return String(val); } }
+      default: return String(val);
+    }
+  }
+  function originalById(id) { return state.original_rows.find((r) => r._id === id); }
+  function rowLabel(r) { return r[state.row_key] ?? r._id; }
+
+  // -------- editing diff --------
+  function changes() {
+    const out = [];
+    state.rows.forEach((r) => {
+      const orig = originalById(r._id) || {};
+      state.columns.forEach((c) => {
+        if (!c.editable) return;
+        const a = orig[c.key]; const b = r[c.key];
+        const changed = (a ?? '') !== (b ?? '');
+        if (changed) out.push({ row: rowLabel(r), col: c.label, was: a, now: b });
+      });
+    });
+    return out;
+  }
+  function refreshEditState() {
+    const editsBtn = root.querySelector('[data-dt-copy-edits]');
+    const badge = root.querySelector('[data-dt-edit-count]');
+    const ch = changes();
+    if (badge) badge.textContent = ch.length;
+    if (editsBtn) {
+      if (ch.length > 0) editsBtn.removeAttribute('hidden');
+      else editsBtn.setAttribute('hidden', '');
+    }
+  }
+
+  // -------- render --------
+  function render() {
+    const rows = visibleRows();
+    body.innerHTML = rows.map((r) => `<tr data-dt-row="${escapeHtml(r._id)}">${rowHtml(r)}</tr>`).join('');
+    if (empty) {
+      if (rows.length === 0) empty.removeAttribute('hidden'); else empty.setAttribute('hidden', '');
+    }
+    if (counter) counter.textContent = `${rows.length} of ${state.rows.length} rows`;
+    heads.forEach((th) => {
+      const k = th.dataset.dtSort;
+      if (k === sortKey && sortDir) th.dataset.dtDir = sortDir; else th.removeAttribute('data-dt-dir');
+    });
+    wireCellInputs();
+  }
+  function rowHtml(r) {
+    return state.columns.map((c) => {
+      let inner;
+      if (c.editable) {
+        const v = r[c.key];
+        const inputType = (c.type === 'number' || c.type === 'currency' || c.type === 'percent') ? 'number' : 'text';
+        inner = `<input type="${inputType}" class="dt-cell-input" data-dt-cell="${escapeHtml(r._id)}:${escapeHtml(c.key)}" value="${escapeHtml(v == null ? '' : v)}" step="any">`;
+      } else {
+        const text = fmtCell(r[c.key], c);
+        let html = escapeHtml(text);
+        if (c.type === 'badge' && text) html = `<span class="dt-badge">${escapeHtml(text)}</span>`;
+        if (c.type === 'mono' && text) html = `<code>${escapeHtml(text)}</code>`;
+        inner = html;
+      }
+      return `<td style="text-align:${c.align};">${inner}</td>`;
+    }).join('');
+  }
+  function wireCellInputs() {
+    body.querySelectorAll('[data-dt-cell]').forEach((inp) => {
+      inp.addEventListener('input', () => {
+        const [rid, key] = inp.dataset.dtCell.split(':');
+        const row = state.rows.find((r) => r._id === rid);
+        const col = state.columns.find((c) => c.key === key);
+        if (!row || !col) return;
+        if (col.type === 'number' || col.type === 'currency' || col.type === 'percent') {
+          const v = inp.value === '' ? null : parseFloat(inp.value);
+          row[key] = isFinite(v) ? v : null;
+        } else {
+          row[key] = inp.value;
+        }
+        refreshEditState();
+      });
+    });
+  }
+
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg; toast.removeAttribute('hidden'); void toast.offsetWidth;
+    toast.classList.add('dt-toast-show');
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => { toast.classList.remove('dt-toast-show'); setTimeout(() => toast.setAttribute('hidden', ''), 220); }, 1800);
+  }
+  async function copyText(text) {
+    if (navigator.clipboard) { try { await navigator.clipboard.writeText(text); return true; } catch {} }
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    let ok = false; try { ok = document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta); return ok;
+  }
+  function buildMarkdown() {
+    const rows = visibleRows();
+    const cols = state.columns;
+    const head = '| ' + cols.map((c) => c.label).join(' | ') + ' |';
+    const sep = '| ' + cols.map(() => '---').join(' | ') + ' |';
+    const lines = [head, sep];
+    for (const r of rows) {
+      lines.push('| ' + cols.map((c) => String(r[c.key] ?? '').replace(/\|/g, '\\|').replace(/\n/g, ' ')).join(' | ') + ' |');
+    }
+    return lines.join('\n');
+  }
+  function buildEditsPrompt() {
+    const lines = [];
+    lines.push(state.prompt_intro || `Edits to "${state.title}":`);
+    lines.push(''); lines.push(`Date: ${new Date().toISOString()}`); lines.push('');
+    const ch = changes();
+    if (ch.length === 0) lines.push('(no edits)');
+    else {
+      lines.push('Cell changes:');
+      ch.forEach((c, i) => {
+        lines.push(`${i + 1}. Row "${c.row}" / column "${c.col}": ${c.was ?? '(empty)'} → ${c.now ?? '(empty)'}`);
+      });
+    }
+    lines.push(''); lines.push('Full table after edits:'); lines.push(''); lines.push(buildMarkdown());
+    return lines.join('\n');
+  }
+
+  // -------- modal --------
+  const modal = root.querySelector('[data-dt-modal]');
+  const modalText = root.querySelector('[data-dt-text]');
+  function openModal(text) {
+    if (!modal) return;
+    if (modalText) modalText.textContent = text;
+    modal.removeAttribute('hidden');
+  }
+  function closeModal() { if (modal) modal.setAttribute('hidden', ''); }
+
+  // -------- wire UI --------
+  search?.addEventListener('input', () => { filter = search.value; render(); });
+  heads.forEach((th) => th.addEventListener('click', () => {
+    const k = th.dataset.dtSort;
+    if (sortKey !== k) { sortKey = k; sortDir = 'asc'; }
+    else if (sortDir === 'asc') sortDir = 'desc';
+    else if (sortDir === 'desc') { sortKey = null; sortDir = null; }
+    render();
+  }));
+  const copyBtn = root.querySelector('[data-dt-copy]');
+  if (copyBtn) copyBtn.addEventListener('click', async () => {
+    const text = buildMarkdown();
+    const ok = await copyText(text);
+    showToast(ok ? 'Copied as markdown' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+  const editsBtn = root.querySelector('[data-dt-copy-edits]');
+  if (editsBtn) editsBtn.addEventListener('click', () => openModal(buildEditsPrompt()));
+  root.querySelectorAll('[data-dt-close]').forEach((el) => el.addEventListener('click', closeModal));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) closeModal(); });
+  const confirmBtn = root.querySelector('[data-dt-confirm]');
+  if (confirmBtn) confirmBtn.addEventListener('click', async () => {
+    const text = modalText ? modalText.textContent : buildEditsPrompt();
+    const ok = await copyText(text);
+    closeModal(); showToast(ok ? 'Copied' : 'Copy failed');
+    if (!ok) console.log(text);
+  });
+
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'data-table',
+    blockId: state.block_id || state.title,
+    hasChanges: () => changes().length > 0 || filter !== '' || sortKey !== null,
+    getPrompt: () => {
+      if (changes().length > 0) return buildEditsPrompt();
+      const lines = [`Filtered/sorted view of "${state.title}":`];
+      if (filter) lines.push(`Filter: "${filter}"`);
+      if (sortKey && sortDir) lines.push(`Sort: ${sortKey} ${sortDir}`);
+      lines.push(''); lines.push(buildMarkdown());
+      return lines.join('\n');
+    }
+  });
+
+  render();
+  refreshEditState();
+})();
+
+</script>
+</body>
+</html>

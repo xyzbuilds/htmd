@@ -1,0 +1,32 @@
+title: PRs awaiting your approval
+subtitle: Pick approve / reject / hold for each. Add a reason where it matters. Then send the decisions back.
+prompt_intro: I reviewed the PRs you proposed and made these decisions.
+actions:
+  - { value: approve, label: Approve, color: "#16a34a" }
+  - { value: reject,  label: Reject,  color: "#dc2626" }
+  - { value: hold,    label: Hold,    color: "#d97706" }
+items:
+  - id: pr1421
+    title: "feat: htmd compose command"
+    subtitle: "alice — +612 / -38, 4 files"
+    body: "Adds the compose command + tests. Touches src/render.js (refactor to expose renderTemplateParts), src/cli.js (new subcommand), src/compose.js (new). Behind no feature flag."
+    metadata: { ci: passing, reviewers: "bob, cara" }
+    suggested: approve
+  - id: pr1419
+    title: "fix: kanban iOS Safari drag"
+    subtitle: "bob — +188 / -71, 2 files"
+    body: "Switches native HTML5 drag-and-drop to embedded SortableJS. Larger bundle but iOS Safari now works."
+    metadata: { ci: passing, reviewers: "alice" }
+    suggested: approve
+  - id: pr1404
+    title: "feat: detect command (DRAFT)"
+    subtitle: "alice — +356 / -2, 2 files"
+    body: "Heuristic markdown scanner that suggests templates per region. Still missing: tests, the dashboard detector, and decision-matrix sample-yaml fidelity."
+    metadata: { ci: failing, reviewers: "—" }
+    suggested: hold
+  - id: pr1399
+    title: "test: round-trip md/html"
+    subtitle: "bob — +92 / -0, 1 file"
+    body: "Adds round-trip tests for headings, paragraphs, lists, emphasis, code fences."
+    metadata: { ci: passing, reviewers: "cara" }
+    suggested: approve

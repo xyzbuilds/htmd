@@ -257,5 +257,15 @@
     });
   }
 
+  // Register with the compose-level export bridge so that a parent compose
+  // page can include this block's prompt in the global "Copy all changes" FAB.
+  if (!window.__htmd) window.__htmd = { blocks: [] };
+  window.__htmd.blocks.push({
+    template: 'feedback-corrector',
+    blockId: state.context_id || '',
+    hasChanges: () => modifiedCount() > 0,
+    getPrompt: () => assemble()
+  });
+
   updateCounter();
 })();

@@ -1,40 +1,132 @@
-title: htmd — token-cheap rich HTML for AI agents
+title: htmd — the bidirectional Markdown ↔ HTML bridge for AI agents
+theme: indigo
 slides:
-  - title: htmd
-    body_md: |
-      ## Token-cheap structured data → rich self-contained HTML.
-      A library of templates for AI agents.
-      *v0.1 — May 2026*
-  - title: The problem
-    body_md: |
-      - Agents writing **HTML directly** burns tokens (~2.5× MD).
-      - Agents writing **MD** is cheap but visually flat.
-      - We want **rich** output for the **price of MD**.
-  - title: The idea
-    body_md: |
-      1. Agent emits ~150 tokens of YAML.
-      2. `htmd render` produces ~1,500 tokens of beautiful HTML.
-      3. Charts, layout, theming, all on CPU. Zero LLM cost.
-  - title: Killer demo
-    body_md: |
-      `htmd render decision-matrix --data db.yaml`
+  - layout: title
+    accent: indigo
+    eyebrow: Internal demo · May 2026
+    title: htmd
+    subtitle: One markdown file in. One rich interactive HTML page out. Human edits in the browser. Structured prompt back to the agent.
+    body_md: "Inspired by Thariq Shihipar's *Unreasonable Effectiveness of HTML for AI Agents*."
+    notes: "Open on the title slide. Pause. Then advance."
 
-      Same data, three forms:
-      - **MD**: 1× tokens, flat table
-      - **Direct HTML**: 2.5× tokens, decent
-      - **htmd template**: 0.4× tokens, *gorgeous heatmap*
-  - title: 9 templates in v0.1
-    body_md: |
-      **Tier A (static rich):**
-      status-report · dashboard · decision-matrix · comparison-3-up · email-digest
+  - layout: quote
+    accent: purple
+    quote: Diffs and call-graphs are spatial information; markdown flattens them.
+    attribution: Thariq Shihipar
+    notes: "This is the thesis. HTML is how humans want to consume; markdown is how agents want to emit. Bridge them."
 
-      **Tier B (interactive):**
-      slide-deck · prompt-tuner · kanban-board · concept-explainer
-  - title: Try it
+  - layout: section
+    accent: indigo
+    section: The problem
+    subtitle: Agents are great at writing prose but terrible at writing rich HTML.
+
+  - layout: bullets
+    title: Three options for rich agent output
+    body_md: |
+      1. **Markdown** — cheap to author but visually flat
+      2. **Hand-written HTML** — ~2.5× the tokens, agent skips polish (no dark mode, no accessibility, no print)
+      3. **htmd** — emit ~150 tokens of YAML, get back a polished interactive widget with a Copy-back button
+    footer: Option 3 wins.
+    notes: "Three doors. Door 1 is cheap but ugly. Door 2 is rich but expensive. Door 3 is cheap AND rich AND consistent."
+
+  - layout: kpis
+    accent: green
+    eyebrow: Measured on real compose pages
+    title: Token savings vs hand-written HTML
+    kpis:
+      - { label: "CLAUDE.md doc",         value: "2.0×",  delta: 60,  trend: [1, 1.2, 1.5, 1.8, 1.95, 2.0] }
+      - { label: "Sprint review (6 widgets)", value: "25–34×", delta: 2400, trend: [1, 5, 12, 18, 24, 30] }
+      - { label: "Tech decision (4 widgets)", value: "18–24×", delta: 1900, trend: [1, 4, 9, 14, 19, 22] }
+      - { label: "Research read-out (4 widgets)", value: "18–24×", delta: 1900, trend: [1, 4, 10, 15, 20, 22] }
+    body_md: "Range = optimistic 4 chars/token vs pessimistic 3 chars/token for HTML markup."
+    notes: "The win grows with widget count. Documentation is 2x. Multi-widget pages are 20x+."
+
+  - layout: section
+    accent: purple
+    section: The bidirectional loop
+    subtitle: Agent → HTML → human → structured prompt → agent.
+
+  - layout: two-col
+    title: Every interactive template implements one contract
+    left_md: |
+      ### What the agent writes
+
+      ```yaml
+      title: PRs awaiting review
+      items:
+        - { id: pr1421, title: "...", suggested: approve }
+      ```
+
+      ~150 tokens of YAML.
+
+    right_md: |
+      ### What the human gets back
+
+      A real interactive widget with **Copy decisions back** as a button. Click it; paste it; the agent gets:
+
+      ```
+      1. Decision: Approve
+         Reason: "lgtm — ship it"
+      ```
+
+    notes: "Same data shape, different audiences. The contract is the export button."
+
+  - layout: chart
+    accent: indigo
+    eyebrow: One markdown file → one shareable page
+    title: Compose demo growth (lines of agent output)
+    chart:
+      kind: bar
+      caption: "Markdown input vs HTML output for each of the four compose demos. The agent only writes the left column."
+      items:
+        - { label: "Sprint review — MD in",  value: 4596 }
+        - { label: "Sprint review — HTML out", value: 116684 }
+        - { label: "Tech decision — MD in",  value: 5991 }
+        - { label: "Tech decision — HTML out", value: 105965 }
+        - { label: "Research — MD in",       value: 4818 }
+        - { label: "Research — HTML out",     value: 87041 }
+    notes: "Visual proof: the agent's contribution is the tiny blue bar; the polish is the huge bar — and the agent didn't have to write a token of it."
+
+  - layout: section
+    accent: green
+    section: How agents call it
+    subtitle: It's a Node CLI. Claude invokes it through Bash.
+
+  - layout: code
+    accent: ink
+    eyebrow: From the SKILL.md decision tree
+    title: Three commands an agent uses
+    code_language: bash
     code: |
-      npm install -g htmd
-      htmd render dashboard --data metrics.yaml --out dash.html
-      htmd templates  # list all
+      # Render multiple widgets from one markdown file (the main case)
+      htmd compose review.md --out review.html
+
+      # Suggest which template fits a plain markdown region
+      htmd detect notes.md --json
+
+      # Recover state from an interacted-with HTML file
+      htmd extract review.html
+    body_md: "`SKILL.md` ships with htmd — Claude loads it and learns when each command applies. No new training, just a skill file."
+    notes: "Stress that the agent never writes HTML directly. The agent emits YAML; htmd does the rest."
+
+  - layout: bullets
+    accent: indigo
+    title: 19 templates today
     body_md: |
-      MIT licensed. Plugin SDK for community templates.
-      → github.com/htmd/htmd
+      - **status-report**, **dashboard**, **decision-matrix**, **comparison-3-up**, **email-digest** — classic structured output, all now bidirectional
+      - **slide-deck** (this!), **prompt-tuner**, **concept-explainer** — narrative formats
+      - **kanban-board**, **feedback-corrector**, **checklist**, **q-and-a**, **data-table**, **approval-list**, **rank-order**, **text-redline**, **priority-matrix**, **code-review**, **chart-block** — focused human-in-the-loop widgets
+    footer: 14 of 19 expose a Copy-back button.
+
+  - layout: quote
+    accent: green
+    quote: You stay in the loop; the loop gets tighter.
+    attribution: Thariq Shihipar
+    notes: "Close on the thesis. We just gave it teeth."
+
+  - layout: title
+    accent: indigo
+    eyebrow: Try it
+    title: npm install -g htmd
+    subtitle: github.com/htmd/htmd · MIT license · Plugin SDK for community templates.
+    notes: "End slide. Q&A."

@@ -1,54 +1,148 @@
 # htmd
 
-> Token-cheap structured data → rich, self-contained HTML for AI agents.
+> **Markdown ↔ HTML bridge for AI agents and the humans who review them.**
+> Agents speak Markdown. Humans want HTML. htmd is the bridge — and the export button on the other side that closes the loop.
 
-**htmd** is a Node.js CLI + library that lets AI agents emit ~150 tokens of YAML/JSON and get back ~1,500 tokens of beautifully-styled, interactive HTML — charts, layout, dark mode, all of it. CPU-rendered. Zero LLM cost. No CDN, no network.
+![A composed sprint-review page with multiple interactive widgets and the global Copy-all-changes FAB](docs/screenshots/01-compose-hero.png)
 
-Inspired by [Thariq Shihipar's "The Unreasonable Effectiveness of HTML"](https://thariqs.github.io/html-effectiveness/).
-
-> _Animated demo placeholder — drop a GIF here once you record one._
-
----
-
-## The problem
-
-Agents write Markdown because it's cheap. Agents write HTML when they need rich layout — but HTML is **2.5× more tokens** than the equivalent Markdown for the same information density. Even worse: an agent writing HTML directly will skip the polish (dark mode, sparklines, print stylesheets) because each one costs more tokens.
-
-The math, for one weekly status report:
-
-| Format            | Tokens | Visual quality |
-|-------------------|-------:|----------------|
-| Markdown          | 1.0×   | Flat table     |
-| Direct HTML       | 2.5×   | Decent         |
-| **htmd template** | **0.4×** | **Gorgeous, with sparklines** |
-
-The agent emits less, you get more.
+*One markdown file. Multiple interactive widgets. One page. One **Copy all changes** button that aggregates every human edit into a single prompt to send back to the agent.*
 
 ---
 
-## The killer demo
+## The thesis in one paragraph
 
-```yaml
-# 100 tokens of YAML
-title: Q2 ship week
-period: Week of May 5
-metrics:
-  - { label: Shipped, value: 9, delta: 12.5 }
-  - { label: Tests passing, value: "27/27" }
-sections:
-  shipped:
-    - title: Core render pipeline
-    - title: 9 built-in templates
-  blocked:
-    - title: NPM scope
-      blocker: waiting on support
+An AI agent writing **Markdown** is cheap but flat. Writing **HTML** directly is ~2.5× the tokens and the agent will skip dark mode, accessibility, drag-drop, print stylesheets — every bit of polish. **htmd** lets the agent emit ~150 tokens of YAML inside Markdown fences and produces a polished, interactive HTML page. More importantly, every interactive widget includes a button that turns whatever the human did in the browser into a structured prompt the agent can pick up next turn.
+
+> *"Diffs and call-graphs are spatial information; markdown flattens them. You stay in the loop; the loop gets tighter."* — [Thariq Shihipar, *The Unreasonable Effectiveness of HTML for AI Agents*](https://thariqs.github.io/html-effectiveness/)
+
+---
+
+## What you get
+
+### A markdown file in. A rich interactive HTML page out.
+
+Authoring a multi-widget review is now this short:
+
+````markdown
+# Tech decision: which database for v2?
+
+The platform team needs to choose by Friday. Here is the analysis.
+
+```htmd:decision-matrix
+question: Which database for the v2 backend?
+criteria:
+  - { name: Query performance, weight: 5 }
+  - { name: Operational simplicity, weight: 4 }
+  - { name: Cost, weight: 3, direction: lower_better }
+options:
+  - { name: Postgres,    scores: { Query performance: 8,  Operational simplicity: 9, Cost: 4 } }
+  - { name: ClickHouse,  scores: { Query performance: 10, Operational simplicity: 7, Cost: 6 } }
 ```
+
+And a few PRs to clear:
+
+```htmd:approval-list
+title: PRs awaiting your review
+items:
+  - { id: pr1421, title: "feat: compose command", suggested: approve }
+  - { id: pr1404, title: "feat: detect (DRAFT)",  suggested: hold }
+```
+````
 
 ```bash
-htmd render status-report --data weekly.yaml --out report.html
+htmd compose decision.md --out decision.html
 ```
 
-→ Open `examples/status-report.html` to see what comes out. Color-coded pills, KPI strip with deltas, two-column layout, dark mode, print stylesheet — all from those 100 tokens.
+What the human gets: a polished page with a **live editable** decision matrix, a row of PR cards with approve/reject/hold buttons, and one **Copy all changes** button that bundles every edit into a structured prompt.
+
+### Closing the loop — the agent gets back a clean prompt, not a screenshot
+
+![The aggregate "Copy all changes" modal showing the structured prompt that contains every block's revisions](docs/screenshots/02-aggregate-prompt-modal.png)
+
+*Every interactive widget on the page registers into a global `window.__htmd.blocks` registry. The Copy-all-changes button walks the registry, asks each block for its prompt fragment, and concatenates them with `--- Block N (template):` separators. The human pastes it back to the agent. The agent already knows the shape.*
+
+### Token receipts (measured)
+
+| Scenario | Agent emits | htmd produces | If the agent had hand-written it |
+|---|---:|---:|---:|
+| CLAUDE.md → `md2html` (read-only doc) | ~1,600 tok | ~3,100–4,200 tok | ~**2× cheaper** with htmd |
+| Sprint review compose (6 widgets) | ~1,150 tok | ~29,200–38,900 tok | ~**25–34× cheaper** |
+| Tech-decision compose (4 widgets) | ~1,500 tok | ~26,500–35,300 tok | ~**18–24× cheaper** |
+| Research read-out compose (4 widgets) | ~1,200 tok | ~21,800–29,000 tok | ~**18–24× cheaper** |
+| Slide deck (single template) | ~1,400 tok | ~10,800–14,400 tok | ~**7.7× cheaper** |
+
+Range = optimistic 4 chars/token vs pessimistic 3 chars/token for HTML markup. **And** the agent would skip the polish (dark mode, print, drag-drop, accessibility) entirely if writing by hand. htmd is cheaper *and* qualitatively better.
+
+---
+
+## What it looks like
+
+A slide deck, rendered from 100 lines of YAML:
+
+![Slide deck title slide — gradient typography, eyebrow pill, slide footer with deck name and counter](docs/screenshots/03-slide-title.png)
+
+![Slide deck KPI slide — accent gradient bars on top of cards, gradient-colored values, deltas, sparklines](docs/screenshots/04-slide-kpis.png)
+
+*9 slide layouts (title / section / bullets / two-col / kpis / quote / image / code / chart) selectable per slide, plus 6 deck themes (indigo / purple / green / warn / ink / slate). Arrow-key navigation, overview grid (`o`), speaker notes panel (`n`), printable one-slide-per-page (`p`).*
+
+An editable **decision matrix** — change any score or weight, watch the recommendation re-compute live:
+
+![Decision matrix with editable score cells, editable weights, heat-mapped cells, weighted-total bars, and rationale textbox](docs/screenshots/06-decision-matrix.png)
+
+A **feedback corrector** — the original inspiration for htmd. Mobile-first, pill labels, clarification notes, a copy-ready correction prompt:
+
+![Feedback corrector — list of email classifications each with a pill chooser and clarification textarea, FAB at bottom](docs/screenshots/05-feedback-corrector.png)
+
+A **prompt tuner** — edit the template up top, three sample variant cards render live below, star one as preferred:
+
+![Prompt tuner — template textarea up top, three side-by-side sample cards with live previews underneath, star buttons and Send-tuned-prompt-back FAB](docs/screenshots/07-prompt-tuner.png)
+
+A **kanban board** with native drag-and-drop (touch + mouse + iOS Safari), URL-hash sharable state, and Markdown export:
+
+![Kanban board with columns Now / Next / Later / Done, tickets with owner pills and tag chips](docs/screenshots/08-kanban.png)
+
+An **editable data table** — sortable, filterable, cells become inputs when `editable: true`, export emits both a markdown table *and* a structured "was → now" change list:
+
+![Data table styled as a sprint backlog with editable cells for points, owner, status](docs/screenshots/09-data-table.png)
+
+A **text redliner** — click any paragraph to edit, the × button rejects a paragraph entirely, every change shows up in the exported change log:
+
+![Text redline view with editable paragraphs, suggested rejections highlighted, per-paragraph comment fields](docs/screenshots/10-text-redline.png)
+
+---
+
+## The 19 templates
+
+The 14 marked **↔** are bidirectional — they include a Copy-back button that emits a structured prompt the agent can ingest.
+
+| Template | What it does |
+|---|---|
+| `status-report` | Weekly status with shipped / in-progress / blocked sections + optional KPI strip. |
+| `dashboard` | KPI grid with big-number cards, sparklines, deltas, targets. |
+| `decision-matrix` **↔** | Weighted scoring with heatmap cells. Edit any score or weight; the recommendation re-computes live. |
+| `comparison-3-up` **↔** | 2–4 way side-by-side: pros / cons / verdict, plus radio-pick a winner. |
+| `email-digest` **↔** | Categorised inbox digest with per-item Reply / Archive / Keep / Forward action chooser. |
+| `slide-deck` | 9 layouts, 6 themes, keyboard nav, overview, speaker notes, print-per-page. |
+| `prompt-tuner` **↔** | Edit a prompt template, see live previews across N sample variants, star one as preferred. |
+| `kanban-board` **↔** | Drag-and-drop board with URL-hash state and Markdown export. |
+| `concept-explainer` | Doc with collapsibles, code-sample tabs, hover-glossary tooltips. |
+| `feedback-corrector` **↔** | Mobile-first classification corrector with pill labels and copy-ready correction prompt. |
+| `checklist` **↔** | Task list with check-offs, notes, owner/priority pills, copy-as-prompt. |
+| `q-and-a` **↔** | Clarifying questions (free / single / multi choice); copy answers as prompt. |
+| `data-table` **↔** | Sortable, filterable table. With `editable: true`, every cell becomes an input + diff export. |
+| `approval-list` **↔** | Approve / reject / hold per item with optional reason. |
+| `rank-order` **↔** | Drag-to-rank a list of items; copy the ranked order. |
+| `text-redline` **↔** | Inline-edit a draft paragraph by paragraph; reject paragraphs; copy redlined draft + change log. |
+| `priority-matrix` **↔** | 4-quadrant drag-drop (Eisenhower by default); copy placements. |
+| `chart-block` | Single inline-SVG chart (line/bar/donut/sparkline) with caption + optional data table. |
+| `code-review` **↔** | Annotated diff (add/del/context). Click any line number to leave a comment; export all comments. |
+
+Every example is checked in. Browse [`examples/`](./examples/) and open any HTML file directly in a browser. The four compose demos showcase multi-widget pages:
+
+- [`compose-sprint-review.html`](./examples/compose-sprint-review.html) — status + approvals + Q&A + checklist + corrections + priority matrix ([source](./examples/data/compose-sprint-review.md))
+- [`compose-tech-decision.html`](./examples/compose-tech-decision.html) — decision matrix + comparison + Q&A + approvals ([source](./examples/data/compose-tech-decision.md))
+- [`compose-research-readout.html`](./examples/compose-research-readout.html) — editable data table + chart + redline + checklist ([source](./examples/data/compose-research-readout.md))
+- [`compose-friday-triage.html`](./examples/compose-friday-triage.html) — inbox digest + classifier corrections + approvals + Q&A ([source](./examples/data/compose-friday-triage.md))
 
 ---
 
@@ -57,110 +151,101 @@ htmd render status-report --data weekly.yaml --out report.html
 ```bash
 npm install -g htmd
 
-# render any built-in template
-htmd render dashboard --data metrics.yaml --out dash.html
+# The headline command — compose a multi-widget page
+htmd compose review.md --out review.html
 
-# list all templates
-htmd templates
+# Single template render
+htmd render decision-matrix --data db.yaml --out decision.html
 
-# get a template's input schema (great for agents)
-htmd schema decision-matrix
+# Suggest which templates fit a plain markdown file
+htmd detect notes.md --json
+
+# Recover state from an interacted-with HTML file (closes the loop)
+htmd extract review.html
+
+# Discovery
+htmd templates              # list all templates
+htmd schema decision-matrix # get JSON schema for one
 ```
 
-Or use it programmatically:
+Programmatic:
 
 ```js
-import { renderTemplate } from 'htmd';
+import { renderTemplate, composeFromMarkdown, detectTemplates, extractState } from 'htmd';
+const { html, errors, blocks } = await composeFromMarkdown(myMarkdown);
+```
 
-const html = await renderTemplate('status-report', {
-  title: 'Weekly status',
-  sections: { shipped: [{ title: 'Shipped htmd v0.1' }] }
+---
+
+## How agents actually call it
+
+htmd is a **Node CLI**, invoked via the shell. Claude (or any agent) reads [`SKILL.md`](./SKILL.md) once at session start — that's the decision tree teaching it when to reach for `compose` vs `render` vs `detect` vs `extract`. Then for every concrete task it calls the CLI through its Bash tool.
+
+The agent never writes HTML. The agent writes YAML, runs `htmd compose file.md`, and tells the human:
+
+> *I generated `/tmp/review.html`. Open it in a browser, make any corrections, then click **Copy all changes** at the bottom-left and paste the result back to me.*
+
+The human edits in the browser. Clicks the button. Pastes back a clean structured prompt. The agent picks up where it left off. **You stay in the loop; the loop gets tighter.**
+
+See [`docs/AGENT_USAGE.md`](./docs/AGENT_USAGE.md) for the long-form workflow and [`CLAUDE.md`](./CLAUDE.md) for the architecture.
+
+---
+
+## Authoring a new template
+
+Every template lives in `templates/<name>/` with five files (six if interactive):
+
+```
+my-template/
+├── render.js       # default export: render(data, helpers) → string
+├── schema.json     # JSON Schema for input validation
+├── style.css       # uses CSS custom properties from _base/tokens.css
+├── description.md  # one-line summary surfaced in `htmd templates`
+├── example.yaml    # sample input — also what `htmd render <t>` falls back to
+└── script.js       # OPTIONAL — for interactive templates
+```
+
+Interactive templates register their export contract into a shared registry so `htmd compose` can aggregate them:
+
+```js
+window.__htmd = window.__htmd || { blocks: [] };
+window.__htmd.blocks.push({
+  template: 'my-template',
+  blockId: state.title,
+  hasChanges: () => /* boolean */,
+  getPrompt: () => /* the prompt string sent back to the agent */
 });
 ```
 
----
-
-## Template gallery
-
-All examples are committed in [`examples/`](./examples). Open any HTML file directly in a browser.
-
-| Template | What it does | Example |
-|---|---|---|
-| **status-report** | Weekly status with shipped / in-progress / blocked / next sections + optional KPI strip. | [`examples/status-report.html`](./examples/status-report.html) |
-| **dashboard** | KPI grid: big-number cards with sparklines, deltas, targets. | [`examples/dashboard.html`](./examples/dashboard.html) |
-| **decision-matrix** | Weighted scoring with heatmap cells and auto-recommendation. The "MD literally can't do this" demo. | [`examples/decision-matrix.html`](./examples/decision-matrix.html) |
-| **comparison-3-up** | Side-by-side approach comparison with pros/cons/code/verdict. | [`examples/comparison-3-up.html`](./examples/comparison-3-up.html) |
-| **email-digest** | Categorized inbox digest with urgent / useful / noise bands and action pills. | [`examples/email-digest.html`](./examples/email-digest.html) |
-| **slide-deck** | Single-file presentation with arrow-key navigation, overview mode, print-per-page. | [`examples/slide-deck.html`](./examples/slide-deck.html) |
-| **prompt-tuner** | Editable prompt template + N sample variable sets with live previews. Stakeholders can fiddle. | [`examples/prompt-tuner.html`](./examples/prompt-tuner.html) |
-| **kanban-board** | Drag-and-drop kanban with Markdown export and shareable URL hash state. | [`examples/kanban-board.html`](./examples/kanban-board.html) |
-| **concept-explainer** | Doc with collapsibles, code-sample tabs, and hover-glossary tooltips. | [`examples/concept-explainer.html`](./examples/concept-explainer.html) |
-| **feedback-corrector** | Human-in-the-loop classification corrector: pill labels, clarification notes, copy-ready correction prompt. Mobile-first. | [`examples/feedback-corrector.html`](./examples/feedback-corrector.html) |
-
----
-
-## Why htmd vs alternatives
-
-| Tool | Strength | Where htmd wins |
-|---|---|---|
-| `pandoc` | Many formats | One Node binary, agent-first templates, charts, interactivity |
-| `marked` (raw) | Basic MD→HTML | Templates with structured input, schema validation |
-| `mdx` / React | Component model | No build step, works in any agent loop, single-file output |
-| Hand-written HTML by agent | Maximum flexibility | 5-10× cheaper, consistent quality, accessible by default |
-
-htmd is **not** trying to replace your static-site generator. It's trying to replace the moment when an agent decides "I'll just write some HTML inline" — and gives you a template instead.
-
----
-
-## For AI agents
-
-If you're an agent reading this: see [`SKILL.md`](./SKILL.md) and [`docs/AGENT_USAGE.md`](./docs/AGENT_USAGE.md).
-
-The decision rule is simple:
-
-- **Default to Markdown.**
-- **Data-shaped output → use a template.** (a status report, KPI grid, decision matrix...)
-- **One-off complex layout** → write raw HTML.
-
-Always run `htmd schema <template>` before constructing the data — it returns the JSON Schema, so you can validate before rendering and avoid round-trips.
-
----
-
-## Adding a template
-
-Templates are JS modules. Each lives in `templates/<name>/` with:
-
-```
-render.js       # default export: render(data, helpers) → string
-schema.json     # JSON Schema for input validation
-style.css       # uses CSS custom properties from _base/tokens.css
-script.js       # OPTIONAL — only for interactive templates
-description.md  # one-line summary for agents
-example.yaml    # sample input
-```
-
-See [`docs/TEMPLATE_AUTHORING.md`](./docs/TEMPLATE_AUTHORING.md) for the full guide and the helpers API. Scaffold one with:
-
-```bash
-htmd init-template my-template
-```
+Scaffold one with `htmd init-template my-template`. Full guide: [`docs/TEMPLATE_AUTHORING.md`](./docs/TEMPLATE_AUTHORING.md).
 
 ### Plugin SDK
 
-Want to ship a template as an npm package? Name it `htmd-template-<name>` and add `htmd-template` to `keywords` in `package.json`. htmd auto-discovers it from `node_modules`.
+Publish a template as `htmd-template-<name>` on npm with `"htmd-template"` in `keywords`. htmd auto-discovers it from `node_modules/`.
 
 ---
 
-## Roadmap
+## What's in this repo
 
-- [ ] Theme system (light/dark/custom CSS variable overrides)
-- [ ] Hot-reload dev server for template authors
-- [ ] Web playground (htmd.dev) — paste YAML, see HTML
-- [ ] More templates (Gantt, org chart, tree, timeline)
-- [ ] i18n (RTL, locale-aware date/number formatting)
-- [ ] WASM build for in-browser rendering
+- **17 KB** of orchestration code (`src/`): compose, detect, extract, render, schema, html-tag, charts.
+- **19 templates** (`templates/`) — each self-contained.
+- **66 tests** (`tests/`) — vitest. `npm test`. Covers compose parsing, schema validation, every template rendering its example, the export-protocol convention, MD↔HTML round-trip, extract recovery.
+- **23 rendered HTML examples** (`examples/`) including the 4 compose demos.
 
-PRs welcome.
+Zero runtime build step. Node 20+, ESM only. Output is one self-contained HTML file — no CDNs, works offline, can be emailed.
+
+---
+
+## Architecture (one paragraph)
+
+CLI in `bin/htmd.js` → `src/cli.js` (commander). Templates load on demand. Render path: `loadTemplate(name)` → ajv-validate against `schema.json` → call `render(data, helpers)` (a tagged template literal `html\`\`` that auto-escapes) → wrap in shell that inlines `tokens.css` + `reset.css` + template CSS + optional template JS. `compose.js` walks `marked.lexer`, splits prose vs. ` ```htmd:* ` fences, renders each block, dedupes CSS/JS, injects the global Copy-all-changes FAB and bridge JS. `detect.js` runs per-template heuristic detectors and returns ranked suggestions. `extract.js` parses `<script type="application/json" data-htmd-state>` blocks back into YAML. Charts are inline SVG via `src/chart.js` (zero deps). Plugins are auto-discovered npm packages named `htmd-template-*`.
+
+---
+
+## Inspiration
+
+- [Thariq Shihipar — *The Unreasonable Effectiveness of HTML for AI Agents*](https://thariqs.github.io/html-effectiveness/) — the thesis: HTML is what humans want to consume; every artifact should end with an export button.
+- The original `feedback-corrector` template — the canonical "human-in-the-loop returns a prompt to the agent" pattern that the other 13 bidirectional templates are modeled on.
 
 ---
 
