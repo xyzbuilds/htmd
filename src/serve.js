@@ -245,7 +245,34 @@ export async function deliverSubmission({ id, body, mode, env = process.env, log
     }
     try {
       const { spawn } = await import('node:child_process');
+      // Session continuity: openclaw's --session-id expects a session UUID, not a
+      // session key. Look up the UUID from the OpenClaw session store keyed by
+      // `agent:<agent>:<channel>:direct:<replyTo>` so submissions land in the
+      // user's existing chat session (and the responding agent has full context).
+      // Falls back to fresh session if no match or if env override is unset.
+      let sessionId = env.HTMD_OPENCLAW_SESSION_ID || null;
+      if (!sessionId && channel && replyTo) {
+        try {
+          const { readFile } = await import('node:fs/promises');
+          const home = env.HOME || process.env.HOME;
+          const storePath = env.HTMD_OPENCLAW_SESSION_STORE
+            || `${home}/.openclaw/agents/${agent}/sessions/sessions.json`;
+          const raw = await readFile(storePath, 'utf8');
+          const store = JSON.parse(raw);
+          const key = `agent:${agent}:${channel}:direct:${replyTo}`;
+          const entry = store[key];
+          if (entry && typeof entry.sessionId === 'string') {
+            sessionId = entry.sessionId;
+            logLine(logPath, { event: 'session-lookup', mode: 'openclaw-local', id, key, sessionId });
+          } else {
+            logLine(logPath, { event: 'session-lookup-miss', mode: 'openclaw-local', id, key });
+          }
+        } catch (lookupErr) {
+          logLine(logPath, { event: 'session-lookup-error', mode: 'openclaw-local', id, error: lookupErr.message });
+        }
+      }
       const args = ['agent', '--agent', agent, '--message', prompt, '--deliver'];
+      if (sessionId) args.push('--session-id', sessionId);
       if (channel) args.push('--reply-channel', channel);
       if (replyTo) args.push('--reply-to', replyTo);
       // Fire-and-forget: openclaw agent turns can take 1-3 minutes (model thinking,
