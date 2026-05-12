@@ -1,14 +1,19 @@
 :root {
-  --htmd-bg: #f8fafc;
-  --htmd-surface: #ffffff;
-  --htmd-surface-2: #f1f5f9;
+  /* Telegram Mini App theme vars (--tg-theme-*) override htmd defaults when
+     the page is opened inside Telegram. In standalone Safari/etc. the vars
+     are absent and the fallbacks below are used as-is. The Mini App bridge
+     in compose.js mirrors window.Telegram.WebApp.themeParams onto :root at
+     runtime so these var() lookups resolve. */
+  --htmd-bg: var(--tg-theme-bg-color, #f8fafc);
+  --htmd-surface: var(--tg-theme-secondary-bg-color, #ffffff);
+  --htmd-surface-2: var(--tg-theme-secondary-bg-color, #f1f5f9);
   --htmd-border: #e2e8f0;
-  --htmd-fg: #0f172a;
-  --htmd-fg-muted: #475569;
-  --htmd-muted: #94a3b8;
-  --htmd-accent: #4f46e5;
+  --htmd-fg: var(--tg-theme-text-color, #0f172a);
+  --htmd-fg-muted: var(--tg-theme-hint-color, #475569);
+  --htmd-muted: var(--tg-theme-hint-color, #94a3b8);
+  --htmd-accent: var(--tg-theme-button-color, #4f46e5);
   --htmd-accent-soft: rgba(79, 70, 229, 0.12);
-  --htmd-accent-fg: #ffffff;
+  --htmd-accent-fg: var(--tg-theme-button-text-color, #ffffff);
   --htmd-success: #16a34a;
   --htmd-success-soft: rgba(22, 163, 74, 0.12);
   --htmd-warn: #d97706;
@@ -34,16 +39,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --htmd-bg: #0b1220;
-    --htmd-surface: #111827;
-    --htmd-surface-2: #1f2937;
+    --htmd-bg: var(--tg-theme-bg-color, #0b1220);
+    --htmd-surface: var(--tg-theme-secondary-bg-color, #111827);
+    --htmd-surface-2: var(--tg-theme-secondary-bg-color, #1f2937);
     --htmd-border: #1f2937;
-    --htmd-fg: #e2e8f0;
-    --htmd-fg-muted: #94a3b8;
-    --htmd-muted: #475569;
-    --htmd-accent: #818cf8;
+    --htmd-fg: var(--tg-theme-text-color, #e2e8f0);
+    --htmd-fg-muted: var(--tg-theme-hint-color, #94a3b8);
+    --htmd-muted: var(--tg-theme-hint-color, #475569);
+    --htmd-accent: var(--tg-theme-button-color, #818cf8);
     --htmd-accent-soft: rgba(129, 140, 248, 0.18);
-    --htmd-accent-fg: #0b1220;
+    --htmd-accent-fg: var(--tg-theme-button-text-color, #0b1220);
     --htmd-success: #4ade80;
     --htmd-success-soft: rgba(74, 222, 128, 0.16);
     --htmd-warn: #fbbf24;
@@ -69,7 +74,7 @@ body {
 }
 
 a {
-  color: var(--htmd-accent);
+  color: var(--tg-theme-link-color, var(--htmd-accent));
   text-decoration: none;
 }
 a:hover { text-decoration: underline; }

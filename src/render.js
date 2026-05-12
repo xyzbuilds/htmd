@@ -86,21 +86,22 @@ export async function renderTemplate(name, data, opts = {}) {
   });
 }
 
-export function wrapShell({ title, body, css, js, template, lang }) {
+export function wrapShell({ title, body, css, js, template, lang, headExtra }) {
   const safeTitle = escapeHtml(title || 'htmd');
   const tplAttr = template ? ` data-htmd-template="${escapeHtml(template)}"` : '';
   const styles = `${RESET_CSS}\n${TOKENS_CSS}\n${css || ''}`;
   const scriptTag = js ? `\n<script>\n${js}\n</script>` : '';
+  const extra = headExtra ? `\n${headExtra}` : '';
   return `<!doctype html>
 <html lang="${escapeHtml(lang || 'en')}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="generator" content="htmd v0.2.0">
+<meta name="generator" content="htmd v0.4.0">
 <title>${safeTitle}</title>
 <style>
 ${styles}
-</style>
+</style>${extra}
 </head>
 <body${tplAttr}>
 ${body}${scriptTag}

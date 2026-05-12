@@ -127,13 +127,21 @@ export async function composeFromMarkdown(mdText, opts = {}) {
   const js = [...jsByTemplate.values(), composeBridgeJs].filter(Boolean).join('\n;\n');
   const title = opts.title || extractFirstHeading(mdText) || 'htmd compose';
 
+  // Always include the Telegram WebApp SDK in compose output. When the page
+  // loads outside Telegram (Safari standalone, saved HTML, email attachment)
+  // the script either fails to load (offline) or sets window.Telegram.WebApp
+  // with an empty initData — the bridge JS auto-detects and stays on the
+  // standalone path either way.
+  const headExtra = `<script src="https://telegram.org/js/telegram-web-app.js"></script>`;
+
   const html = wrapShell({
     title,
     body: `<main class="htmd-compose">\n${bodyParts.join('\n')}\n${composeBridgeUi}\n</main>`,
     css,
     js,
     template: 'compose',
-    lang: opts.lang || 'en'
+    lang: opts.lang || 'en',
+    headExtra
   });
 
   return { html, errors, blocks: blocksMeta };
@@ -563,26 +571,48 @@ const COMPOSE_BRIDGE_JS = `
     if (fabLabel) fabLabel.textContent = 'Send all changes';
   }
 
-  // Telegram WebApp shim: no-op for now so this same JS will work later when
-  // the page is opened inside a Telegram Mini App without code changes.
-  if (!window.Telegram) window.Telegram = {};
-  if (!window.Telegram.WebApp) {
-    window.Telegram.WebApp = {
-      ready: () => {},
-      expand: () => {},
-      close: () => {},
-      sendData: (data) => { console.log('[Telegram.WebApp shim] sendData:', data); },
-      onEvent: () => {},
-      offEvent: () => {},
-      MainButton: { show: () => {}, hide: () => {}, setText: () => {}, onClick: () => {} }
-    };
+  // ---- Telegram Mini App detection (f1/f3) ----
+  // The SDK script tag is loaded in <head>. If the page is opened inside
+  // Telegram, window.Telegram.WebApp.initData is a non-empty signed string.
+  // Otherwise (Safari standalone, saved HTML, offline) it's empty or the
+  // SDK didn't load at all — we degrade silently.
+  const tg = (typeof window !== 'undefined' && window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
+  const isMiniApp = !!(tg && typeof tg.initData === 'string' && tg.initData.length > 0);
+  if (tg) {
+    try { tg.ready(); } catch (e) {}
+    try { tg.expand(); } catch (e) {}
+    // Mirror Telegram theme params onto :root as CSS custom properties so
+    // tokens.css can read them via var(--tg-theme-*). The SDK doesn't do
+    // this automatically — page is responsible.
+    try {
+      const params = tg.themeParams || {};
+      const root = document.documentElement;
+      for (const k of Object.keys(params)) {
+        const v = params[k];
+        if (typeof v === 'string') {
+          root.style.setProperty('--tg-theme-' + k.replace(/_/g, '-'), v);
+        }
+      }
+      if (tg.colorScheme) {
+        root.setAttribute('data-tg-color-scheme', tg.colorScheme);
+      }
+      // Re-apply when Telegram switches theme mid-session.
+      if (typeof tg.onEvent === 'function') {
+        tg.onEvent('themeChanged', () => {
+          const p2 = tg.themeParams || {};
+          for (const k of Object.keys(p2)) {
+            const v = p2[k];
+            if (typeof v === 'string') root.style.setProperty('--tg-theme-' + k.replace(/_/g, '-'), v);
+          }
+          if (tg.colorScheme) root.setAttribute('data-tg-color-scheme', tg.colorScheme);
+        });
+      }
+    } catch (e) {}
   }
-  try { window.Telegram.WebApp.ready(); } catch {}
 
-  async function sendToAgent() {
-    if (!submitUrl) return;
-    const text = modalText ? modalText.textContent : buildAggregatePrompt();
-    const payload = {
+  function buildPayload() {
+    const text = modalText && modalText.textContent ? modalText.textContent : buildAggregatePrompt();
+    return {
       prompt: text,
       contextId: renderId || '',
       blocks: reg.blocks.map((b) => {
@@ -596,9 +626,17 @@ const COMPOSE_BRIDGE_JS = `
         };
       })
     };
-    sendBtn.disabled = true;
-    const originalLabel = sendBtn.textContent;
-    sendBtn.textContent = 'Sending…';
+  }
+
+  async function sendViaHttp() {
+    if (!submitUrl) return;
+    const payload = buildPayload();
+    let originalLabel = '';
+    if (sendBtn) {
+      sendBtn.disabled = true;
+      originalLabel = sendBtn.textContent;
+      sendBtn.textContent = 'Sending…';
+    }
     try {
       const res = await fetch(submitUrl, {
         method: 'POST',
@@ -619,9 +657,78 @@ const COMPOSE_BRIDGE_JS = `
       showToast('Send failed: ' + e.message);
       console.error('[htmd send]', e);
     } finally {
-      sendBtn.disabled = false;
-      sendBtn.textContent = originalLabel;
+      if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.textContent = originalLabel;
+      }
     }
+  }
+
+  // Mini App path: build the same payload, hand it to Telegram via sendData().
+  // Telegram signs the WebAppData with the bot token and pushes it to the
+  // OpenClaw bot adapter as update.message.web_app_data — no HTTP POST.
+  // Payload is capped at 4096 bytes by Telegram; we truncate the prompt if
+  // necessary (rare for our envelope; structured blocks are summarised).
+  function sendViaTelegram() {
+    if (!tg || typeof tg.sendData !== 'function') {
+      showToast('Telegram SDK not available');
+      return;
+    }
+    const payload = buildPayload();
+    payload.via = 'tg-webapp';
+    let serialised = JSON.stringify(payload);
+    if (serialised.length > 4000) {
+      // Drop per-block prompts (we keep the aggregate) to stay under cap.
+      const trimmed = {
+        prompt: payload.prompt.slice(0, 3500),
+        contextId: payload.contextId,
+        via: 'tg-webapp',
+        truncated: true,
+        blockCount: payload.blocks.length
+      };
+      serialised = JSON.stringify(trimmed);
+    }
+    try {
+      tg.sendData(serialised);
+      close();
+      showToast('Sent — closing…');
+      try { tg.close(); } catch (e) {}
+    } catch (e) {
+      showToast('Telegram send failed: ' + e.message);
+      console.error('[htmd tg send]', e);
+    }
+  }
+
+  async function sendToAgent() {
+    if (isMiniApp) return sendViaTelegram();
+    return sendViaHttp();
+  }
+
+  // In Mini App mode, the floating "Send" button is replaced by Telegram's
+  // native MainButton at the bottom of the screen. Hide the FAB and bind the
+  // MainButton instead. Standalone mode keeps the FAB as-is.
+  if (isMiniApp && tg && tg.MainButton) {
+    fab.style.display = 'none';
+    try {
+      tg.MainButton.setText('Send to agent');
+      tg.MainButton.show();
+      // Enable/disable mirrors the FAB's disabled state.
+      const syncMain = () => {
+        const n = changedBlocks().length;
+        try {
+          if (n === 0) tg.MainButton.disable && tg.MainButton.disable();
+          else tg.MainButton.enable && tg.MainButton.enable();
+          tg.MainButton.setText(n === 0 ? 'No changes' : ('Send to agent (' + n + ')'));
+        } catch (e) {}
+      };
+      tg.MainButton.onClick(() => {
+        if (changedBlocks().length === 0) { showToast('No changes yet'); return; }
+        sendViaTelegram();
+      });
+      // Sibling poller for MainButton state. Cheap; runs alongside refresh().
+      setInterval(syncMain, 800);
+      syncMain();
+    } catch (e) { console.error('[htmd mainbutton]', e); }
   }
 
   fab.addEventListener('click', open);
@@ -634,12 +741,19 @@ const COMPOSE_BRIDGE_JS = `
     if (ok) {
       // Keep modal open if "Send to agent" is also visible (user might still
       // want to send); close otherwise to match v0.2 behaviour.
-      if (!submitUrl) close();
+      if (!submitUrl && !isMiniApp) close();
     }
     showToast(ok ? 'Copied to clipboard' : 'Copy failed — see console');
     if (!ok) console.log(text);
   });
   if (sendBtn) sendBtn.addEventListener('click', sendToAgent);
+  // In Mini App mode, surface "Send to agent" inside the modal even if the
+  // page wasn't rendered with --serve (no submitUrl meta) — Telegram doesn't
+  // need the submit URL since it routes via WebAppData.
+  if (isMiniApp && sendBtn) {
+    sendBtn.removeAttribute('hidden');
+    if (fabLabel) fabLabel.textContent = 'Send all changes';
+  }
 
   // Poll for changes (cheap; covers the case where a block doesn't dispatch events).
   setInterval(refresh, 800);
