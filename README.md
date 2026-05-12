@@ -154,6 +154,9 @@ npm install -g htmd
 # The headline command — compose a multi-widget page
 htmd compose review.md --out review.html
 
+# Same, but publish to the local serve dir + print the public URL (Phase 1)
+htmd compose review.md --serve
+
 # Single template render
 htmd render decision-matrix --data db.yaml --out decision.html
 
@@ -166,6 +169,10 @@ htmd extract review.html
 # Discovery
 htmd templates              # list all templates
 htmd schema decision-matrix # get JSON schema for one
+
+# Serve rendered pages over HTTP so they open in mobile browsers, with a
+# "Send to agent" button that POSTs the assembled prompt back without copy-paste
+htmd serve                  # default: 0.0.0.0:8787, dryrun submit mode
 ```
 
 Programmatic:
@@ -227,12 +234,44 @@ Publish a template as `htmd-template-<name>` on npm with `"htmd-template"` in `k
 
 ## What's in this repo
 
-- **17 KB** of orchestration code (`src/`): compose, detect, extract, render, schema, html-tag, charts.
+- **17 KB** of orchestration code (`src/`): compose, detect, extract, render, schema, html-tag, charts, **serve** (Phase 1).
 - **19 templates** (`templates/`) — each self-contained.
-- **66 tests** (`tests/`) — vitest. `npm test`. Covers compose parsing, schema validation, every template rendering its example, the export-protocol convention, MD↔HTML round-trip, extract recovery.
-- **23 rendered HTML examples** (`examples/`) including the 4 compose demos.
+- **86 tests** (`tests/`) — vitest. `npm test`. Covers compose parsing, schema validation, every template rendering its example, the export-protocol convention, MD↔HTML round-trip, extract recovery, **serve + submit-pipeline (dryrun + file modes)**.
+- **23 rendered HTML examples** (`examples/`) including the 4 compose demos and the new `compose-serve-demo.md`.
 
-Zero runtime build step. Node 20+, ESM only. Output is one self-contained HTML file — no CDNs, works offline, can be emailed.
+Zero runtime build step. Node 20+, ESM only. Output is one self-contained HTML file — no CDNs, works offline, can be emailed. **New in v0.3.0:** `htmd serve` + `htmd compose --serve` add an optional round-trip channel (host the page at a URL, accept submit POSTs back to the agent). See [`docs/SERVE.md`](docs/SERVE.md).
+
+---
+
+## Serving rendered htmd pages (v0.3.0)
+
+The output of `htmd compose` is great for desktop and email, but Telegram document attachments are awkward on iPhone — iOS treats `.html` files as downloads, the in-app preview is read-only, JS coverage is spotty, and clipboard-from-`file://` is unreliable.
+
+`htmd v0.3.0` adds an optional serve layer that keeps htmd's "self-contained HTML" guarantee but lets the page be reached at a stable URL on a private network (Tailscale, LAN, or via SSH tunnel), AND lets the in-page FAB POST changes directly back to the agent instead of forcing copy-paste.
+
+```bash
+# 1. Start the server (built-in node http; no Express; no daemons)
+htmd serve
+
+# 2. Render with --serve flag in another shell
+htmd compose review.md --serve
+# → http://100.70.189.117:8787/r/review-a1b2c3d4
+
+# 3. Open the URL on your phone, fiddle with the widgets, tap
+#    "Send all changes" — the modal previews the prompt, hit Send,
+#    and the assembled prompt is routed back to your OpenClaw agent.
+```
+
+The submit endpoint supports four delivery modes (`HTMD_SUBMIT_MODE`):
+`dryrun` (default, logs only), `file` (writes to `~/.htmd/inbox/`), `telegram`
+(direct Bot API POST), and `openclaw-ssh` (real agent turn via SSH to the
+OpenClaw host). Full operational guide in **[`docs/SERVE.md`](docs/SERVE.md)**.
+
+The "Send to agent" button is a **strict addition** — pages rendered without
+`--serve` still get the old "Copy all changes" FAB and behave identically to
+v0.2.
+
+---
 
 ---
 

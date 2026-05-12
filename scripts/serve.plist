@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  macOS launchd template for `htmd serve`.
+
+  To install:
+    1. Edit this file: replace ${USER} with your actual username (whoami),
+       and fix any paths if your htmd checkout is elsewhere.
+    2. Copy to: ~/Library/LaunchAgents/com.htmd.serve.plist
+    3. Load:   launchctl load -w ~/Library/LaunchAgents/com.htmd.serve.plist
+    4. Test:   curl http://127.0.0.1:8787/health
+
+  To uninstall:
+    launchctl unload -w ~/Library/LaunchAgents/com.htmd.serve.plist
+    rm ~/Library/LaunchAgents/com.htmd.serve.plist
+
+  This is a TEMPLATE — `scripts/serve.sh foreground` is what launchd actually
+  runs, so all of HTMD_* env / .htmd.env handling is consistent with the
+  command-line workflow.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.htmd.serve</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/Users/${USER}/coding/Projects/htmd/scripts/serve.sh</string>
+    <string>foreground</string>
+  </array>
+
+  <key>WorkingDirectory</key>
+  <string>/Users/${USER}/coding/Projects/htmd</string>
+
+  <key>EnvironmentVariables</key>
+  <dict>
+    <key>PATH</key>
+    <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string>
+    <key>HTMD_ENV_FILE</key>
+    <string>/Users/${USER}/.htmd/.htmd.env</string>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>KeepAlive</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/${USER}/.htmd/serve.out.log</string>
+
+  <key>StandardErrorPath</key>
+  <string>/Users/${USER}/.htmd/serve.err.log</string>
+</dict>
+</plist>

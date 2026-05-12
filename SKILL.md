@@ -1,6 +1,6 @@
 ---
 name: htmd
-description: Render agent output to rich self-contained HTML using htmd templates instead of writing HTML directly. Use compose to mix prose + many interactive widgets in one markdown file with one global "Copy all changes" button that aggregates all human edits back into one prompt for the agent. Templates: status-report, dashboard, decision-matrix, comparison-3-up, email-digest, slide-deck, prompt-tuner, kanban-board, concept-explainer, feedback-corrector, checklist, q-and-a, data-table, approval-list, rank-order, text-redline, priority-matrix.
+description: Render agent output to rich self-contained HTML using htmd templates instead of writing HTML directly. Use compose to mix prose + many interactive widgets in one markdown file with one global "Send / Copy all changes" button that aggregates all human edits back into one prompt for the agent. With `--serve` (v0.3.0) the page is also hosted at a URL so iPhone users can open + reply without copy-paste. Templates: status-report, dashboard, decision-matrix, comparison-3-up, email-digest, slide-deck, prompt-tuner, kanban-board, concept-explainer, feedback-corrector, checklist, q-and-a, data-table, approval-list, rank-order, text-redline, priority-matrix.
 ---
 
 # htmd — Markdown ↔ HTML bridge for human-in-the-loop agents
@@ -147,6 +147,32 @@ options:
 - The `--out file.html` flag is preferred — emitting HTML through stdout into your conversation wastes tokens.
 - Ask the user to open the HTML file in a browser to view it. The output is self-contained (no CDNs, no network) so it works offline and can be emailed.
 - For interactive templates (slide-deck, prompt-tuner, kanban-board, concept-explainer, feedback-corrector) the HTML includes inlined JS — the user gets a working widget by opening the file.
+
+## Serving the page so the user can reply on their phone (`--serve`, v0.3.0)
+
+If the user is mobile (Telegram on iPhone, etc.) and you want their interaction with the page to come **back to you automatically** (instead of asking them to copy-paste a prompt), use the `--serve` flag:
+
+```bash
+htmd compose review.md --serve
+# prints: http://100.70.189.117:8787/r/review-a1b2c3d4
+```
+
+Send that URL in your reply. When the user opens it on their phone, the in-page FAB is now a two-stage **"Send all changes"** button (instead of just "Copy"): tapping Send POSTs the assembled prompt to `htmd serve` on the user's machine, which routes it back to your agent session (mode-dependent: `dryrun` / `file` / `telegram` / `openclaw-ssh`).
+
+Requirements:
+- `htmd serve` must be running on the user's machine; if it isn't, the file is still written and the URL still printed, but with a stderr warning.
+- The page is back-compat — if the user opens an htmd page that was **not** rendered with `--serve`, the FAB falls back to the v0.2 "Copy" behavior.
+
+When to prefer `--serve`:
+- The user is on mobile and you want a low-friction round trip.
+- The compose page has interactive blocks (`checklist`, `feedback-corrector`, `kanban-board`, etc.) where the user's edits matter.
+- The user is on a private network you can reach (Tailscale / LAN).
+
+When NOT to prefer it:
+- The output is purely informational (no interactive blocks).
+- You're emailing the page or attaching it to a chat that doesn't have inline HTML rendering.
+
+See `docs/SERVE.md` for the full operational guide (port choice, auth tokens, the four submit pipeline modes, troubleshooting).
 
 ## Plugin templates
 

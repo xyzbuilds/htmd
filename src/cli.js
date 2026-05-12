@@ -11,8 +11,10 @@ import { detectTemplates } from './detect.js';
 import { extractState } from './extract.js';
 import { htmlToMd } from './html2md.js';
 import { mdToHtml } from './md.js';
+import { startServer, defaultRenderDir } from './serve.js';
+import { publishRender, publicHost, cleanupOldRenders } from './serve-helpers.js';
 
-const VERSION = '0.2.0';
+const VERSION = '0.3.0';
 
 export async function run(argv) {
   const program = new Command();
@@ -54,6 +56,10 @@ export async function run(argv) {
     .option('-o, --out <file>', 'output file (default: stdout)')
     .option('--no-validate', 'skip schema validation')
     .option('--json', 'emit JSON envelope (for scripting): { ok, html, errors }')
+    .option('--serve', 'publish to the local htmd serve dir and print the Tailscale URL')
+    .option('--serve-dir <dir>', `serve dir (default: ${defaultRenderDir()})`)
+    .option('--serve-host <host>', 'public host for the URL (overrides HTMD_PUBLIC_HOST/HTMD_TAILSCALE_IP)')
+    .option('--ttl-days <n>', 'auto-prune renders older than N days when --serve is used', '7')
     .action(async (name, opts) => {
       let data;
       try {
@@ -73,6 +79,10 @@ export async function run(argv) {
           }
         }
         const html = await renderTemplate(name, data, { validate: opts.validate });
+        if (opts.serve) {
+          await runServePublish({ html, slug: data?.title || name, opts });
+          return;
+        }
         if (opts.json) {
           process.stdout.write(JSON.stringify({ ok: true, html }));
           return;
@@ -106,10 +116,23 @@ export async function run(argv) {
     .option('-t, --title <title>', 'page title (default: first H1)')
     .option('--no-validate', 'skip schema validation per block')
     .option('--json', 'emit JSON envelope: { ok, html, errors, blocks }')
+    .option('--serve', 'publish to the local htmd serve dir and print the Tailscale URL')
+    .option('--serve-dir <dir>', `serve dir (default: ${defaultRenderDir()})`)
+    .option('--serve-host <host>', 'public host for the URL (overrides HTMD_PUBLIC_HOST/HTMD_TAILSCALE_IP)')
+    .option('--ttl-days <n>', 'auto-prune renders older than N days when --serve is used', '7')
     .action(async (file, opts) => {
       try {
         const md = await readTextOrStdin(file);
         const result = await composeFromMarkdown(md, { title: opts.title, validate: opts.validate });
+        if (opts.serve) {
+          if (result.errors.length) {
+            for (const e of result.errors) {
+              console.error(`htmd compose: block #${e.idx} (${e.template}): ${e.error}`);
+            }
+          }
+          await runServePublish({ html: result.html, slug: opts.title || file || 'compose', opts });
+          return;
+        }
         if (opts.json) {
           process.stdout.write(JSON.stringify(result));
           return;
@@ -196,6 +219,38 @@ export async function run(argv) {
     });
 
   program
+    .command('serve')
+    .description('serve rendered htmd pages over HTTP and accept /submit POSTs back to the agent')
+    .option('-p, --port <port>', 'port to listen on', '8787')
+    .option('-b, --bind <addr>', 'bind address', '0.0.0.0')
+    .option('-d, --dir <path>', `renders dir (default: ${defaultRenderDir()})`)
+    .option('--token <secret>', 'require X-HTMD-Token header on /submit/* (otherwise open)')
+    .option('--mode <mode>', 'submit mode: dryrun|telegram|openclaw-ssh|openclaw|file (overrides HTMD_SUBMIT_MODE)')
+    .option('--log <path>', 'log file path (default: ~/.htmd/serve.log)')
+    .option('--tailscale-ip <ip>', 'tailscale IP for banner (default: HTMD_TAILSCALE_IP env or 100.70.189.117)')
+    .action(async (opts) => {
+      const tailscaleIp = opts.tailscaleIp || process.env.HTMD_TAILSCALE_IP || '100.70.189.117';
+      const mode = (opts.mode || process.env.HTMD_SUBMIT_MODE || 'dryrun').toLowerCase();
+      startServer({
+        port: opts.port,
+        bind: opts.bind,
+        dir: opts.dir,
+        token: opts.token,
+        mode,
+        logPath: opts.log,
+        tailscaleIp,
+        version: VERSION,
+        onReady: ({ port, dir }) => {
+          console.log(`htmd serve listening on http://${opts.bind}:${port}`);
+          console.log(`  • Tailscale URL: http://${tailscaleIp}:${port}`);
+          console.log(`  • Render dir:    ${dir}`);
+          console.log(`  • Auth:          ${opts.token ? 'token-protected' : 'open'}`);
+          console.log(`  • Submit hook:   ${mode}`);
+        }
+      });
+    });
+
+  program
     .command('init-template <name>')
     .description('scaffold a new template directory')
     .option('--dir <path>', 'parent directory (default: ./templates)')
@@ -250,6 +305,48 @@ async function writeOutput(text, out) {
   mkdirSync(dirname(path), { recursive: true });
   writeFileSync(path, text);
   console.error(`htmd: wrote ${path}`);
+}
+
+// Publish a rendered HTML page into the serve dir and print the public URL.
+async function runServePublish({ html, slug, opts }) {
+  const dir = opts.serveDir || defaultRenderDir();
+  const host = publicHost({ host: opts.serveHost });
+  const ttl = Number(opts.ttlDays || 7);
+  const pruned = cleanupOldRenders(dir, ttl);
+  const { id, file, viewUrl, submitUrl } = publishRender({ html, slug, dir, host });
+  console.log(viewUrl);
+  console.error(`htmd: wrote ${file}`);
+  console.error(`htmd: submit endpoint: ${submitUrl}`);
+  if (pruned > 0) console.error(`htmd: pruned ${pruned} render(s) older than ${ttl} day(s)`);
+  // Best-effort: hit /health to confirm the serve daemon is up.
+  await pingHealth(host).catch(() => {
+    console.error(`htmd: warning — htmd serve does not appear to be running at ${host}. Start it with: htmd serve`);
+  });
+}
+
+function pingHealth(host) {
+  return new Promise((res, rej) => {
+    try {
+      const u = new URL(host + '/health');
+      const lib = u.protocol === 'https:' ? import('node:https') : import('node:http');
+      lib.then((mod) => {
+        const req = mod.request({
+          method: 'GET',
+          hostname: u.hostname,
+          port: u.port || (u.protocol === 'https:' ? 443 : 80),
+          path: '/health',
+          timeout: 1500
+        }, (r) => {
+          if (r.statusCode === 200) res(true);
+          else rej(new Error('HTTP ' + r.statusCode));
+          r.resume();
+        });
+        req.on('error', rej);
+        req.on('timeout', () => { req.destroy(new Error('timeout')); });
+        req.end();
+      }).catch(rej);
+    } catch (e) { rej(e); }
+  });
 }
 
 const TEMPLATE_RENDER_STUB = `import { html } from '../../src/html-tag.js';
