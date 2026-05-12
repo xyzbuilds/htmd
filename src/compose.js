@@ -423,10 +423,14 @@ const COMPOSE_CSS = `
 `;
 
 // HTML for the global compose-level export UI.
+// When the page was rendered with `htmd compose --serve`, a
+// <meta name="htmd-submit"> tag is present; the FAB becomes a two-stage
+// dialog with a "Send to agent" primary button alongside the "Copy"
+// fallback. Otherwise (v0.2 back-compat) only "Copy" is shown.
 const COMPOSE_BRIDGE_UI = `
-<button type="button" class="htmd-cx-fab" data-htmd-cx-export aria-label="Copy all changes back to agent">
+<button type="button" class="htmd-cx-fab" data-htmd-cx-export aria-label="Send all changes back to agent">
   <span aria-hidden="true">&#x21B5;</span>
-  <span>Copy all changes</span>
+  <span data-htmd-cx-fab-label>Copy all changes</span>
   <span class="htmd-cx-fab-badge" data-htmd-cx-count>0</span>
 </button>
 <div class="htmd-cx-modal" data-htmd-cx-modal hidden role="dialog" aria-modal="true" aria-labelledby="htmd-cx-title">
@@ -439,7 +443,8 @@ const COMPOSE_BRIDGE_UI = `
     <pre class="htmd-cx-modal-pre" data-htmd-cx-text></pre>
     <footer class="htmd-cx-modal-foot">
       <button type="button" class="htmd-cx-btn htmd-cx-btn-ghost" data-htmd-cx-close>Cancel</button>
-      <button type="button" class="htmd-cx-btn htmd-cx-btn-primary" data-htmd-cx-confirm>Copy</button>
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-ghost" data-htmd-cx-confirm>Copy</button>
+      <button type="button" class="htmd-cx-btn htmd-cx-btn-primary" data-htmd-cx-send hidden>Send to agent</button>
     </footer>
   </div>
 </div>
@@ -546,6 +551,79 @@ const COMPOSE_BRIDGE_JS = `
     document.body.style.overflow = '';
   }
 
+  // -------- Send-to-agent (Phase 1: only available when rendered with --serve) --------
+  const submitMeta = document.querySelector('meta[name="htmd-submit"]');
+  const submitUrl = submitMeta ? submitMeta.getAttribute('content') : '';
+  const renderIdMeta = document.querySelector('meta[name="htmd-render-id"]');
+  const renderId = renderIdMeta ? renderIdMeta.getAttribute('content') : '';
+  const sendBtn = document.querySelector('[data-htmd-cx-send]');
+  const fabLabel = document.querySelector('[data-htmd-cx-fab-label]');
+  if (submitUrl && sendBtn) {
+    sendBtn.removeAttribute('hidden');
+    if (fabLabel) fabLabel.textContent = 'Send all changes';
+  }
+
+  // Telegram WebApp shim: no-op for now so this same JS will work later when
+  // the page is opened inside a Telegram Mini App without code changes.
+  if (!window.Telegram) window.Telegram = {};
+  if (!window.Telegram.WebApp) {
+    window.Telegram.WebApp = {
+      ready: () => {},
+      expand: () => {},
+      close: () => {},
+      sendData: (data) => { console.log('[Telegram.WebApp shim] sendData:', data); },
+      onEvent: () => {},
+      offEvent: () => {},
+      MainButton: { show: () => {}, hide: () => {}, setText: () => {}, onClick: () => {} }
+    };
+  }
+  try { window.Telegram.WebApp.ready(); } catch {}
+
+  async function sendToAgent() {
+    if (!submitUrl) return;
+    const text = modalText ? modalText.textContent : buildAggregatePrompt();
+    const payload = {
+      prompt: text,
+      contextId: renderId || '',
+      blocks: reg.blocks.map((b) => {
+        let promptText = '';
+        try { promptText = b.getPrompt ? b.getPrompt() : ''; } catch (e) { promptText = ''; }
+        return {
+          template: b.template || 'unknown',
+          blockId: b.blockId || '',
+          hasChanges: (() => { try { return typeof b.hasChanges === 'function' ? !!b.hasChanges() : true; } catch { return false; } })(),
+          prompt: promptText
+        };
+      })
+    };
+    sendBtn.disabled = true;
+    const originalLabel = sendBtn.textContent;
+    sendBtn.textContent = 'Sending…';
+    try {
+      const res = await fetch(submitUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        credentials: 'omit'
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok !== false) {
+        close();
+        showToast('Sent to agent — check your chat');
+      } else {
+        const msg = (data && data.error) ? data.error : ('HTTP ' + res.status);
+        showToast('Send failed: ' + msg);
+        console.error('[htmd send] failed', data);
+      }
+    } catch (e) {
+      showToast('Send failed: ' + e.message);
+      console.error('[htmd send]', e);
+    } finally {
+      sendBtn.disabled = false;
+      sendBtn.textContent = originalLabel;
+    }
+  }
+
   fab.addEventListener('click', open);
   document.querySelectorAll('[data-htmd-cx-close]').forEach((el) => el.addEventListener('click', close));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal && !modal.hasAttribute('hidden')) close(); });
@@ -553,10 +631,15 @@ const COMPOSE_BRIDGE_JS = `
   if (confirmBtn) confirmBtn.addEventListener('click', async () => {
     const text = modalText ? modalText.textContent : buildAggregatePrompt();
     const ok = await copyText(text);
-    close();
+    if (ok) {
+      // Keep modal open if "Send to agent" is also visible (user might still
+      // want to send); close otherwise to match v0.2 behaviour.
+      if (!submitUrl) close();
+    }
     showToast(ok ? 'Copied to clipboard' : 'Copy failed — see console');
     if (!ok) console.log(text);
   });
+  if (sendBtn) sendBtn.addEventListener('click', sendToAgent);
 
   // Poll for changes (cheap; covers the case where a block doesn't dispatch events).
   setInterval(refresh, 800);

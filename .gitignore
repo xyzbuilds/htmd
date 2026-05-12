@@ -9,3 +9,5 @@ coverage/
 .idea/
 *.tgz
 .playwright-mcp/
+.htmd.env
+.htmd/

@@ -1,6 +1,6 @@
 {
   "name": "htmd",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Token-cheap structured data → rich self-contained HTML for AI agents",
   "type": "module",
   "main": "src/index.js",
