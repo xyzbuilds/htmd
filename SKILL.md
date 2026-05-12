@@ -174,6 +174,31 @@ When NOT to prefer it:
 
 See `docs/SERVE.md` for the full operational guide (port choice, auth tokens, the four submit pipeline modes, troubleshooting).
 
+## Telegram Mini App mode (v0.4.0)
+
+When the same `htmd compose --serve` page is opened **inside Telegram** (via an inline-keyboard `web_app` button), it auto-upgrades into a Mini App: Telegram's native MainButton replaces the in-page FAB and the submit goes through `tg.sendData()` (signed by Telegram, no HTTP POST). One render, two paths — Safari standalone still works exactly the same.
+
+How to send a Mini App entry point as an agent:
+
+```bash
+# 1. Publish a page (requires HTMD_MINI_APP_BASE set in the serving shell)
+htmd compose triage.md --serve
+# prints (when HTMD_MINI_APP_BASE is set):
+#   http://100.70.189.117:8787/r/triage-XXXXXXXX
+#   https://xyzubuntu.tail9f58ee.ts.net/htmd-app/r/triage-XXXXXXXX   ← mini-app URL
+
+# 2. Emit a chat-message envelope with an inline web_app button
+htmd button --url 'https://xyzubuntu.tail9f58ee.ts.net/htmd-app/r/triage-XXXXXXXX' \
+            --text 'Open triage' \
+            --message 'Triage list ready — tap below.'
+```
+
+`htmd button` writes a JSON envelope (chat_id, text, reply_markup.inline_keyboard with a `web_app` button). Pipe it to whatever talks to the Telegram Bot API; for OpenClaw, the existing telegram-sender adapter accepts this shape.
+
+When the user taps the MainButton inside the Mini App, Telegram delivers `update.message.web_app_data` to the bot. The receiving side (htmd's `/tg-webhook` endpoint or the standalone `scripts/openclaw-webappdata-hook.mjs`) unwraps the JSON and routes it through the same `openclaw agent --message ... --deliver` path as the FAB POST — so the agent sees a normal user turn.
+
+See `docs/MINI_APP_SETUP.md` for the one-time setup (Tailscale Funnel route, BotFather registration, webhook secret, end-to-end test plan).
+
 ## Plugin templates
 
 If a template you want isn't built-in, check `htmd templates` — it lists installed plugins (npm packages named `htmd-template-*`). Suggest the user `npm install htmd-template-foo` if they want it.

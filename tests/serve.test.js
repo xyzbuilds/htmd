@@ -3,7 +3,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync, readFileSync, existsSync, readdirSync, utimesSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { startServer, deliverSubmission } from '../src/serve.js';
+import { startServer, deliverSubmission, handleTelegramUpdate } from '../src/serve.js';
 import { publishRender, injectSubmitMeta, makeRenderId, cleanupOldRenders } from '../src/serve-helpers.js';
 import { composeFromMarkdown } from '../src/compose.js';
 import { renderTemplate } from '../src/render.js';
@@ -133,6 +133,69 @@ describe('serve: startServer', () => {
   it('CORS preflight returns 204 with permissive headers', async () => {
     const r = await httpGet(port, '/health');
     expect(r.headers['access-control-allow-origin']).toBe('*');
+  });
+});
+
+describe('serve: telegram webhook (b2)', () => {
+  let tmp, logPath, server, port;
+  beforeEach(async () => {
+    tmp = mkdtempSync(join(tmpdir(), 'htmd-tg-'));
+    logPath = join(tmp, 'serve.log');
+    const r = await freePortServer({ dir: join(tmp, 'renders'), bind: '127.0.0.1', mode: 'dryrun', logPath, tailscaleIp: '100.70.189.117', version: 'test' });
+    server = r.server; port = r.port;
+  });
+  afterEach(() => { if (server) server.close(); try { rmSync(tmp, { recursive: true, force: true }); } catch {} });
+
+  it('unwraps a valid web_app_data update and returns 200', async () => {
+    const update = {
+      update_id: 1,
+      message: {
+        chat: { id: 8331776182 },
+        from: { id: 8331776182 },
+        web_app_data: {
+          button_text: 'Send to agent',
+          data: JSON.stringify({ via: 'tg-webapp', prompt: 'user pressed send', contextId: 'r-1' })
+        }
+      }
+    };
+    const r = await httpPost(port, '/tg-webhook', update);
+    expect(r.status).toBe(200);
+    const j = JSON.parse(r.body);
+    expect(j.dispatched).toBe(true);
+    expect(j.contextId).toBe('r-1');
+  });
+
+  it('skips updates with no web_app_data field', async () => {
+    const update = { update_id: 2, message: { chat: { id: 1 }, text: 'hi' } };
+    const r = await httpPost(port, '/tg-webhook', update);
+    expect(r.status).toBe(200);
+    const j = JSON.parse(r.body);
+    expect(j.skipped).toBe(true);
+  });
+
+  it('rejects malformed inner JSON', async () => {
+    const update = {
+      message: { chat: { id: 1 }, web_app_data: { data: '{not-json' } }
+    };
+    const r = await httpPost(port, '/tg-webhook', update);
+    expect(r.status).toBe(200);
+    const j = JSON.parse(r.body);
+    expect(j.ok).toBe(false);
+    expect(j.error).toMatch(/invalid web_app_data JSON/);
+  });
+
+  it('handleTelegramUpdate dispatches through dryrun deliverSubmission', async () => {
+    const update = {
+      message: {
+        chat: { id: 'chat-7' },
+        web_app_data: { data: JSON.stringify({ prompt: 'hello', contextId: 'r-7', via: 'tg-webapp' }) }
+      }
+    };
+    const r = await handleTelegramUpdate(update, { mode: 'dryrun', logPath });
+    expect(r.ok).toBe(true);
+    expect(r.dispatched).toBe(true);
+    expect(r.result.mode).toBe('dryrun');
+    expect(r.result.echo.promptLen).toBe(5);
   });
 });
 

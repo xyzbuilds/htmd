@@ -87,6 +87,21 @@ When authoring a compose markdown that will go to a phone, use `--serve`. For de
 
 See `docs/SERVE.md` for the operational guide and `NOTES.md` for Phase 2 follow-ups (Telegram Mini App, HMAC signing, direct-HTTP gateway integration).
 
+## Telegram Mini App (v0.4 — Phase 2)
+
+Same compose page, two modes — auto-detected via `window.Telegram?.WebApp?.initData`:
+
+- **Standalone (Safari/desktop/saved file):** v0.3 behavior — FAB at bottom-left, HTTP POST to `/submit/<id>`.
+- **Mini App (opened from inline `web_app` button in Telegram):** Telegram's native MainButton replaces the FAB, submit routes via `tg.sendData()` (signed). No per-template change anywhere — `tokens.css` reads `--tg-theme-*` vars with htmd defaults as fallbacks, and the compose bridge mirrors `tg.themeParams` onto `:root` at runtime.
+
+Wiring:
+- `htmd compose --serve` prints the public Mini App URL when `HTMD_MINI_APP_BASE` is set.
+- `htmd button --url <mini-app-url>` emits the inline-keyboard chat envelope.
+- `htmd serve`'s new `POST /tg-webhook` unwraps `update.message.web_app_data` and dispatches via `deliverSubmission()`.
+- `scripts/openclaw-webappdata-hook.mjs` is the standalone alternative for OpenClaw setups that prefer not to use webhooks.
+
+See `docs/MINI_APP_SETUP.md` for the one-time Tailscale + BotFather setup and the end-to-end test plan.
+
 ## What NOT to do
 
 - Don't introduce a build step. Templates are shipped as source `.js`/`.css`/`.json`.

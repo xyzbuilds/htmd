@@ -169,6 +169,54 @@ Filter on `hasChanges: true` to ignore blocks the user did not touch. The top-le
 
 When a user submits via the FAB, the configured pipeline routes the structured prompt into the agent's chat as if the user typed it. The next turn the agent sees is the assembled prompt. Respond conversationally — confirm what changed, ask follow-ups, or act on the decisions.
 
+### 5. Telegram Mini App mode (v0.4.0)
+
+The same `htmd compose --serve` page also works as a **Telegram Mini App** — opening it inside Telegram (via an inline-keyboard `web_app` button) auto-upgrades the UI:
+
+- Telegram's native MainButton (`Send to agent`) replaces the in-page FAB.
+- Submission goes through `tg.sendData()` (signed by Telegram) instead of HTTP POST.
+- Theme tracks Telegram light/dark, including mid-session theme switches.
+
+The same compose markdown, the same render output — no per-template changes. The agent's job is just to send the right button:
+
+```bash
+# Publish; with HTMD_MINI_APP_BASE set, --serve prints the Mini App URL too.
+htmd compose triage.md --serve
+# stdout:
+#   http://100.70.189.117:8787/r/triage-XXXXXXXX
+#   https://xyzubuntu.tail9f58ee.ts.net/htmd-app/r/triage-XXXXXXXX
+
+# Emit the chat envelope for the Telegram sender.
+htmd button \
+  --url 'https://xyzubuntu.tail9f58ee.ts.net/htmd-app/r/triage-XXXXXXXX' \
+  --text 'Open in Telegram' \
+  --message 'Triage list ready — tap below.'
+```
+
+The envelope shape:
+
+```json
+{
+  "chat_id": "<set at delivery time>",
+  "text": "Triage list ready — tap below.",
+  "reply_markup": {
+    "inline_keyboard": [[
+      { "text": "Open in Telegram",
+        "web_app": { "url": "https://..." } }
+    ]]
+  }
+}
+```
+
+When the user taps the MainButton inside the Mini App, Telegram routes a signed `update.message.web_app_data` to the bot. The receiving side unwraps `data` (a JSON string with the same `{prompt, contextId, blocks}` shape as a FAB POST) and dispatches it via the existing `openclaw agent --deliver` path — so the agent sees a normal next turn.
+
+Two equivalent receivers ship with v0.4:
+
+- `htmd serve`'s `/tg-webhook` endpoint (set as the bot's Telegram webhook URL).
+- `scripts/openclaw-webappdata-hook.mjs` (standalone Node script for direct invocation from any process that holds Telegram updates).
+
+See `docs/MINI_APP_SETUP.md` for one-time setup (Tailscale Funnel route, BotFather registration, end-to-end test plan).
+
 
 ## Token-cost intuition
 

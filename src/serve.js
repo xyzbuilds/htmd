@@ -327,6 +327,61 @@ export async function deliverSubmission({ id, body, mode, env = process.env, log
   return { ok: false, status: 400, error: `unknown HTMD_SUBMIT_MODE: ${m}` };
 }
 
+/**
+ * Unwrap a Telegram update with web_app_data and route via deliverSubmission.
+ * Exported for testing. Returns { ok, ... }.
+ *
+ * Expected shape (Telegram Bot API):
+ *   update.message.web_app_data.data       — JSON string the Mini App sent
+ *   update.message.web_app_data.button_text — (informational; ignored)
+ *   update.message.chat.id                 — used as reply_to / replyTo
+ *   update.message.from.id                 — user id (informational)
+ *
+ * The Mini App payload (from htmd's compose bridge) is:
+ *   { via: "tg-webapp", prompt, contextId, blocks?, truncated? }
+ */
+export async function handleTelegramUpdate(update, { mode, logPath, env = process.env } = {}) {
+  const msg = update?.message || update?.edited_message || null;
+  const webApp = msg?.web_app_data || null;
+  if (!webApp || typeof webApp.data !== 'string') {
+    // Not a WebAppData update — accept silently so Telegram doesn't retry.
+    logLine(logPath, { event: 'tg-webhook-skip', reason: 'no web_app_data' });
+    return { ok: true, skipped: true };
+  }
+  let payload = null;
+  try {
+    payload = JSON.parse(webApp.data);
+  } catch (e) {
+    logLine(logPath, { event: 'tg-webhook-bad-json', error: e.message, raw: webApp.data.slice(0, 200) });
+    return { ok: false, error: 'invalid web_app_data JSON: ' + e.message };
+  }
+  if (!payload || typeof payload.prompt !== 'string' || !payload.prompt.trim()) {
+    return { ok: false, error: 'web_app_data missing prompt' };
+  }
+  // Resolve replyTo from the chat the user tapped from. Env override wins
+  // (useful for testing); otherwise use the live chat id.
+  const chatId = (msg.chat && msg.chat.id) ? String(msg.chat.id) : '';
+  const env2 = { ...env };
+  if (chatId && !env2.HTMD_OPENCLAW_REPLY_TO) env2.HTMD_OPENCLAW_REPLY_TO = chatId;
+  if (chatId && !env2.HTMD_TELEGRAM_CHAT_ID) env2.HTMD_TELEGRAM_CHAT_ID = chatId;
+  const body = {
+    prompt: payload.prompt,
+    contextId: payload.contextId || '',
+    blocks: payload.blocks || [],
+    via: 'tg-webapp'
+  };
+  logLine(logPath, {
+    event: 'tg-webhook-received',
+    contextId: body.contextId,
+    promptLen: body.prompt.length,
+    chatId,
+    truncated: !!payload.truncated
+  });
+  const id = body.contextId || 'tg-webapp';
+  const result = await deliverSubmission({ id, body, mode, env: env2, logPath });
+  return { ok: result.ok !== false, dispatched: true, contextId: body.contextId, result };
+}
+
 function chunkString(s, n) {
   const out = [];
   for (let i = 0; i < s.length; i += n) out.push(s.slice(i, i + n));
@@ -473,6 +528,33 @@ export function startServer(opts = {}) {
         const ctype = extname(file) === '.html' ? 'text/html; charset=utf-8' : 'application/octet-stream';
         // No-cache for renders (mtime can change)
         return sendText(res, 200, readFileSync(file, 'utf8'), ctype);
+      }
+
+      // POST /tg-webhook — Telegram bot webhook for unwrapping
+      // update.message.web_app_data. Configure a Telegram bot webhook
+      // (setWebhook) pointing at the public path that maps here, with the
+      // secret_token equal to HTMD_TG_WEBHOOK_SECRET. Telegram delivers the
+      // signed WebAppData inside the update; we unwrap and route through the
+      // same deliverSubmission() pipeline as the FAB POST path.
+      if (req.method === 'POST' && path === '/tg-webhook') {
+        const secret = process.env.HTMD_TG_WEBHOOK_SECRET || '';
+        if (secret) {
+          const hdr = req.headers['x-telegram-bot-api-secret-token'] || '';
+          if (hdr !== secret) {
+            logLine(logPath, { event: 'tg-webhook-unauth' });
+            return sendJson(res, 401, { ok: false, error: 'unauthorized' });
+          }
+        }
+        let update = {};
+        try {
+          const raw = await readBody(req, 1024 * 64);
+          update = raw ? JSON.parse(raw) : {};
+        } catch (e) {
+          return sendJson(res, 400, { ok: false, error: 'invalid JSON: ' + e.message });
+        }
+        const result = await handleTelegramUpdate(update, { mode, logPath, env: process.env });
+        // Always 200 to Telegram; non-200 causes Telegram to retry.
+        return sendJson(res, 200, result);
       }
 
       // POST /submit/<id> — receive an in-page submission

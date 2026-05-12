@@ -14,7 +14,7 @@ import { mdToHtml } from './md.js';
 import { startServer, defaultRenderDir } from './serve.js';
 import { publishRender, publicHost, cleanupOldRenders } from './serve-helpers.js';
 
-const VERSION = '0.3.0';
+const VERSION = '0.4.0';
 
 export async function run(argv) {
   const program = new Command();
@@ -243,11 +243,37 @@ export async function run(argv) {
         onReady: ({ port, dir }) => {
           console.log(`htmd serve listening on http://${opts.bind}:${port}`);
           console.log(`  • Tailscale URL: http://${tailscaleIp}:${port}`);
+          const miniBase = process.env.HTMD_MINI_APP_BASE;
+          if (miniBase) {
+            console.log(`  • Mini App base: ${miniBase.replace(/\/+$/, '')}`);
+          }
           console.log(`  • Render dir:    ${dir}`);
           console.log(`  • Auth:          ${opts.token ? 'token-protected' : 'open'}`);
           console.log(`  • Submit hook:   ${mode}`);
         }
       });
+    });
+
+  program
+    .command('button')
+    .description('emit a Telegram chat-message JSON envelope with an inline-keyboard web_app button')
+    .requiredOption('--url <url>', 'web_app URL the button opens (use the HTMD_MINI_APP_BASE URL)')
+    .option('--text <label>', 'button label', 'Open in Telegram')
+    .option('--message <text>', 'message body shown above the button', 'Tap to open the interactive page.')
+    .option('--chat-id <id>', 'Telegram chat id to fill in (otherwise left as placeholder)')
+    .option('--reply-to <msg-id>', 'reply_to_message_id (optional)')
+    .action((opts) => {
+      const envelope = {
+        chat_id: opts.chatId || '<set at delivery time>',
+        text: opts.message,
+        reply_markup: {
+          inline_keyboard: [[
+            { text: opts.text, web_app: { url: opts.url } }
+          ]]
+        }
+      };
+      if (opts.replyTo) envelope.reply_to_message_id = Number(opts.replyTo);
+      process.stdout.write(JSON.stringify(envelope, null, 2) + '\n');
     });
 
   program
@@ -315,8 +341,16 @@ async function runServePublish({ html, slug, opts }) {
   const pruned = cleanupOldRenders(dir, ttl);
   const { id, file, viewUrl, submitUrl } = publishRender({ html, slug, dir, host });
   console.log(viewUrl);
+  // h2: If HTMD_MINI_APP_BASE is set (e.g. the public HTTPS Funnel hostname),
+  // also print a Mini-App-friendly URL. The base maps to the same render id
+  // and is what an inline-keyboard web_app button should point at.
+  const miniBase = (process.env.HTMD_MINI_APP_BASE || '').replace(/\/+$/, '');
+  if (miniBase) {
+    console.log(`${miniBase}/r/${id}`);
+  }
   console.error(`htmd: wrote ${file}`);
   console.error(`htmd: submit endpoint: ${submitUrl}`);
+  if (miniBase) console.error(`htmd: mini-app URL:    ${miniBase}/r/${id}`);
   if (pruned > 0) console.error(`htmd: pruned ${pruned} render(s) older than ${ttl} day(s)`);
   // Best-effort: hit /health to confirm the serve daemon is up.
   await pingHealth(host).catch(() => {
