@@ -120,6 +120,56 @@ Outputs YAML (or `--json`) of every embedded `data-htmd-state` block. Works for 
 2. `htmd extract review.html` → YAML of all states.
 3. Parse + act.
 
+### 4. `htmd compose --serve` — hosted URL + Send-to-agent (mobile-friendly)
+
+Same compose markdown as #2, but published to a local HTTP server and made tappable from a chat client. The page also gains a "Send to agent" FAB action that POSTs the structured prompt to the agent directly — no copy/paste.
+
+```bash
+htmd compose /tmp/friday-triage.md --serve --out /tmp/friday-triage.html
+# prints: http://<host>:8787/r/friday-triage-9d84c259
+```
+
+Send the URL to the user. They tap, interact on phone or desktop, hit **Send to agent**, and the submission lands back in your conversation via the configured submit pipeline (`HTMD_SUBMIT_MODE`).
+
+**When to use `--serve` vs default:**
+
+| Scenario | Use |
+|---|---|
+| User is on a phone (Telegram/SMS/email viewing) | `--serve` |
+| User wants a single-file artifact to save/forward | default (file) |
+| You expect them to make decisions and hand state back | `--serve` |
+| One-shot status report / dashboard for the eye | default |
+
+Prereq: an `htmd serve` daemon must be running and reachable by the user. The daemon and OpenClaw should co-locate on the same machine so the submit pipeline can call OpenClaw via localhost (rather than SSH-proxying).
+
+### What the agent receives on Send
+
+POSTs are JSON. The payload your handler sees:
+
+```json
+{
+  "id": "friday-triage-9d84c259",
+  "contextId": "friday-triage-9d84c259",
+  "prompt": "...top-level assembled prompt, concatenated across all blocks that had changes...",
+  "blocks": [
+    {
+      "template": "feedback-corrector",
+      "blockId": "<from the compose fence>",
+      "hasChanges": true,
+      "prompt": "...per-block prompt fragment..."
+    }
+  ],
+  "receivedAt": "2026-05-12T14:56:38.425Z"
+}
+```
+
+Filter on `hasChanges: true` to ignore blocks the user did not touch. The top-level `prompt` is a single coherent text the agent can ingest as if the user typed it. Each block's individual `prompt` is also preserved for cases where the agent wants to handle templates separately.
+
+### What to do when the user submits
+
+When a user submits via the FAB, the configured pipeline routes the structured prompt into the agent's chat as if the user typed it. The next turn the agent sees is the assembled prompt. Respond conversationally — confirm what changed, ask follow-ups, or act on the decisions.
+
+
 ## Token-cost intuition
 
 | Approach | Tokens (one weekly review) |

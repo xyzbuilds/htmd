@@ -66,6 +66,27 @@ Each template's `script.js` reads its initial state from a single `[data-<short>
 
 When adding a template, add it to the `BUILTIN_NAMES` list in `src/templates.js` AND to the loops in `tests/render.test.js`.
 
+## Serving rendered pages (v0.3 — Phase 1)
+
+By default htmd writes one HTML file and the user opens it however they like. **For mobile delivery (Telegram, SMS, email), that path is fragile** — iOS treats `.html` as a download, in-Telegram preview is read-only, JS is spotty, and clipboard from a downloaded file is unreliable. v0.3 adds an optional serve layer.
+
+- `htmd serve [--port 8787] [--bind 0.0.0.0]` — a tiny built-in `node:http` server (no Express, zero new deps) that hosts rendered pages and accepts submissions back from them. Bind to `0.0.0.0` on a private network (Tailscale, LAN) so a phone can reach it.
+- `htmd render --serve` and `htmd compose --serve` — publish into `~/.htmd/renders/<slug>-<short-uuid>.html`, inject `<meta name="htmd-submit">` + `<meta name="htmd-render-id">` into `<head>`, print the Tailscale URL, auto-prune renders older than `--ttl-days` (default 7).
+- **Two-stage FAB** in compose mode: when the page carries a submit meta tag, the floating button shows a primary "Send to agent" alongside the fallback "Copy". Tapping Send POSTs the structured prompt to the submit endpoint, which routes it back into the agent. When no meta tag is present, the FAB stays single-action Copy (v0.2 back-compat).
+- A no-op `Telegram.WebApp` shim ships in the bridge JS so the same compose page can later run as a Telegram Mini App without code changes.
+
+Delivery modes are env-driven (`HTMD_SUBMIT_MODE`):
+
+- `dryrun` — log + 200 (default; safe smoke test)
+- `file` — write JSON to `~/.htmd/inbox/`
+- `telegram` — direct Bot API `sendMessage`
+- `openclaw-ssh` — SSH-proxy into the OpenClaw host, runs `openclaw agent --message ... --deliver --reply-channel telegram --reply-to <chat>` to inject a real agent turn
+- `openclaw` (placeholder) — direct HTTP to gateway once `/agent/turn` is stable upstream
+
+When authoring a compose markdown that will go to a phone, use `--serve`. For desktop or one-shot attachment artifacts, the default file-write path is still right.
+
+See `docs/SERVE.md` for the operational guide and `NOTES.md` for Phase 2 follow-ups (Telegram Mini App, HMAC signing, direct-HTTP gateway integration).
+
 ## What NOT to do
 
 - Don't introduce a build step. Templates are shipped as source `.js`/`.css`/`.json`.
