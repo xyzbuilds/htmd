@@ -102,6 +102,10 @@ Wiring:
 
 See `docs/MINI_APP_SETUP.md` for the one-time Tailscale + BotFather setup and the end-to-end test plan.
 
+## Phase 3 (v0.5+) — routing + transport (designed, not yet built)
+
+The next phase moves the **per-turn "inline vs page" decision** into htmd itself so every agent harness (OpenClaw, Claude Code/Desktop cowork, future VS Code) gets it for free via a thin adapter. New core surface: `htmd normalize` + `htmd route` + a pluggable `HtmdTransport` interface. Read `docs/PHASE3_DESIGN.md` (rationale + interfaces) and `docs/PHASE3_PLAN.md` (milestones) before starting implementation work on v0.5.
+
 ## What NOT to do
 
 - Don't introduce a build step. Templates are shipped as source `.js`/`.css`/`.json`.
