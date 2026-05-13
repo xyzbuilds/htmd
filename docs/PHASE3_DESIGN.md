@@ -221,23 +221,41 @@ This becomes a real product. v0.5 ensures the transport contract is
 strong enough that the hosted variant is a drop-in addition rather
 than a rewrite.
 
-## Open questions for Phase 3
+## Decisions (resolved 2026-05-12)
 
-1. **Where does the routing config live?** Per-repo `htmd.config.json`,
-   global `~/.htmd/config.json`, or env vars? Suggest a layered scheme
-   (env > repo > global) but pick before implementation.
-2. **How does the agent pass intent flags?** Today the only path is
-   the harness adapter inspecting the message for hints (e.g.,
-   "Approve?" → `--needs-approval`). A cleaner future path: agents
-   write fenced metadata blocks (`<!-- htmd: needs-approval -->`) that
-   `htmd normalize` strips and surfaces as flags. Defer until v0.6.
-3. **Streaming.** Currently the router runs on completed messages.
-   Streaming adapters would need partial-render UX (e.g., page that
-   updates as the agent writes). Out of v0.5 scope.
-4. **Failure mode for transport.publish().** If publish throws, fall
-   back to inline? Or surface the error to the user via the harness?
-   Recommend: fall back to inline with a one-line "(htmd page failed:
-   …)" prefix.
+The four open questions below were resolved by Xuyang prior to
+v0.5.0-alpha implementation.
+
+1. **Routing config = layered.** Lookup order: env vars > per-repo
+   `htmd.config.json` (walked up from cwd) > global
+   `~/.htmd/config.json` > built-in defaults. Implemented in
+   `src/config.js`.
+2. **No-rule default = inline.** When none of the rules in §Routing
+   fire, the router emits `action: "inline"` with
+   `reason: "below-thresholds"`. (This matches rule 6 in the design;
+   confirmed as the intended default rather than a fail-open quirk.)
+3. **Default length threshold = 1500 chars.** Confirmed. Override via
+   `--length-threshold` flag or `routing.lengthThreshold` config key.
+4. **Transport publish failure = fallback to inline with prefix.**
+   When `transport.publish()` throws, htmd falls back to inline
+   delivery prefixed with `(htmd page failed: <one-line reason>)` and
+   includes the full error in `stderr` for the harness. The router's
+   JSON output reports `action: "inline"` with
+   `reason: "transport-failure"` and `error` populated.
+
+## Open questions deferred past v0.5
+
+- **Agent-side intent metadata.** Agents emitting
+  `<!-- htmd: needs-approval -->` fenced blocks that `htmd normalize`
+  strips and surfaces as flags. Targeted for v0.6 per the
+  implementation plan.
+- **Streaming partial renders.** Out of scope; the router operates on
+  completed messages.
+
+## Distribution
+
+htmd stays at **github.com/xyzbuilds/htmd**. The repo is the source of
+truth for the OSS release; no rename or org migration in v0.5.
 
 ## Inspirations / prior art for routing
 
