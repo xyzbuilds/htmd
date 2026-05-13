@@ -1,6 +1,6 @@
 {
   "name": "htmd",
-  "version": "0.4.0",
+  "version": "0.5.0-alpha.0",
   "description": "Token-cheap structured data → rich self-contained HTML for AI agents",
   "type": "module",
   "main": "src/index.js",
@@ -31,7 +31,8 @@
     "templates",
     "SKILL.md",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "CHANGELOG.md"
   ],
   "dependencies": {
     "ajv": "^8.17.1",

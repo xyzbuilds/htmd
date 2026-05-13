@@ -13,8 +13,13 @@ import { htmlToMd } from './html2md.js';
 import { mdToHtml } from './md.js';
 import { startServer, defaultRenderDir } from './serve.js';
 import { publishRender, publicHost, cleanupOldRenders } from './serve-helpers.js';
+import { normalize as normalizeInput } from './normalize.js';
+import { route as routeMessage, applyDecision } from './route.js';
+import { loadConfig } from './config.js';
+import { getTransport, listTransports, hasTransport } from './transports/index.js';
+import { renderMarkdown as renderMd } from './render.js';
 
-const VERSION = '0.4.0';
+const VERSION = '0.5.0-alpha.0';
 
 export async function run(argv) {
   const program = new Command();
@@ -277,6 +282,86 @@ export async function run(argv) {
     });
 
   program
+    .command('normalize [file]')
+    .description('canonicalize an agent message (Markdown / Telegram-HTML / plain) to CommonMark')
+    .option('--hint <format>', 'force input format: markdown | telegram-html | plain')
+    .option('--json', 'emit JSON envelope: { markdown, format, chars }')
+    .action(async (file, opts) => {
+      const input = await readTextOrStdin(file);
+      const out = normalizeInput(input, { hint: opts.hint });
+      if (opts.json) {
+        process.stdout.write(JSON.stringify(out));
+        return;
+      }
+      process.stdout.write(out.markdown);
+      if (!out.markdown.endsWith('\n')) process.stdout.write('\n');
+    });
+
+  program
+    .command('route [file]')
+    .description('decide whether an agent reply should go inline or as an htmd page')
+    .option('--input <file>', 'input file (alias for the positional argument)')
+    .option('--length-threshold <n>', 'override config lengthThreshold (default: 1500)')
+    .option('--fenced-min-lines <n>', 'override config fencedBlockMinLines (default: 10)')
+    .option('--needs-approval', 'force routing to a page with an approval control')
+    .option('--prefer-inline', 'force inline regardless of length/structure')
+    .option('--prefer-page', 'force a page regardless of length/structure')
+    .option('--render', 'when action=page, publish via --transport and include rendered.{id,url,submitEndpoint}')
+    .option('--transport <name>', `transport name (default from config; available: ${listTransports().join(', ')})`)
+    .option('--slug <slug>', 'slug for the published page (default: derived from input)')
+    .option('--meta <json>', 'JSON object of meta fields passed to the transport')
+    .action(async (file, opts) => {
+      try {
+        const input = await readTextOrStdin(opts.input || file);
+        const { config } = loadConfig();
+        const norm = normalizeInput(input);
+        const decision = routeMessage(norm.markdown, {
+          config,
+          alreadyNormalized: true,
+          lengthThreshold: opts.lengthThreshold ? Number(opts.lengthThreshold) : undefined,
+          fencedBlockMinLines: opts.fencedMinLines ? Number(opts.fencedMinLines) : undefined,
+          needsApproval: !!opts.needsApproval,
+          preferInline: !!opts.preferInline,
+          preferPage: !!opts.preferPage
+        });
+        // Carry the detected input format through (decision.input.format
+        // reflects the input as seen by `route()`, which we forced to
+        // 'markdown' via alreadyNormalized; rewrite it for the caller).
+        decision.input.format = norm.format;
+        decision.input.chars = norm.chars;
+
+        if (!opts.render || decision.action === 'inline') {
+          process.stdout.write(JSON.stringify(decision));
+          return;
+        }
+
+        const transportName = opts.transport || config.routing.defaultTransport;
+        if (!hasTransport(transportName)) {
+          decision.action = 'inline';
+          decision.reason = 'transport-failure';
+          decision.error = `unknown transport "${transportName}"`;
+          decision.inlinePrefix = `(htmd page failed: unknown transport "${transportName}")`;
+          decision.inlineBody = norm.markdown;
+          process.stdout.write(JSON.stringify(decision));
+          return;
+        }
+        const transport = getTransport(transportName);
+        const meta = opts.meta ? safeJson(opts.meta) : {};
+        const slug = opts.slug || deriveSlug(norm.markdown);
+
+        const finalDecision = await applyDecision(decision, norm.markdown, transport, {
+          slug,
+          meta,
+          renderer: (md) => renderMd(md, { title: slug })
+        });
+        process.stdout.write(JSON.stringify(finalDecision));
+      } catch (e) {
+        process.stdout.write(JSON.stringify({ action: 'inline', reason: 'transport-failure', error: e.message }));
+        process.exit(1);
+      }
+    });
+
+  program
     .command('init-template <name>')
     .description('scaffold a new template directory')
     .option('--dir <path>', 'parent directory (default: ./templates)')
@@ -309,6 +394,18 @@ async function readData(file) {
 async function readTextOrStdin(file) {
   if (!file || file === '-') return await readStdin();
   return readFileSync(resolve(file), 'utf8');
+}
+
+function safeJson(s) {
+  try { return JSON.parse(s); } catch { return {}; }
+}
+
+function deriveSlug(md) {
+  if (!md) return 'reply';
+  const firstH1 = /^#\s+(.+)$/m.exec(md);
+  if (firstH1) return firstH1[1].trim().slice(0, 60);
+  const firstLine = String(md).split('\n').find((l) => l.trim().length);
+  return (firstLine || 'reply').trim().slice(0, 60);
 }
 
 function readStdin() {
