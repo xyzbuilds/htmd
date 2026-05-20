@@ -3,6 +3,78 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.10.0-alpha.0] — 2026-05-20
+
+Email-safe render mode. `htmd render --mode=email` produces a single
+self-contained HTML document that survives Gmail and Outlook compose
+windows: every CSS rule is inlined as a per-element `style` attribute,
+every `var(--…)` reference is resolved to a literal, and every
+`<script>`, `<style>`, and `<link>` tag is stripped. Web mode is
+unchanged — the flag is purely additive. See PHASE3_NOTES.md
+§v0.10.0-alpha for locked decisions and the inliner-choice rationale.
+
+### Added
+- **`htmd render --mode=email` CLI flag.** Default mode (`web`) is
+  unchanged. `--mode=email` runs the rendered HTML through the new
+  inliner before writing it out.
+- **`renderTemplate(name, data, { mode: 'email' })` library option.**
+  Mode-flagged only; an unknown mode throws.
+- **`src/email-inliner.js`** — hand-rolled CSS inliner. Parses the
+  embedded `<style>` block, expands `:root` custom properties (light
+  mode only), matches rules against the parsed HTML tree by tag /
+  class / id / multi-class / descendant / child / `:first-child` /
+  `:last-child` / `:nth-child(N)` / `:first-of-type` / `:last-of-type`,
+  applies declarations in specificity order, and writes them as inline
+  `style` attributes. Unsupported selectors (`:hover`, `::before`,
+  `+`, `~`) and `@media` / `@keyframes` / `@font-face` rules are
+  dropped silently. Also resolves `var(--…)` expressions inside SVG
+  attribute values (e.g. `fill="var(--htmd-accent, #4f46e5)"` becomes
+  `fill="#4f46e5"`). ~500 LOC, no new dependencies.
+- **MCP tool `htmd_render` gains a `mode` argument** with the same
+  semantics as the CLI flag. Maps 1:1 to `htmd render --mode=…`; the
+  `_debug.cli_equivalent` reflects the flag when set.
+- **`tests/email-mode.test.js`** — 18 cases covering: per-template
+  email-safe invariants (no script / link-stylesheet / style block /
+  `var(--…)` residue) across status-report, dashboard, kanban-board,
+  data-table, feedback-corrector, email-digest, pr-review;
+  comparison-to-web-mode determinism; snapshot stability of
+  status-report's email render across runs; low-level units for var()
+  resolution, `@media` skipping, pseudo-element dropping, SVG
+  attribute resolution, descendant/child/multi-class matching with
+  correct specificity, and the HTML round-trip.
+
+### Changed
+- Version bumped to `0.10.0-alpha.0`. `wrapShell` is unchanged — the
+  email pass runs on the already-wrapped HTML. No template, compose,
+  serve, route, normalize, or transport-interface surface changed.
+
+### Design decisions (locked)
+
+1. **Hand-rolled inliner, not `juice` or `linkedom`.** `juice` pulls
+   in cheerio + mensch + slick + web-resource-inliner; `linkedom`
+   pulls in css-select + cssom + htmlparser2 + html-escaper. Both
+   violate CLAUDE.md's no-frameworks rule. The hand-rolled inliner
+   only handles the selector / CSS subset htmd templates emit; that
+   subset is small and stable.
+2. **Dark mode is the email client's job.** The
+   `@media (prefers-color-scheme: dark)` block is parsed but its
+   overrides are ignored. Only the light-mode `:root` values reach
+   inline styles.
+3. **Read-only by design.** Stripping `<script>` removes FAB,
+   kanban-drag, form-submit, etc. Email is not a runtime for
+   interaction.
+4. **No table-based layout rewrite.** Outlook drops grid / flex; we
+   pass them through unchanged. Adding pixel-perfect Outlook fallback
+   is template-level work and explicitly out of scope for v0.10.0.
+
+### Known limitations
+- `::before` / `::after` decoration is dropped (no DOM target).
+- `color-mix()` and `linear-gradient()` are preserved after `var()`
+  resolution; Outlook desktop will drop them. Gmail / Apple Mail
+  render correctly.
+- The HTML parser handles htmd's own output (well-formed XHTML-ish);
+  it is not a general-purpose HTML5 parser.
+
 ## [0.9.0-alpha.0] — 2026-05-20
 
 Five new templates. All follow the existing `templates/<name>/`

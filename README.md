@@ -160,6 +160,10 @@ htmd compose review.md --serve
 # Single template render
 htmd render decision-matrix --data db.yaml --out decision.html
 
+# Email-safe render (v0.10.0): inline all CSS, strip scripts, resolve
+# CSS custom properties — paste straight into Gmail or Outlook compose
+htmd render status-report --data weekly.yaml --mode email --out weekly-email.html
+
 # Suggest which templates fit a plain markdown file
 htmd detect notes.md --json
 

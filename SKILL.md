@@ -148,6 +148,35 @@ options:
 - Ask the user to open the HTML file in a browser to view it. The output is self-contained (no CDNs, no network) so it works offline and can be emailed.
 - For interactive templates (slide-deck, prompt-tuner, kanban-board, concept-explainer, feedback-corrector) the HTML includes inlined JS — the user gets a working widget by opening the file.
 
+## Email-safe render (`--mode=email`, v0.10.0)
+
+When you need to deliver an htmd page **inside the body of an email**
+(Gmail / Outlook / Apple Mail compose, transactional templates), use
+the email-safe mode:
+
+```bash
+htmd render status-report --data weekly.yaml --mode email --out weekly-email.html
+```
+
+What changes vs. default web mode:
+- Every CSS rule is inlined as a per-element `style="…"` attribute.
+- Every `var(--…)` reference is resolved to a literal value (light
+  mode; dark mode is the email client's job).
+- Every `<script>`, `<style>`, and `<link>` tag is stripped. The page
+  becomes **read-only** — FAB, kanban-drag, form-submit JS go away.
+  Pick `--mode=email` only when interactivity isn't needed.
+
+When to prefer email mode:
+- Sending a weekly status / dashboard / decision-matrix summary by
+  email or transactional template.
+- Generating a printable PDF source where you want layout to survive
+  PDF renderers' weak CSS support.
+
+When NOT to use it:
+- The page needs to be interactive (use the default web mode or
+  `--serve`).
+- The recipient will open it in a real browser (web mode is richer).
+
 ## Serving the page so the user can reply on their phone (`--serve`, v0.3.0)
 
 If the user is mobile (Telegram on iPhone, etc.) and you want their interaction with the page to come **back to you automatically** (instead of asking them to copy-paste a prompt), use the `--serve` flag:
