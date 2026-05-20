@@ -172,3 +172,28 @@ limitations, and gotchas as v0.5 ships.
   → harness submission delivery) is still stubbed in the transports
   and will swap in once the harness side speaks MCP back at the
   server.
+
+## Decisions locked for v0.11.0-alpha (2026-05-20)
+
+| Topic | Decision |
+|---|---|
+| New surface | `htmd render --cache` (CLI) + companions (`--cache-dir`, `--cache-ttl`, `--cache-max-bytes`); `renderTemplate(name, data, { cache: true | { dir, ttlMs, maxBytes, enabled } })` (lib); `cache.*` keys in `htmd.config.json` / `~/.htmd/config.json`. `HTMD_CACHE_DIR` env override. **Off by default.** |
+| Default state | Disabled. The deterministic CLI contract is the headline feature; adding implicit on-disk state would change the contract for every caller for the benefit of a minority. Opt-in only. |
+| Cache key | `SHA-256( canonical-JSON( { template, templateHash, data, options, mode } ) )`. `templateHash` = hash of `render.js` + `style.css` + `script.js` + `schema.json`. `options` is restricted to the keys that actually shape the HTML output (`title`, `lang`); `validate`, `cache`, and any other knob that does not change output bytes is excluded. |
+| Canonical serializer | **Inline, ~25 LOC** in `src/render-cache.js`. Sorts object keys; preserves array order; drops `undefined`; coerces non-finite numbers to `null`. No dep. Sufficient for htmd's JSON-safe data + scalar options. |
+| Cache value | The exact rendered HTML bytes — no metadata wrapper, no compression, no JSON envelope. The two byte-parity invariants (cache hit ≡ cache miss; cache disabled ≡ cache enabled) reduce to "the cached path doesn't transform the output." |
+| Storage location | One HTML file per entry under `os.tmpdir() + '/htmd-cache/'` by default. Overridable via `HTMD_CACHE_DIR` env, `cache.dir` config, or `--cache-dir` flag (highest precedence). Per-user, per-machine. |
+| TTL | Default 24h. Lazy: on read, if `Date.now() - mtimeMs > ttlMs`, return miss. The next write overwrites the stale entry. No background sweeper. |
+| Size cap | Default 100MB. On write, if total directory size + incoming > cap, evict oldest entries by `mtime` ascending until the new entry fits. No LRU package — just `readdir + stat + unlink`. |
+| Concurrency | None. Two processes that compute the same key write the same bytes; last-writer-wins is fine because the bytes are identical by construction. No locks. |
+| MCP integration | `htmd_render` passes the `cache` option through unchanged. No MCP-only cache knobs. The server's "stateless across calls" promise is preserved in the sense that v0.8.0 meant it: state lives on disk, and the tool call's effect on it is a pure function of the inputs. |
+| Compose | Does not hit the cache today. Compose blocks route through `renderTemplateParts`, which is the composition-friendly entry point; the cache lives one layer up at `renderTemplate`. Future v0.12 follow-up if measured to matter. |
+| Verification | `tests/render-cache.test.js` — 30 cases. The two byte-parity invariants are the hardest constraint; everything else (key sensitivity per axis, TTL, eviction) is mechanical. Poisoned-value test proves hits skip the renderer; rewritten-content test proves expired entries re-render. |
+
+## Known limitations going into v0.11.0-alpha
+
+- The cache layer reads `render.js` once per cache check to compute the template source hash. For a cache miss the cost is the same as the uncached path; for a hit there is one extra `readFileSync` of a small file. Page cache absorbs it.
+- Compose is uncached. The unit of caching is `renderTemplate`, not `renderTemplateParts`. Composed pages mixing prose + multiple templates always re-render today.
+- No `htmd cache stats` / `htmd cache clear` subcommand. `rm -rf $HTMD_CACHE_DIR` (or `~/.htmd-cache`, or `os.tmpdir()/htmd-cache`) is the manual workaround.
+- Two-user collisions on the same machine are possible only if `HTMD_CACHE_DIR` is deliberately shared. The default per-user `os.tmpdir()` avoids them.
+- The cache only memoizes the final output of `renderTemplate`. Schema validation still runs on the live data before any hit / miss is consulted? — **no, it does not.** A cache hit short-circuits before validation, which is correct (the cached value was produced by validated inputs). If you change the schema without changing the rest of the template, the `templateHash` invalidates the entry anyway.
