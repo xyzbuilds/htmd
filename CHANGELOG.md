@@ -3,6 +3,114 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.11.0-alpha.0] — 2026-05-20
+
+Opt-in content-hash render cache. `htmd render --cache` (or the
+library option `{ cache: true }`, or `cache.enabled: true` in
+`htmd.config.json`) memoizes the rendered HTML on disk by SHA-256 of
+its inputs. Off by default; nothing changes for callers that don't ask
+for it. Determinism is preserved — see PHASE3_NOTES.md
+§v0.11.0-alpha for locked decisions.
+
+### Added
+- **`htmd render --cache` CLI flag.** Opt-in. Companion flags:
+  `--cache-dir <path>`, `--cache-ttl <ms>` (default 24h),
+  `--cache-max-bytes <n>` (default 100MB). Environment overrides:
+  `HTMD_CACHE_DIR`.
+- **`renderTemplate(name, data, { cache: true })` library option.**
+  Accepts `true` (defaults) or `{ enabled, dir, ttlMs, maxBytes }`.
+  `enabled: false` disables the cache for that call.
+- **`cache.*` keys in `htmd.config.json` / `~/.htmd/config.json`.**
+  `cache.enabled`, `cache.dir`, `cache.ttlMs`, `cache.maxBytes`. CLI
+  flags override config; config overrides built-in defaults.
+- **`src/render-cache.js`** — the cache layer itself. ~170 LOC, no
+  new dependencies. Filesystem-only (one HTML file per entry under
+  the cache dir). Key = `SHA-256(canonical-JSON(template, template
+  source hash, data, options, mode))`. Value = the exact rendered
+  HTML bytes — no wrapper. Inline ~25-LOC canonical JSON serializer
+  (sorted keys, dropped `undefined`, stable array order). Lazy TTL
+  expiry on read; oldest-by-mtime eviction on insert when the
+  directory would exceed the size cap.
+- **`tests/render-cache.test.js`** — 30 cases covering canonical
+  JSON determinism, key sensitivity to every input axis (template,
+  template source, data, options, mode), TTL expiry, size-cap
+  eviction, cache hit / miss correctness, and the two byte-parity
+  invariants (cache hit ≡ cache miss; cache disabled ≡ cache enabled).
+- **Public re-exports** from `src/index.js`: `defaultCacheDir`,
+  `canonicalJson`, `computeCacheKey`, `templateSourceHash`.
+
+### Changed
+- Version bumped to `0.11.0-alpha.0`. `renderTemplate` now short-circuits
+  to a cached entry before validating + rendering when the cache is
+  enabled and the entry exists and is fresh. `renderTemplateParts`,
+  `wrapShell`, and `renderMarkdown` are unchanged. Compose is unchanged
+  (it goes through `renderTemplateParts`, which never touches the cache).
+
+### Design decisions (locked)
+
+1. **Off by default.** Same priority as v0.8.0 — the deterministic-CLI
+   contract is the headline feature; adding silent state would change
+   the contract for everybody to benefit a minority. Callers opt in
+   per-process via CLI flag, per-call via library option, or per-repo
+   via config.
+2. **Hand-rolled canonical JSON, ~25 LOC.** No dependency. The
+   serializer sorts object keys, drops `undefined`, and preserves
+   array order. Sufficient for htmd's JSON-safe inputs (YAML-parsed
+   data, scalar options). Non-finite numbers coerce to `null`.
+3. **Cache value is the exact HTML bytes.** No metadata wrapper, no
+   compression, no JSON envelope. The byte-parity invariants
+   (`hit ≡ miss`, `disabled ≡ enabled`) collapse to "read returns
+   what write wrote" and "the cached path takes whatever the
+   uncached path produced." Tested.
+4. **Cache key includes the template source hash.** A change to any
+   of `render.js`, `style.css`, `script.js`, or `schema.json` for a
+   template must invalidate that template's cached renders even when
+   data + options are unchanged. Computed lazily inside the cache
+   path; the existing `_cache` in `templates.js` means we only pay
+   for it once per template per process.
+5. **Cache key excludes `validate` and `cache` opts.** Including
+   `validate` would make enabling validation a different cache key
+   for the same output — false positive on the byte-parity invariant.
+   Including `cache` itself would mean enabling the cache changes the
+   key vs. disabled, which is the exact thing the invariant forbids.
+   Only the options that actually shape the HTML (`title`, `lang`,
+   `mode`) enter the key.
+6. **Lazy TTL + lazy size eviction.** Reads check mtime; on a stale
+   read we return a miss and the next write overwrites. Writes
+   evict by mtime ascending until total + incoming fits under the
+   cap. No background sweeper, no LRU package — just `fs` calls.
+7. **Per-user, per-machine, last-writer-wins.** Two parallel htmd
+   processes that compute the same key write the same bytes; the
+   race resolves to "one of them wrote it last, and the bytes are
+   identical." We do not lock.
+8. **MCP `htmd_render` passes `cache` through unchanged.** No
+   cache-aware tool, no MCP-only knobs. The MCP server stays stateless
+   in the sense that v0.8.0 promised: state lives on disk and the
+   tool call's effect on it is a pure function of the inputs.
+
+### Known limitations
+- The cache key has to load the template source to hash it. For a
+  cache miss the cost is the same as the uncached path; for a hit we
+  still pay one `readFileSync` of `render.js`. Acceptable — the file
+  is tiny and the OS page cache absorbs it.
+- The cache is filesystem-only and per-user. Two users on the same
+  machine each get their own cache under `os.tmpdir()` (unless
+  `HTMD_CACHE_DIR` is shared explicitly).
+- Compose does not yet hit the cache. Each `htmd:`-fenced block
+  routes through `renderTemplateParts`, which is the
+  composition-friendly entry point; the cache lives one layer up at
+  `renderTemplate`. Future v0.12 follow-up if useful.
+- No metric / stat command surface. `htmd cache stats` / `htmd cache
+  clear` are obvious follow-ups but not built — `rm -rf $HTMD_CACHE_DIR`
+  is the workaround.
+
+### Rough numbers
+- Cold cache miss (single `htmd render status-report --cache …`):
+  ~795 ms wall-clock. Warm cache hit: ~630 ms. ~20% reduction,
+  dominated by Node startup and template loading. The actual render
+  step is the slice the cache replaces; for larger / more data-heavy
+  templates the gain is proportionally larger.
+
 ## [0.10.0-alpha.0] — 2026-05-20
 
 Email-safe render mode. `htmd render --mode=email` produces a single
