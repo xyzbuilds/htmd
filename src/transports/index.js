@@ -23,3 +23,4 @@ export { registerTransport, getTransport, hasTransport, listTransports } from '.
 // participates in an import cycle.
 await import('./stdio.js');
 await import('./openclaw-telegram.js');
+await import('./cowork-mcp.js');
