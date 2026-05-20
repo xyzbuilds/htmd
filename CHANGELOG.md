@@ -3,6 +3,88 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.8.0-alpha.0] — 2026-05-20
+
+htmd as MCP server. Lands a first-party Model Context Protocol server
+that exposes the htmd CLI surface to any MCP-aware agent (Claude Code,
+Claude Desktop, Cursor's MCP integration, Aider, …) as native tool
+calls. One server replaces N adapters for harnesses that already speak
+MCP. See PHASE3_NOTES.md §v0.8.0-alpha for locked decisions.
+
+### Added
+- **`htmd mcp` CLI subcommand** starts the htmd MCP server on stdio.
+  Runs until stdin closes; logs a single ready banner to stderr.
+- **`src/mcp-server/`** — hand-rolled JSON-RPC 2.0 over newline-
+  delimited stdio (`protocol.js`), eight MCP tools each wrapping the
+  same exported function the CLI calls (`tools.js`), and a stateless
+  request handler (`index.js`). ~400 LOC total.
+- Eight MCP tools, all 1:1 with existing CLI subcommands:
+  - `htmd_render` → `renderTemplate()`
+  - `htmd_compose` → `composeFromMarkdown()`
+  - `htmd_route` → `route()` (decision only — no transport publish)
+  - `htmd_normalize` → `normalize()`
+  - `htmd_detect` → `detectTemplates()`
+  - `htmd_extract` → `extractState()`
+  - `htmd_templates` → `listTemplates()`
+  - `htmd_schema` → `loadTemplate().schema`
+
+  Every successful tool response carries `_debug.cli_equivalent` — a
+  shell-quoted reproduction of the equivalent `htmd <subcommand>` call.
+  Users can always reproduce a tool call on the shell.
+- Tests: `tests/mcp-server.test.js` (27 cases) covering byte-identical
+  output vs. the direct function call for every tool, statelessness
+  (same args → same bytes across calls), error envelopes (missing
+  args, schema-validation failure, invalid YAML), the JSON-RPC
+  protocol layer (initialize, tools/list, tools/call, ping,
+  notifications, unknown methods, parse errors), and a full stdio
+  integration test against `PassThrough` streams.
+- `docs/ADAPTERS.md` gains a "htmd MCP server" section documenting
+  the wiring config for MCP clients and the design contract.
+- `docs/PHASE3_NOTES.md` captures the v0.8.0-alpha locked decisions:
+  thin-wrapper / stateless / 1:1-with-CLI / cli_equivalent in every
+  response, plus the SDK-choice rationale.
+
+### Changed
+- Version bumped to `0.8.0-alpha.0`. No template, compose, serve,
+  normalize, route, or transport-interface surface changed. The MCP
+  server is purely additive.
+
+### Design decisions (locked)
+
+1. **Thin wrapper, not parallel implementation.** Each MCP tool calls
+   the same exported function the CLI calls. No reimplementation.
+2. **Stateless.** Zero cache / session / persistence. Same input →
+   same output, every call.
+3. **1:1 with CLI subcommands.** No MCP-only tools, no convenience
+   wrappers without a shell-command counterpart.
+4. **Every response carries `_debug.cli_equivalent`.** Users can
+   reproduce any tool call on the shell.
+
+These four rules preserve htmd's "deterministic CLI, no backend"
+principle (CLAUDE.md). MCP is one more transport, not a fork.
+
+### SDK choice
+- **Hand-rolled JSON-RPC over stdio**, not `@modelcontextprotocol/sdk`.
+  The official SDK pulls in `@hono/node-server`, `express`, `hono`,
+  `jose`, `cors`, `pkce-challenge`, `eventsource`, `zod`,
+  `zod-to-json-schema`, and ~6 other deps — a clear violation of
+  htmd's "no frameworks" rule. The stdio MCP wire protocol is
+  newline-delimited JSON-RPC 2.0; the implementation is ~80 lines for
+  the dispatch loop and ~200 for the tool registry. No new
+  dependencies added in v0.8.0-alpha.
+
+### Known limitations
+- The MCP server does not publish routed pages. `htmd_route` returns
+  just the decision; rendering + publishing requires the host's serve
+  daemon and transport credentials. Use the adapter pattern when you
+  need publishing.
+- No streaming. Each tool call is a single request → single response.
+- The `cowork-mcp` and `cursor` transports' `_deliver` stubs (locked
+  in v0.5.0-beta and v0.7.0-alpha) are unchanged. The htmd MCP server
+  is the *agent → htmd* direction; the transport stubs are the
+  *htmd → harness* direction. They will share a process eventually
+  but v0.8.0 lands only the inbound direction.
+
 ## [0.7.0-alpha.0] — 2026-05-19
 
 Third Phase 3 transport: Cursor IDE. Lands the adapter shape and
