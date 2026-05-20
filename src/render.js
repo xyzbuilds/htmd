@@ -6,6 +6,7 @@ import { validate, formatErrorList } from './schema.js';
 import { html, raw, toString, escapeHtml } from './html-tag.js';
 import { md, mdToHtml } from './md.js';
 import * as chart from './chart.js';
+import { inlineEmailCss } from './email-inliner.js';
 
 const ROOT = projectRoot();
 const TOKENS_CSS = readFileSync(join(ROOT, 'templates/_base/tokens.css'), 'utf8');
@@ -76,14 +77,24 @@ export async function renderTemplateParts(name, data, opts = {}) {
 
 export async function renderTemplate(name, data, opts = {}) {
   const parts = await renderTemplateParts(name, data, opts);
-  return wrapShell({
+  const mode = normalizeMode(opts.mode);
+  const html = wrapShell({
     title: parts.title,
     body: parts.body,
     css: parts.css,
-    js: parts.js,
+    js: mode === 'email' ? '' : parts.js,
     template: name,
     lang: opts.lang || 'en'
   });
+  if (mode === 'email') return inlineEmailCss(html);
+  return html;
+}
+
+function normalizeMode(mode) {
+  if (!mode) return 'web';
+  const m = String(mode).toLowerCase();
+  if (m === 'email' || m === 'web') return m;
+  throw new Error(`htmd: unknown render mode "${mode}" (expected "web" or "email")`);
 }
 
 export function wrapShell({ title, body, css, js, template, lang, headExtra }) {

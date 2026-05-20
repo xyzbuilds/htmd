@@ -20,7 +20,7 @@ import { getTransport, listTransports, hasTransport } from './transports/index.j
 import { renderMarkdown as renderMd } from './render.js';
 import { startStdioServer } from './mcp-server/index.js';
 
-const VERSION = '0.8.0-alpha.0';
+const VERSION = '0.10.0-alpha.0';
 
 export async function run(argv) {
   const program = new Command();
@@ -61,6 +61,7 @@ export async function run(argv) {
     .option('--inline <json>', 'inline JSON data')
     .option('-o, --out <file>', 'output file (default: stdout)')
     .option('--no-validate', 'skip schema validation')
+    .option('--mode <mode>', 'render mode: web (default) or email (inline CSS, no JS, no external assets)', 'web')
     .option('--json', 'emit JSON envelope (for scripting): { ok, html, errors }')
     .option('--serve', 'publish to the local htmd serve dir and print the Tailscale URL')
     .option('--serve-dir <dir>', `serve dir (default: ${defaultRenderDir()})`)
@@ -84,7 +85,7 @@ export async function run(argv) {
             throw new Error('No data source. Provide --data <file> or --inline <json>.');
           }
         }
-        const html = await renderTemplate(name, data, { validate: opts.validate });
+        const html = await renderTemplate(name, data, { validate: opts.validate, mode: opts.mode });
         if (opts.serve) {
           await runServePublish({ html, slug: data?.title || name, opts });
           return;

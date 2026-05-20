@@ -54,7 +54,13 @@ defineTool('htmd_render', {
       dataYaml: { type: 'string', description: 'Raw YAML to parse into data (alternative to `data`).' },
       dataJson: { type: 'string', description: 'Raw JSON to parse into data (alternative to `data`).' },
       validate: { type: 'boolean', default: true, description: 'Run schema validation.' },
-      lang: { type: 'string', description: 'Document lang attribute (default: en).' }
+      lang: { type: 'string', description: 'Document lang attribute (default: en).' },
+      mode: {
+        type: 'string',
+        enum: ['web', 'email'],
+        default: 'web',
+        description: 'Render mode. "web" (default) is the standard self-contained interactive page. "email" inlines all CSS, strips scripts/style/link tags, resolves CSS custom properties, and produces HTML safe to paste into Gmail/Outlook compose.'
+      }
     },
     required: ['template']
   },
@@ -62,7 +68,8 @@ defineTool('htmd_render', {
     const data = resolveData(args);
     const html = await renderTemplate(args.template, data, {
       validate: args.validate !== false,
-      lang: args.lang
+      lang: args.lang,
+      mode: args.mode
     });
     return {
       ok: true,
@@ -99,6 +106,7 @@ function buildRenderCli(args) {
     parts.push('--data', '-');
   }
   if (args.validate === false) parts.push('--no-validate');
+  if (args.mode && args.mode !== 'web') parts.push('--mode', shq(args.mode));
   const cmd = parts.join(' ');
   if (args.dataYaml) return `echo ${shq(args.dataYaml)} | ${cmd}`;
   return cmd;
