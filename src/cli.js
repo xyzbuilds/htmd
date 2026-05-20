@@ -19,7 +19,7 @@ import { loadConfig } from './config.js';
 import { getTransport, listTransports, hasTransport } from './transports/index.js';
 import { renderMarkdown as renderMd } from './render.js';
 
-const VERSION = '0.5.0-alpha.0';
+const VERSION = '0.6.0-alpha.0';
 
 export async function run(argv) {
   const program = new Command();

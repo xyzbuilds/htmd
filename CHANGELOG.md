@@ -3,6 +3,57 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.6.0-alpha.0] — 2026-05-19
+
+Agent-side intent metadata. Removes the harness adapter's need to
+sniff intent from message content — the agent declares routing
+intent inline and `htmd normalize` strips + surfaces it.
+
+### Added
+- **Metadata extraction in `src/normalize.js`.** Two source forms,
+  both stripped from canonical output:
+  - HTML comment: `<!-- htmd: needs-approval -->`,
+    `<!-- htmd: priority=high -->`, or compound
+    `<!-- htmd: needs-approval; priority=high -->`.
+  - Fenced block:
+    ` ```htmd-meta\nneeds-approval: true\npriority: high\n``` `.
+  Values coerce to bool / int / float / quoted-string; bare
+  directives become `true`. Hand-rolled mini-parser, no YAML
+  dependency.
+- New `metadata` field on the `normalize()` return object (always
+  defined, `{}` when no directives are present).
+- New `extractMetadata()` export for callers that want to run the
+  extractor against already-Markdown input.
+- **`src/route.js` consumes metadata directives.** Maps the well-
+  known keys to the existing routing rules and OR-s them with CLI
+  flags:
+  - `inline-only: true` → rule 1 (`prefer-inline`, inline).
+  - `needs-approval: true` → rule 2 (page,
+    `reason: intent:needs-approval`).
+  - `prefer-page: true` → rule 3 (page, `reason: prefer-page`).
+  Annotation-only directives (e.g. `priority: high`) and unknown
+  directives pass through unchanged on `decision.metadata`.
+- `htmd route` CLI threads `norm.metadata` into the router so
+  agent-emitted directives reach the rule pipeline without any
+  flag plumbing on the harness side.
+- Docs: PHASE3_DESIGN.md gains an "Agent-side intent metadata"
+  section with the formal grammar + router behavior table.
+  PHASE3_NOTES.md captures the v0.6.0-alpha decisions.
+
+### Changed
+- Version bumped to `0.6.0-alpha.0`. No template, compose, serve,
+  or transport surface changed. The transport contract is
+  unchanged — metadata only affects router decisions.
+
+### Known limitations
+- HTML comments in Telegram-flavored HTML input are stripped by
+  turndown before metadata extraction runs. Agents emitting
+  metadata should emit Markdown (the typical path). The fenced
+  form survives turndown.
+- Metadata-looking content inside an ordinary (untagged) fenced
+  code block is intentionally not extracted. The fence info-string
+  must be exactly `htmd-meta`.
+
 ## [0.5.0-beta.0] — 2026-05-19
 
 Second Phase 3 transport. Validates that the v0.5.0-alpha transport
