@@ -99,6 +99,42 @@ limitations, and gotchas as v0.5 ships.
   `deliverViaHttp` (or add an `mcp` mode) when wiring the real MCP
   control surface.
 
+## Decisions locked for v0.8.0-alpha (2026-05-20)
+
+| Topic | Decision |
+|---|---|
+| Server scope | htmd MCP server is a **thin wrapper over the existing CLI code path**, not a parallel implementation. Every MCP tool maps 1:1 to an existing CLI subcommand; every tool internally calls the same exported function (`renderTemplate`, `composeFromMarkdown`, `route`, `normalize`, `detectTemplates`, `extractState`, `listTemplates`, `loadTemplate`) the CLI calls. No MCP-only features, no convenience tools, no parallel impl. |
+| Statelessness | **Zero state across calls.** No cache, no session, no persistence, no per-client memory. Each `tools/call` is independent. Same input → same output, every time. This preserves htmd's deterministic-CLI contract. |
+| CLI reproducibility | **Every successful tool response carries `_debug.cli_equivalent`** — a shell-quoted invocation of the equivalent `htmd <subcommand>` call. Users can always reproduce a tool call on the shell. |
+| Tool surface | Eight tools, all 1:1 with CLI subcommands: `htmd_render`, `htmd_compose`, `htmd_route`, `htmd_normalize`, `htmd_detect`, `htmd_extract`, `htmd_templates`, `htmd_schema`. Other CLI subcommands (`serve`, `button`, `preview`, `init-template`) are explicitly **not** exposed: they perform host-side I/O (start a daemon, open a browser, scaffold files) that doesn't fit a stateless MCP transport. |
+| `htmd_route` scope | The MCP variant does **not** support the CLI's `--render --transport` mode — that requires host-side state (renders dir, serve daemon, transport credentials). MCP returns the decision; adapters still own publish. |
+| SDK choice | **Hand-rolled JSON-RPC over stdio**, not `@modelcontextprotocol/sdk`. The official SDK pulls in `@hono/node-server`, `express`, `hono`, `jose`, `cors`, `pkce-challenge`, `eventsource`, `zod`, `zod-to-json-schema`, and ~6 other deps — a clear violation of htmd's "no frameworks" rule (CLAUDE.md). The stdio MCP wire protocol is newline-delimited JSON-RPC 2.0; the dispatch loop is ~80 lines, the tool layer is ~200. We accept the small maintenance burden of tracking the spec for the much larger benefit of keeping the dep tree minimal. |
+| Protocol version | `2025-06-18`. Server advertises `capabilities.tools.listChanged = false` (tool list is fixed at build time; nothing changes at runtime). |
+| Tool input schemas | JSON Schema (draft-07-ish, hand-authored). Aligns with how every other htmd template defines its inputs and avoids a Zod / `zod-to-json-schema` dep. |
+| Tool response shape | Each tool returns a JSON object stringified into `content[0].text`. Successful: `{ ok: true, ...result, _debug: { cli_equivalent } }`. Failure: `{ ok: false, error, ...details }` plus `isError: true` on the outer MCP envelope. |
+| Relationship to transports | `cowork-mcp` and `cursor` transports still stub their `_deliver` MCP wire (locked in v0.5.0-beta and v0.7.0-alpha respectively). The htmd MCP server is the *agent → htmd* direction; the transports' MCP wire is the *htmd → harness* direction. Both will eventually share the same MCP server process, but the v0.8.0 ship lands only the inbound direction. |
+| Telegram user concern | Xuyang explicitly raised "doesn't this defeat htmd's deterministic-CLI design?" before scoping. The four constraints above (thin wrapper / stateless / 1:1 with CLI / cli_equivalent debug field) are the answer; they are tested in `tests/mcp-server.test.js` and enforced architecturally by the fact that every tool calls the same exported function the CLI calls. |
+
+## Known limitations going into v0.8.0-alpha
+
+- The MCP server doesn't publish routed pages. `htmd_route` returns
+  just the decision; rendering + publishing a page requires the host's
+  serve daemon + transport credentials. Use the adapter pattern when
+  you need publishing.
+- No streaming. Each tool call is a single request → single response.
+- `htmd_render` accepts `data` (parsed object), `dataYaml`, or
+  `dataJson` as inputs. The CLI's `--data <file>` path is reachable by
+  reading the file on the agent side and passing the contents — file
+  I/O stays in the client process, not the server.
+- The hand-rolled JSON-RPC layer implements the minimum surface needed
+  for `initialize`, `tools/list`, `tools/call`, `ping`, and
+  `notifications/initialized`. If a future MCP feature (sampling,
+  roots, prompts, resources) becomes interesting we'll add it; nothing
+  in v0.8.0 needs it.
+- Per the design constraint, the server holds no state. Clients that
+  expect e.g. an "open render id" session must thread that state
+  themselves via tool arguments.
+
 ## Open follow-ups (not blockers for beta)
 
 - Add `htmd route --explain` (debug rule trace). Punted from alpha;
@@ -107,7 +143,11 @@ limitations, and gotchas as v0.5 ships.
 - Decide whether the `openclaw-telegram` SSH reply path should move
   into `htmd serve` once the transport contract stabilizes.
 - Real cowork-mcp wire integration once the MCP spec lands.
-- htmd MCP server (v0.8.0). Provides the `mcp` delivery mode that
-  both `cowork-mcp` and `cursor` transports defer to today. Lands as
-  a standalone module that Cursor (and other MCP-aware harnesses)
-  launch as a child process over stdio.
+- ~~htmd MCP server (v0.8.0).~~ **Shipped 2026-05-20.** Provides the
+  `mcp` delivery mode the `cowork-mcp` and `cursor` transports defer
+  to today; lands as a stdio module (`htmd mcp`) that MCP-aware
+  harnesses launch as a child process. Inbound direction (agent →
+  htmd tools) is the entire v0.8.0 surface. Outbound direction (htmd
+  → harness submission delivery) is still stubbed in the transports
+  and will swap in once the harness side speaks MCP back at the
+  server.

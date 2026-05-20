@@ -154,6 +154,93 @@ cowork adapter, with `transport=cursor`:
 Three adapters now share that line shape; harnesses that consume the
 shape can dispatch on the `transport` tag alone.
 
+## htmd MCP server (v0.8.0) — one server replaces N adapters
+
+The adapters above ship for harnesses that don't natively speak MCP
+(OpenClaw's Stop hook, Cursor's outbound message hook, etc.). For
+**MCP-aware agents** — Claude Code, Claude Desktop, Cursor's MCP
+integration, Aider, and anything else that already shells out to an
+MCP server — htmd v0.8.0 ships a first-party MCP server that exposes
+the htmd CLI surface directly. **One server, zero adapters.**
+
+### What it is
+
+`htmd mcp` starts an MCP server on stdio. It exposes every primary
+CLI subcommand as a tool:
+
+| MCP tool          | CLI subcommand   |
+|-------------------|------------------|
+| `htmd_render`     | `htmd render`    |
+| `htmd_compose`    | `htmd compose`   |
+| `htmd_route`      | `htmd route`     |
+| `htmd_normalize`  | `htmd normalize` |
+| `htmd_detect`     | `htmd detect`    |
+| `htmd_extract`    | `htmd extract`   |
+| `htmd_templates`  | `htmd templates` |
+| `htmd_schema`     | `htmd schema`    |
+
+### Design contract (locked for v0.8.0)
+
+1. **1:1 with CLI subcommands.** No MCP-only tools. No convenience
+   wrappers that don't exist as a shell command.
+2. **Thin wrapper.** Each tool internally calls the same exported
+   function the CLI calls. No parallel implementation.
+3. **Stateless.** Zero cache, zero session, zero persistence. Same
+   input → same output, every time.
+4. **CLI-equivalent in every response.** Every successful tool
+   response carries `_debug.cli_equivalent` — a shell command that
+   reproduces the call exactly.
+
+These rules preserve htmd's "deterministic CLI, no backend" principle:
+the MCP server is *one more transport*, not a parallel codebase.
+
+### Wiring it up
+
+Add to your MCP client config (Claude Desktop / Claude Code / Cursor /
+Aider — exact field names vary):
+
+```json
+{
+  "mcpServers": {
+    "htmd": {
+      "command": "htmd",
+      "args": ["mcp"]
+    }
+  }
+}
+```
+
+Or, if `htmd` isn't on PATH for the harness, point at the bin:
+
+```json
+{
+  "mcpServers": {
+    "htmd": {
+      "command": "node",
+      "args": ["/path/to/htmd/bin/htmd.js", "mcp"]
+    }
+  }
+}
+```
+
+The server logs a banner to stderr on startup; clients may capture or
+ignore it (the MCP spec allows server stderr for logging). Stdin
+closes → server exits cleanly.
+
+### What it does NOT do
+
+- **No transport publishing.** `htmd_route` returns just the decision.
+  Publishing a routed page via a transport (`openclaw-telegram`,
+  `cowork-mcp`, `cursor`) requires host-side state — the renders dir,
+  the serve daemon, the bot creds — none of which belongs in a
+  stateless MCP server. Adapters still own the publish step.
+- **No streaming.** Each tool call returns a single response.
+- **No SDK dependency.** The server is hand-rolled (~200 LOC) on top
+  of newline-delimited JSON-RPC over stdio. The official
+  `@modelcontextprotocol/sdk` pulls in Express, Hono, JOSE, cors, and
+  ~15 other deps — too heavy for htmd's "no frameworks" principle.
+  Tradeoff documented in `PHASE3_NOTES.md`.
+
 ## Writing a new adapter — the cowork walkthrough
 
 The three reference adapters are nearly identical. Reading them side
