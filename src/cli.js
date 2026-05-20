@@ -18,8 +18,9 @@ import { route as routeMessage, applyDecision } from './route.js';
 import { loadConfig } from './config.js';
 import { getTransport, listTransports, hasTransport } from './transports/index.js';
 import { renderMarkdown as renderMd } from './render.js';
+import { startStdioServer } from './mcp-server/index.js';
 
-const VERSION = '0.6.0-alpha.0';
+const VERSION = '0.8.0-alpha.0';
 
 export async function run(argv) {
   const program = new Command();
@@ -360,6 +361,14 @@ export async function run(argv) {
         process.stdout.write(JSON.stringify({ action: 'inline', reason: 'transport-failure', error: e.message }));
         process.exit(1);
       }
+    });
+
+  program
+    .command('mcp')
+    .description('start the htmd MCP server on stdio (for MCP-aware agents)')
+    .action(async () => {
+      // Stay running until stdin closes.
+      await startStdioServer({ version: VERSION });
     });
 
   program
