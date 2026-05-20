@@ -243,14 +243,89 @@ v0.5.0-alpha implementation.
    JSON output reports `action: "inline"` with
    `reason: "transport-failure"` and `error` populated.
 
-## Open questions deferred past v0.5
+## Agent-side intent metadata (v0.6.0)
 
-- **Agent-side intent metadata.** Agents emitting
-  `<!-- htmd: needs-approval -->` fenced blocks that `htmd normalize`
-  strips and surfaces as flags. Targeted for v0.6 per the
-  implementation plan.
+Originally deferred past v0.5; shipped in v0.6.0-alpha. Removes the
+harness adapter's need to sniff intent from message content — the
+agent declares it inline.
+
+`htmd normalize` recognizes two source forms, strips them from the
+canonical output, and surfaces them as a `metadata` object on the
+normalize result:
+
+### 1. HTML comment
+
+```
+<!-- htmd: <directive>[=<value>][; <directive>[=<value>]...] -->
+```
+
+- A bare directive (no `=`) becomes `directive: true`.
+- Multiple directives may appear in a single comment separated by
+  `;`. Multiple separate comments are also OK.
+- Whitespace around tokens is tolerated.
+
+### 2. Fenced htmd-meta block
+
+````
+```htmd-meta
+needs-approval: true
+priority: high
+estimated-minutes: 5
+```
+````
+
+- Hand-rolled mini-parser: one `key: value` per line, no nesting.
+- Lines beginning with `#` are treated as comments and skipped.
+- A bare `key:` (no value) becomes `key: true`.
+
+### Value coercion (both forms)
+
+| Source       | Becomes            |
+|--------------|--------------------|
+| `true`       | boolean `true`     |
+| `false`      | boolean `false`    |
+| `42`         | number `42`        |
+| `0.5`        | number `0.5`       |
+| `"hello"`    | string `hello`     |
+| `'a b'`      | string `a b`       |
+| anything else | string as-given    |
+
+### Router behavior
+
+`htmd route` consumes the metadata object and OR-s it with the CLI
+intent flags. The rule order from the original design holds:
+
+1. `--prefer-inline` **or** `inline-only: true` → inline
+2. `--needs-approval` **or** `needs-approval: true` → page
+3. `--prefer-page` **or** `prefer-page: true` → page
+4. structural rules (table / fenced)
+5. length
+6. inline default
+
+Annotation-only directives (e.g. `priority: high`) do not change the
+route; they are echoed back on `decision.metadata` for transports to
+consult. Unknown directives pass through unchanged for forward
+compatibility — a v0.7 directive like `assign-to=alice` will simply
+appear in the metadata object until the router learns to use it.
+
+The transport contract is unchanged: transports still receive the
+same envelope. Metadata only affects what the router decides.
+
+### Limitations
+
+- HTML comments inside Telegram-flavored HTML input get stripped by
+  the turndown pass before `extractMetadata` sees them. Agents that
+  emit metadata should emit Markdown (the typical path).
+- Metadata-looking content inside an ordinary fenced code block is
+  intentionally not extracted — the fence must be explicitly tagged
+  `htmd-meta` to be recognized.
+
+## Open questions deferred past v0.6
+
 - **Streaming partial renders.** Out of scope; the router operates on
   completed messages.
+- **`htmd route --explain`** — debug rule trace showing the path
+  through the rules and which metadata directives were seen.
 
 ## Distribution
 

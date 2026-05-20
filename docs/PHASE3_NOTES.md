@@ -46,6 +46,31 @@ limitations, and gotchas as v0.5 ships.
 - Per-transport routing is still not supported — routing decisions run
   on wire format, not the chosen transport. (No regression from alpha.)
 
+## Decisions locked for v0.6.0-alpha (2026-05-19)
+
+| Topic | Decision |
+|---|---|
+| Metadata source forms | Two: `<!-- htmd: ... -->` HTML comment and ` ```htmd-meta ` fenced block. Both are equally first-class; both are stripped from canonical output. |
+| Fenced-block parser | Hand-rolled mini-parser. No YAML library dependency. One `key: value` per line, no nesting. `#`-prefixed lines are comments. Values coerce to bool / int / float / quoted-string; bare values pass through as string. |
+| HTML-comment directives | One comment may carry multiple directives separated by `;`. A bare directive (no `=`) becomes `true`. |
+| Surface on normalize result | New `metadata` field on the return object. Empty object `{}` when no directives present (always defined, never null). |
+| Router precedence | Metadata-driven flags OR with CLI flags. Existing rule order holds — `inline-only` (rule 1) beats `needs-approval` (rule 2). CLI `--prefer-inline` and metadata `inline-only: true` collapse to the same rule. |
+| Reason strings | Same reasons regardless of source (`prefer-inline`, `intent:needs-approval`, `prefer-page`). The `metadata` field on the decision tells the caller which directives fired. |
+| Annotation directives | `priority: high` and other non-routing keys are passed through on `decision.metadata`. Transports may consult them (e.g. for delivery priority). |
+| Unknown directives | Forward-compatible. Preserved on the metadata object verbatim. Router ignores keys it does not know. |
+| Transport contract | **Unchanged.** Metadata only affects router decision; transports still receive the existing envelope. The plan budgeted for a possible contract change; we did not need one. |
+| Telegram-HTML metadata | Known limitation: turndown strips HTML comments before metadata extraction runs. Agents emitting metadata should emit Markdown. Documented; not fixed in v0.6. |
+
+## Known limitations going into v0.6.0-alpha
+
+- Turndown strips HTML comments in the Telegram-HTML path, so
+  `<!-- htmd: ... -->` directives that arrive via Telegram-HTML are
+  lost before metadata extraction. The fenced form survives.
+- Metadata extraction runs after format normalization. If the input
+  is plain text, the comment / fence forms are recognized but the
+  detected `format` still reports `plain` (not `markdown`) because
+  format detection looks at the raw input.
+
 ## Open follow-ups (not blockers for beta)
 
 - Add `htmd route --explain` (debug rule trace). Punted from alpha;
