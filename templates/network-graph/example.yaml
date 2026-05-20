@@ -1,0 +1,28 @@
+title: htmd architecture
+subtitle: Module dependency graph (simplified)
+nodes:
+  - { id: cli, label: CLI, kind: entry }
+  - { id: render, label: render, kind: core }
+  - { id: compose, label: compose, kind: core }
+  - { id: detect, label: detect, kind: core }
+  - { id: extract, label: extract, kind: core }
+  - { id: templates, label: templates, kind: core }
+  - { id: schema, label: schema, kind: lib }
+  - { id: html_tag, label: html-tag, kind: lib }
+  - { id: ajv, label: ajv, kind: external }
+  - { id: marked, label: marked, kind: external }
+  - { id: yaml, label: yaml, kind: external }
+edges:
+  - { source: cli, target: render, label: render }
+  - { source: cli, target: compose, label: compose }
+  - { source: cli, target: detect, label: detect }
+  - { source: cli, target: extract, label: extract }
+  - { source: render, target: templates }
+  - { source: render, target: schema }
+  - { source: render, target: html_tag }
+  - { source: compose, target: render }
+  - { source: compose, target: marked }
+  - { source: detect, target: marked }
+  - { source: extract, target: yaml }
+  - { source: schema, target: ajv }
+  - { source: templates, target: html_tag }
