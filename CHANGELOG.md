@@ -3,6 +3,61 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.7.0-alpha.0] — 2026-05-19
+
+Third Phase 3 transport: Cursor IDE. Lands the adapter shape and
+contract-validation milestone described in PHASE3_PLAN.md §v0.7.0.
+The transport interface defined in v0.5.0-alpha now holds across
+three adapters (openclaw-telegram, cowork-mcp, cursor) without any
+refactor.
+
+### Added
+- **`cursor` transport** in `src/transports/cursor.js`. Targets
+  Cursor IDE chat sessions. Publish writes the rendered page locally
+  via the shared `serve-helpers.publishRender` pipeline; deliver
+  routes submissions through one of three pluggable modes:
+  - `file` (default) — appends newline-JSON to
+    `~/.htmd/cursor/inbox.jsonl` for a sidecar to replay.
+  - `http` — POSTs `{ id, sessionId, workspace, action, payload }`
+    to `HTMD_CURSOR_MCP_URL`. Stand-in for the eventual htmd MCP
+    server (v0.8.0) control surface.
+  - `noop` — log + ok; smoke test.
+
+  Cursor's MCP wire is not yet integrated (the htmd MCP server lands
+  in v0.8.0); the transport defines a clean `_deliver` call site so
+  the real MCP invocation drops in without touching the transport
+  contract. `createCursorTransport()` accepts `_deliver` /
+  `_publishRender` overrides for tests and future wiring.
+
+  Publish envelope adds `cursorSession` and `cursorWorkspace` so
+  the harness can address submissions back to the right Cursor
+  chat / project window. Both are sourced from `meta.cursorSessionId`
+  / `meta.cursorWorkspace`, then `HTMD_CURSOR_SESSION_ID` /
+  `HTMD_CURSOR_WORKSPACE` env vars.
+- Reference Stop-hook adapter for Cursor at
+  `examples/adapters/cursor-stop-hook.mjs`. Differs from the cowork
+  adapter only in the transport default and the `transport=cursor`
+  tag on the page-control line — same shape the v0.5.0-beta
+  acceptance criterion validated against cowork.
+- `docs/ADAPTERS.md` gains a "Cursor adapter" section and notes that
+  three adapters now share the `[[htmd:page transport=… …]]` control
+  line; harnesses can dispatch on the `transport` tag.
+
+### Changed
+- Version bumped to `0.7.0-alpha.0`. No transport-interface refactor;
+  the alpha contract held without modification across the third
+  transport. No template, compose, serve, normalize, or route
+  surface changed.
+
+### Known limitations
+- Cursor MCP delivery is stubbed pending the v0.8.0 htmd MCP server.
+  The transport contract above the stub is stable; the wire is the
+  one moving piece.
+- Cursor does not yet have a documented Stop-hook contract. The
+  reference adapter is shaped like the OpenClaw and cowork adapters
+  for symmetry; the wiring point inside Cursor (extension manifest
+  vs. CLI wrapper vs. sidecar) firms up once the MCP server lands.
+
 ## [0.6.0-alpha.0] — 2026-05-19
 
 Agent-side intent metadata. Removes the harness adapter's need to
