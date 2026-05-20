@@ -23,9 +23,34 @@ limitations, and gotchas as v0.5 ships.
 - Per-template routing overrides are not supported; routing decisions
   run on the wire format, not the template choice.
 
-## Open follow-ups (not blockers for alpha)
+## Decisions locked for v0.5.0-beta (2026-05-19)
 
-- Add `htmd route --explain` (debug rule trace). Punted from alpha.
+| Topic | Decision |
+|---|---|
+| Cowork MCP wire format | **Stubbed pending public spec.** The `cowork-mcp` transport defines a `_deliver` call site that the real MCP invocation drops into without changing the transport contract. Default delivery is file-drop (`~/.htmd/cowork/inbox.jsonl`) so a sidecar can tail and replay. |
+| Default cowork delivery mode | `file`. Alternatives are `http` (stand-in via `HTMD_COWORK_MCP_URL`) and `noop` (smoke test). |
+| Cowork session addressing | Submissions carry `sessionId`, sourced (in order): explicit `deliver()` arg → `HTMD_COWORK_SESSION_ID` env. `meta.coworkSessionId` populates the publish envelope so the harness can include it in any chat-side artifact. |
+| Adapter control-line shape | Cowork emits `[[htmd:page transport=cowork-mcp id=… url=… submit=…]]`. OpenClaw stays at `[[htmd:page id=… url=… submit=…]]`. The `transport=` tag is the only adapter-visible difference between the two reference adapters — confirming v0.5.0-beta's "transport abstraction holds" claim. |
+| Transport interface refactor | **None.** The cowork-mcp transport implemented cleanly against the v0.5.0-alpha `HtmdTransport` shape (`publish` → envelope, `deliver` → `{ ok, detail? }`) without any contract changes. The plan budgeted for an "inevitable refactor"; in practice the alpha contract held. |
+
+## Known limitations going into beta
+
+- Cowork MCP delivery is stubbed. Real wiring is one function swap
+  inside `cowork-mcp.js` once the spec is public; the transport
+  contract above it does not change.
+- `cowork-mcp` `http` mode currently uses Node's global `fetch`. Tests
+  exercise the call-site shape via the `_deliver` override rather than
+  spinning up a real HTTP listener; if/when the real MCP control
+  surface is wired, replace the `deliverViaHttp` body and add an
+  integration test against a local stub.
+- Per-transport routing is still not supported — routing decisions run
+  on wire format, not the chosen transport. (No regression from alpha.)
+
+## Open follow-ups (not blockers for beta)
+
+- Add `htmd route --explain` (debug rule trace). Punted from alpha;
+  still useful, still punted.
 - Schema validation for `htmd.config.json` (currently best-effort).
 - Decide whether the `openclaw-telegram` SSH reply path should move
   into `htmd serve` once the transport contract stabilizes.
+- Real cowork-mcp wire integration once the MCP spec lands.

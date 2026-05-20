@@ -3,6 +3,46 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.5.0-beta.0] — 2026-05-19
+
+Second Phase 3 transport. Validates that the v0.5.0-alpha transport
+contract isn't OpenClaw-shaped by hand.
+
+### Added
+- **`cowork-mcp` transport** in `src/transports/cowork-mcp.js`. Targets
+  Anthropic Cowork sessions via the cowork-mcp surface. Publishes
+  renders locally via the shared `serve-helpers.publishRender` pipeline
+  and delivers submissions via one of three modes:
+  - `file` (default) — appends newline-JSON to
+    `~/.htmd/cowork/inbox.jsonl` for a sidecar to replay.
+  - `http` — POSTs `{ id, sessionId, action, payload }` to
+    `HTMD_COWORK_MCP_URL` (stand-in for the eventual MCP control call).
+  - `noop` — log + ok; smoke test.
+
+  The Cowork MCP wire format is not yet public (2026-05-19); the
+  transport defines a clean `_deliver` call site so the real MCP
+  invocation drops in without touching the transport contract.
+  `createCoworkMcpTransport()` accepts `_deliver` / `_publishRender`
+  overrides for tests and future wiring.
+- Reference Stop-hook adapter for Claude Code / Desktop cowork at
+  `examples/adapters/cowork-stop-hook.mjs`. Identical to the OpenClaw
+  adapter modulo two lines (transport default + control-line tag) —
+  by design.
+- `docs/ADAPTERS.md` expanded with a "writing a new adapter" walkthrough
+  that uses cowork-mcp as the worked example.
+
+### Changed
+- Version bumped to `0.5.0-beta.0`. No transport-interface refactor —
+  the alpha contract (`HtmdTransport` shape: `publish` returns an
+  envelope, `deliver` returns `{ ok, detail? }`) held without
+  modification across both transports. Plan budgeted for an
+  "inevitable refactor"; we got lucky.
+
+### Known limitations
+- Cowork MCP delivery is stubbed pending public spec. The transport
+  contract above the stub is stable.
+- Streaming partial renders remain out of scope for v0.5.
+
 ## [0.5.0-alpha.0] — 2026-05-12
 
 First alpha of Phase 3: per-turn routing + transport contract. See
