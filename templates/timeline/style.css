@@ -1,0 +1,69 @@
+.tl { max-width: 760px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.tl-head { margin-bottom: 1.25rem; }
+.tl-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.tl-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+
+.tl-list {
+  list-style: none; padding: 0; margin: 0;
+  position: relative;
+  padding-left: 1.5rem;
+}
+.tl-list::before {
+  content: ''; position: absolute;
+  top: 0.3rem; bottom: 0.3rem;
+  left: 0.5rem;
+  width: 2px;
+  background: var(--htmd-border);
+  border-radius: 2px;
+}
+
+.tl-item {
+  position: relative;
+  padding: 0.4rem 0 1.1rem 1rem;
+}
+.tl-marker {
+  position: absolute;
+  left: -1.05rem; top: 0.65rem;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  background: var(--htmd-surface);
+  border: 3px solid var(--htmd-muted);
+  box-shadow: 0 0 0 3px var(--htmd-bg);
+}
+.tl-info    .tl-marker { border-color: var(--htmd-info); }
+.tl-success .tl-marker { border-color: var(--htmd-success); }
+.tl-warning .tl-marker { border-color: var(--htmd-warn); }
+.tl-error   .tl-marker { border-color: var(--htmd-danger); }
+.tl-neutral .tl-marker { border-color: var(--htmd-muted); }
+
+.tl-body {
+  background: var(--htmd-surface);
+  border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius);
+  padding: 0.7rem 0.9rem;
+  box-shadow: var(--htmd-shadow);
+}
+.tl-meta {
+  display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;
+  font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted);
+  margin-bottom: 0.35rem;
+}
+.tl-ts { font-variant-numeric: tabular-nums; font-weight: 600; }
+.tl-actor::before { content: '@'; opacity: 0.6; }
+.tl-pill {
+  margin-left: auto;
+  padding: 0.1rem 0.5rem; border-radius: 999px;
+  font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.tl-pill-info    { background: var(--htmd-info-soft);    color: var(--htmd-info); }
+.tl-pill-success { background: var(--htmd-success-soft); color: var(--htmd-success); }
+.tl-pill-warning { background: var(--htmd-warn-soft);    color: var(--htmd-warn); }
+.tl-pill-error   { background: var(--htmd-danger-soft);  color: var(--htmd-danger); }
+.tl-pill-neutral { background: var(--htmd-surface-2);    color: var(--htmd-fg-muted); }
+
+.tl-evt-title { font-weight: 600; line-height: 1.35; }
+.tl-evt-body { margin-top: 0.3rem; font-size: var(--htmd-text-sm); line-height: 1.55; color: var(--htmd-fg); white-space: pre-wrap; }
+
+@media print {
+  .tl-body { box-shadow: none; break-inside: avoid; }
+}

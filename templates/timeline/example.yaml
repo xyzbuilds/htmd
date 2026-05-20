@@ -1,0 +1,37 @@
+title: htmd v0.9 release timeline
+subtitle: Recent activity for the v0.9.0 cycle
+events:
+  - timestamp: 2026-05-19T09:14:00Z
+    title: "Cut v0.8.0-alpha.0"
+    body: "MCP server tools land. CI green."
+    actor: xy
+    kind: success
+  - timestamp: 2026-05-19T14:30:00Z
+    title: "Internal feedback on MCP tool naming"
+    body: "Renamed htmd_route output field to `decision` for clarity."
+    actor: claude
+    kind: info
+  - timestamp: 2026-05-20T08:02:00Z
+    title: "Started v0.9 template work"
+    body: "Scaffolding 5 new templates: code-diff, pr-review, form, timeline, network-graph."
+    actor: claude
+    kind: info
+  - timestamp: 2026-05-20T10:45:00Z
+    title: "code-diff hunk algorithm regression"
+    body: "LCS table allocator OOM'd on 5k-line files. Fixed by switching to Int32Array per row."
+    actor: claude
+    kind: warning
+  - timestamp: 2026-05-20T11:30:00Z
+    title: "network-graph layout NaN crash"
+    body: "Coincident node positions produced NaN forces. Added min-distance epsilon."
+    actor: claude
+    kind: error
+  - timestamp: 2026-05-20T13:00:00Z
+    title: "All 5 templates render their example"
+    actor: claude
+    kind: success
+  - timestamp: 2026-05-20T14:30:00Z
+    title: "Released v0.9.0-alpha.0"
+    body: "Tag pushed, CHANGELOG updated."
+    actor: xy
+    kind: success
