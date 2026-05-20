@@ -3,6 +3,44 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.9.0-alpha.0] — 2026-05-20
+
+Five new templates. All follow the existing `templates/<name>/`
+structure (render.js + schema.json + style.css + optional script.js +
+example.yaml + description.md) and reuse the established FAB / modal /
+toast pattern for interactive submission. No new dependencies, no
+build step, no external CDNs.
+
+### Added
+
+- **`code-diff`** — side-by-side/unified diff viewer. Computes hunks
+  via LCS-based line diff at render time. Per-hunk accept/reject
+  buttons aggregate decisions into a prompt copied back via the FAB.
+  Simple regex tokenization for JS/TS and Python (no Prism /
+  highlight.js — those are external libs).
+- **`pr-review`** — list of changed files with per-file inline
+  comment threads. Each comment has a "Mark resolved" toggle; changes
+  (newly resolved + reopened) are aggregated into a prompt.
+- **`form`** — generic schema-driven form. Supports `text`,
+  `textarea`, `number`, `select`, `checkbox` (single or group),
+  `radio`, `date`, `email`, and `url` fields. Required-field
+  validation client-side; submission aggregated as a prompt.
+- **`timeline`** — read-only vertical chronological event log with
+  kind-based color coding (`info` / `success` / `warning` / `error` /
+  `neutral`).
+- **`network-graph`** — read-only node-edge SVG visualization. Layout
+  is computed at render time with a hand-rolled force-directed
+  algorithm (~40 LOC) seeded by a deterministic PRNG, so identical
+  inputs produce identical layouts. Ships an accessible fallback
+  node/edge table.
+
+### Changed
+
+- `src/templates.js` BUILTIN_NAMES extended with the five new
+  templates so they are auto-discovered.
+- `tests/render.test.js` ALL_TEMPLATES, INTERACTIVE_TEMPLATES, and
+  STATEFUL lists extended to cover the new templates.
+
 ## [0.8.0-alpha.0] — 2026-05-20
 
 htmd as MCP server. Lands a first-party Model Context Protocol server

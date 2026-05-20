@@ -28,7 +28,12 @@ const ALL_TEMPLATES = [
   'text-redline',
   'priority-matrix',
   'chart-block',
-  'code-review'
+  'code-review',
+  'code-diff',
+  'pr-review',
+  'form',
+  'timeline',
+  'network-graph'
 ];
 
 const INTERACTIVE_TEMPLATES = new Set([
@@ -47,7 +52,10 @@ const INTERACTIVE_TEMPLATES = new Set([
   'code-review',
   'decision-matrix',
   'comparison-3-up',
-  'email-digest'
+  'email-digest',
+  'code-diff',
+  'pr-review',
+  'form'
 ]);
 
 describe('templates registry', () => {
@@ -93,7 +101,10 @@ describe('export protocol convention', () => {
     'code-review',
     'decision-matrix',
     'comparison-3-up',
-    'email-digest'
+    'email-digest',
+    'code-diff',
+    'pr-review',
+    'form'
   ];
   for (const name of STATEFUL) {
     it(`${name} exposes data-htmd-state`, async () => {
