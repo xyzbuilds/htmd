@@ -7,6 +7,13 @@ import { html, raw, toString, escapeHtml } from './html-tag.js';
 import { md, mdToHtml } from './md.js';
 import * as chart from './chart.js';
 import { inlineEmailCss } from './email-inliner.js';
+import {
+  resolveCacheOptions,
+  templateSourceHash,
+  computeKey,
+  cacheGet,
+  cacheSet
+} from './render-cache.js';
 
 const ROOT = projectRoot();
 const TOKENS_CSS = readFileSync(join(ROOT, 'templates/_base/tokens.css'), 'utf8');
@@ -76,9 +83,26 @@ export async function renderTemplateParts(name, data, opts = {}) {
 }
 
 export async function renderTemplate(name, data, opts = {}) {
-  const parts = await renderTemplateParts(name, data, opts);
   const mode = normalizeMode(opts.mode);
-  const html = wrapShell({
+  const cacheOpts = resolveCacheOptions(opts.cache);
+
+  let cacheKey = null;
+  if (cacheOpts.enabled) {
+    const tpl = await loadTemplate(name);
+    const tplHash = templateSourceHash(tpl);
+    cacheKey = computeKey({
+      template: name,
+      templateHash: tplHash,
+      data,
+      options: cacheKeyOptions(opts),
+      mode
+    });
+    const hit = cacheGet(cacheKey, cacheOpts);
+    if (hit !== null) return hit;
+  }
+
+  const parts = await renderTemplateParts(name, data, opts);
+  const wrapped = wrapShell({
     title: parts.title,
     body: parts.body,
     css: parts.css,
@@ -86,8 +110,22 @@ export async function renderTemplate(name, data, opts = {}) {
     template: name,
     lang: opts.lang || 'en'
   });
-  if (mode === 'email') return inlineEmailCss(html);
-  return html;
+  const finalHtml = mode === 'email' ? inlineEmailCss(wrapped) : wrapped;
+
+  if (cacheOpts.enabled && cacheKey) {
+    cacheSet(cacheKey, finalHtml, cacheOpts);
+  }
+  return finalHtml;
+}
+
+// Pick only the rendering-relevant options for the cache key. `cache` and
+// internal validation toggles must not enter the key, otherwise enabling the
+// cache would change keys vs. disabled and break the byte-parity invariant.
+function cacheKeyOptions(opts) {
+  return {
+    title: opts.title ?? null,
+    lang: opts.lang ?? null
+  };
 }
 
 function normalizeMode(mode) {

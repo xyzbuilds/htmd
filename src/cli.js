@@ -20,7 +20,7 @@ import { getTransport, listTransports, hasTransport } from './transports/index.j
 import { renderMarkdown as renderMd } from './render.js';
 import { startStdioServer } from './mcp-server/index.js';
 
-const VERSION = '0.10.0-alpha.0';
+const VERSION = '0.11.0-alpha.0';
 
 export async function run(argv) {
   const program = new Command();
@@ -62,6 +62,10 @@ export async function run(argv) {
     .option('-o, --out <file>', 'output file (default: stdout)')
     .option('--no-validate', 'skip schema validation')
     .option('--mode <mode>', 'render mode: web (default) or email (inline CSS, no JS, no external assets)', 'web')
+    .option('--cache', 'enable content-hash render cache (opt-in; uses OS temp dir unless HTMD_CACHE_DIR is set)')
+    .option('--cache-dir <path>', 'cache directory (overrides HTMD_CACHE_DIR and config)')
+    .option('--cache-ttl <ms>', 'cache TTL in milliseconds (default: 86400000 = 24h)')
+    .option('--cache-max-bytes <n>', 'cache size cap in bytes (default: 104857600 = 100MB)')
     .option('--json', 'emit JSON envelope (for scripting): { ok, html, errors }')
     .option('--serve', 'publish to the local htmd serve dir and print the Tailscale URL')
     .option('--serve-dir <dir>', `serve dir (default: ${defaultRenderDir()})`)
@@ -85,7 +89,12 @@ export async function run(argv) {
             throw new Error('No data source. Provide --data <file> or --inline <json>.');
           }
         }
-        const html = await renderTemplate(name, data, { validate: opts.validate, mode: opts.mode });
+        const cacheOption = resolveCliCache(opts);
+        const html = await renderTemplate(name, data, {
+          validate: opts.validate,
+          mode: opts.mode,
+          cache: cacheOption
+        });
         if (opts.serve) {
           await runServePublish({ html, slug: data?.title || name, opts });
           return;
@@ -409,6 +418,29 @@ async function readTextOrStdin(file) {
 
 function safeJson(s) {
   try { return JSON.parse(s); } catch { return {}; }
+}
+
+// Resolve cache options for the `htmd render` subcommand from CLI flags + config.
+// Precedence: explicit CLI > config (`cache.enabled: true`) > disabled.
+function resolveCliCache(opts) {
+  const { config } = loadConfig();
+  const fileCache = config.cache || {};
+  const enabled = opts.cache === true || fileCache.enabled === true;
+  if (!enabled) return false;
+  const out = { enabled: true };
+  const dir = opts.cacheDir || process.env.HTMD_CACHE_DIR || fileCache.dir;
+  if (dir) out.dir = dir;
+  const ttlRaw = opts.cacheTtl ?? fileCache.ttlMs;
+  if (ttlRaw !== undefined) {
+    const n = Number(ttlRaw);
+    if (Number.isFinite(n) && n > 0) out.ttlMs = n;
+  }
+  const maxRaw = opts.cacheMaxBytes ?? fileCache.maxBytes;
+  if (maxRaw !== undefined) {
+    const n = Number(maxRaw);
+    if (Number.isFinite(n) && n > 0) out.maxBytes = n;
+  }
+  return out;
 }
 
 function deriveSlug(md) {
