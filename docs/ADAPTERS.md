@@ -5,7 +5,8 @@ Claude Code, etc.) and htmd's routing pipeline. It is not part of
 the htmd package; you copy it into your harness's hooks dir and adjust.
 
 This doc covers the OpenClaw Stop-hook adapter shipped with
-v0.5.0-alpha and the cowork-mcp adapter shipped with v0.5.0-beta.
+v0.5.0-alpha, the cowork-mcp adapter shipped with v0.5.0-beta, and
+the Cursor adapter shipped with v0.7.0-alpha.
 
 ## What an adapter does
 
@@ -100,19 +101,74 @@ chmod +x ~/.claude/hooks/stop-htmd-route.mjs
 Register it as a Stop hook in your harness's `settings.json` (Claude
 Code config). The hook command is `~/.claude/hooks/stop-htmd-route.mjs`.
 
+## Cursor adapter (v0.7.0-alpha)
+
+The Cursor adapter targets Cursor IDE chat sessions via the `cursor`
+transport. Cursor exposes custom MCP (Model Context Protocol) servers
+over stdio; the long-term plan (v0.8.0) is a first-party htmd MCP
+server that Cursor launches as a child process and addresses turn by
+turn. v0.7.0 lands the transport shape — publish + deliver — with a
+stubbed delivery call site that swaps in for the real MCP invocation
+without touching the transport contract.
+
+Prerequisites:
+
+- `htmd` 0.7.0-alpha.0+ on `PATH` (or set `HTMD_BIN`).
+- A way for the Cursor session to ingest submissions. Three modes ship:
+  - **`HTMD_CURSOR_DELIVERY=file`** (default) — submissions append as
+    newline-JSON to `~/.htmd/cursor/inbox.jsonl`. A small sidecar
+    (eventually the htmd MCP server itself) tails the file and replays
+    each entry into the addressed Cursor session.
+  - **`HTMD_CURSOR_DELIVERY=http`** — submissions POST to
+    `HTMD_CURSOR_MCP_URL`. Stand-in for the eventual MCP control call;
+    the wire shape is `{ id, sessionId, workspace, action, payload }`
+    and the call site is one swap away from a real MCP invocation.
+  - **`HTMD_CURSOR_DELIVERY=noop`** — log + ok; smoke test only.
+- `HTMD_CURSOR_SESSION_ID` (optional) — addresses submissions to a
+  specific Cursor chat session.
+- `HTMD_CURSOR_WORKSPACE` (optional) — Cursor project path / id for
+  the submission. Until the MCP server is wired, both fields are
+  passed through the inbox so a sidecar can route correctly.
+
+Install:
+
+```bash
+mkdir -p ~/.cursor/hooks
+cp ~/code/htmd/examples/adapters/cursor-stop-hook.mjs \
+   ~/.cursor/hooks/stop-htmd-route.mjs
+chmod +x ~/.cursor/hooks/stop-htmd-route.mjs
+```
+
+Wire the script in as the Cursor harness's outbound message hook. Until
+Cursor exposes a stable Stop-hook contract, run the adapter from the
+host wrapping Cursor's CLI (the standalone "agent loop" path) or from
+the sidecar that ingests `inbox.jsonl`.
+
+The Cursor adapter emits a control line identical in shape to the
+cowork adapter, with `transport=cursor`:
+
+```text
+[[htmd:page transport=cursor id=… url=… submit=…]]
+```
+
+Three adapters now share that line shape; harnesses that consume the
+shape can dispatch on the `transport` tag alone.
+
 ## Writing a new adapter — the cowork walkthrough
 
-The two reference adapters are nearly identical. Reading them side by
-side is the fastest way to see what a new adapter has to do.
+The three reference adapters are nearly identical. Reading them side
+by side is the fastest way to see what a new adapter has to do.
 
 ```
 examples/adapters/openclaw-stop-hook.mjs   ← v0.5.0-alpha
 examples/adapters/cowork-stop-hook.mjs     ← v0.5.0-beta
+examples/adapters/cursor-stop-hook.mjs     ← v0.7.0-alpha
 ```
 
 Differences are entirely in two lines:
 
-1. The `HTMD_TRANSPORT` default (`openclaw-telegram` → `cowork-mcp`).
+1. The `HTMD_TRANSPORT` default (`openclaw-telegram` → `cowork-mcp` →
+   `cursor`).
 2. The control line emitted on `action: "page"` carries a `transport=`
    tag so the harness knows which delivery surface owns the submit
    endpoint:
@@ -120,6 +176,7 @@ Differences are entirely in two lines:
    ```text
    openclaw: [[htmd:page id=… url=… submit=…]]
    cowork:   [[htmd:page transport=cowork-mcp id=… url=… submit=…]]
+   cursor:   [[htmd:page transport=cursor id=… url=… submit=…]]
    ```
 
 Everything else — stdin read, `htmd normalize --json` invocation,

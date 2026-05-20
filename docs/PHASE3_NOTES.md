@@ -71,6 +71,34 @@ limitations, and gotchas as v0.5 ships.
   detected `format` still reports `plain` (not `markdown`) because
   format detection looks at the raw input.
 
+## Decisions locked for v0.7.0-alpha (2026-05-19)
+
+| Topic | Decision |
+|---|---|
+| Cursor transport name | `cursor` (not `cursor-mcp`). Cursor IDE is the addressed surface; `mcp` is one of several possible wire formats and the eventual primary one. Naming after the surface keeps the door open for non-MCP wire integrations (a Cursor extension HTTP listener, e.g.) without renaming. |
+| Cursor delivery wire | **Stubbed pending v0.8.0 htmd MCP server.** Same `_deliver` pattern as cowork-mcp — defaults to file-drop (`~/.htmd/cursor/inbox.jsonl`), with `http` (stand-in for the eventual MCP control surface) and `noop` modes. The real MCP invocation drops into the `mcp` mode (or replaces `http`) without touching the transport contract. |
+| Default cursor delivery mode | `file`. Mirrors cowork-mcp; lowest-friction smoke test path. |
+| Cursor session addressing | Submissions carry `sessionId` + `workspace`. Sourced (in order): explicit `deliver()` arg → `HTMD_CURSOR_SESSION_ID` / `HTMD_CURSOR_WORKSPACE` env. `meta.cursorSessionId` and `meta.cursorWorkspace` populate the publish envelope so the harness can include them in chat-side artifacts. Workspace is a Cursor-specific addition over the cowork shape; the sidecar that replays the inbox needs both to route into the correct project window. |
+| Adapter control-line shape | Cursor emits `[[htmd:page transport=cursor id=… url=… submit=…]]`. Three adapters now share the line shape; harnesses that consume the shape can dispatch on the `transport` tag. |
+| Transport interface refactor | **None.** Cursor implemented cleanly against the v0.5.0-alpha `HtmdTransport` contract; the alpha shape now holds across three adapters (openclaw-telegram, cowork-mcp, cursor). |
+| Relationship to v0.8.0 (htmd MCP server) | The `cursor` transport's `_deliver` call site is the integration point for the future htmd MCP server. When v0.8.0 lands, the change is one function swap inside `cursor.js` (and a parallel one in `cowork-mcp.js`). The transport name, envelope shape, and adapter remain stable. |
+
+## Known limitations going into v0.7.0-alpha
+
+- Cursor MCP delivery is stubbed pending the v0.8.0 htmd MCP server.
+  The transport contract above the stub is stable; the `mcp` wire is
+  the one moving piece.
+- Cursor does not yet have a documented Stop-hook contract. The
+  reference adapter is shaped like the OpenClaw and cowork adapters
+  for symmetry, but the wiring point inside Cursor (extension manifest
+  vs. CLI wrapper vs. sidecar) is harness-specific and will firm up
+  once the MCP server lands.
+- The `cursor` transport's `http` mode shares the same call-site
+  caveat as cowork-mcp's: tests exercise the shape via `_deliver`
+  override rather than spinning a real HTTP listener. Replace
+  `deliverViaHttp` (or add an `mcp` mode) when wiring the real MCP
+  control surface.
+
 ## Open follow-ups (not blockers for beta)
 
 - Add `htmd route --explain` (debug rule trace). Punted from alpha;
@@ -79,3 +107,7 @@ limitations, and gotchas as v0.5 ships.
 - Decide whether the `openclaw-telegram` SSH reply path should move
   into `htmd serve` once the transport contract stabilizes.
 - Real cowork-mcp wire integration once the MCP spec lands.
+- htmd MCP server (v0.8.0). Provides the `mcp` delivery mode that
+  both `cowork-mcp` and `cursor` transports defer to today. Lands as
+  a standalone module that Cursor (and other MCP-aware harnesses)
+  launch as a child process over stdio.
