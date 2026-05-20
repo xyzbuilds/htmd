@@ -1,0 +1,45 @@
+title: PR review
+pr:
+  title: "Add TTL support to cache"
+  author: claude
+  base: main
+  head: feat/cache-ttl
+  number: 142
+prompt_intro: "PR #142 review follow-ups"
+files:
+  - path: src/cache.js
+    status: modified
+    additions: 12
+    deletions: 3
+    comments:
+      - line: 14
+        author: reviewer
+        body: "Why store expires as null instead of Infinity? Simpler comparison."
+      - line: 22
+        author: reviewer
+        body: "Consider exporting the expiry check as a helper so we can unit-test it."
+      - line: 30
+        author: agent
+        body: "Renamed to ttlMs for clarity."
+        resolved: true
+  - path: src/index.js
+    status: modified
+    additions: 1
+    deletions: 1
+    comments:
+      - line: 1
+        author: reviewer
+        body: "Export `clear` too — it's used in tests."
+  - path: tests/cache.test.js
+    status: added
+    additions: 48
+    deletions: 0
+    comments: []
+  - path: README.md
+    status: modified
+    additions: 6
+    deletions: 1
+    comments:
+      - line: 8
+        author: reviewer
+        body: "Add an example with no TTL to show the default behavior."

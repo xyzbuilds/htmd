@@ -1,0 +1,49 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "pr-review",
+  "type": "object",
+  "required": ["pr", "files"],
+  "properties": {
+    "title": { "type": "string" },
+    "block_id": { "type": "string" },
+    "prompt_intro": { "type": "string" },
+    "pr": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "author": { "type": "string" },
+        "base": { "type": "string" },
+        "head": { "type": "string" },
+        "number": { "type": ["number", "string"] }
+      }
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "id": { "type": "string" },
+          "path": { "type": "string" },
+          "status": { "type": "string", "enum": ["added", "modified", "deleted", "renamed"] },
+          "additions": { "type": "number" },
+          "deletions": { "type": "number" },
+          "comments": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["line", "body"],
+              "properties": {
+                "id": { "type": "string" },
+                "line": { "type": "number" },
+                "author": { "type": "string" },
+                "body": { "type": "string" },
+                "resolved": { "type": "boolean" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
