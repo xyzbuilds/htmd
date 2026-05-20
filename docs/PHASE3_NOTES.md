@@ -135,6 +135,27 @@ limitations, and gotchas as v0.5 ships.
   expect e.g. an "open render id" session must thread that state
   themselves via tool arguments.
 
+## Decisions locked for v0.10.0-alpha (2026-05-20)
+
+| Topic | Decision |
+|---|---|
+| New surface | `htmd render --mode=email` (CLI) and `renderTemplate(name, data, { mode: 'email' })` (lib). Web mode (`--mode=web`, default) is unchanged. MCP gets a `mode` argument on `htmd_render`. |
+| Output guarantees | No `<script>`, no `<link rel="stylesheet">`, no `<style>` block (post-inlining), no `var(--…)` CSS expressions in the body. Single self-contained HTML document, safe to paste into a Gmail compose or attach to a `multipart/related` email. |
+| Inliner choice | **Hand-rolled** (`src/email-inliner.js`, ~500 LOC). Considered `juice` (pulls in `cheerio`, `mensch`, `web-resource-inliner`, `slick`, `entities` — large transitive surface, against CLAUDE.md's "no frameworks") and `linkedom` (pulls in `css-select`, `cssom`, `htmlparser2`). The hand-rolled inliner handles only the subset htmd output actually uses: tag / class / id selectors with descendant + child combinators + multi-class, `:first-child` / `:last-child` / `:nth-child(N)`, and comma-separated lists. Unsupported selectors (`:hover`, `::before`, `*`, `+`, `~`) and `@media`-gated rules are dropped silently. The CSS-custom-property layer is resolved at render time against the `:root` block's light-mode values; nested `var()` chains and `var(--x, fallback)` syntax are honored. |
+| Pseudo-element handling | `::before` / `::after` content rules are dropped — they produce no real DOM nodes that an inliner can target, and most email clients ignore them anyway. Templates that rely on `::before` for decorative content (e.g. `.sr-meta-owner::before { content: "by "; }`) lose the decoration in email mode; this is documented, not a bug. |
+| Dark mode | Skipped in email mode. The `@media (prefers-color-scheme: dark)` block in `tokens.css` is parsed but its overrides are ignored; only the light-mode `:root` values are resolved into inline styles. Same rationale as Gmail / Outlook: dark mode is the client's job to invert. |
+| Responsive media queries | `@media (max-width: ...)` rules are skipped. Email is delivered at a fixed width per client; templates' mobile layouts don't apply. |
+| External fonts / images | No external `<link rel=…font…>` ever appears in htmd output (we use system fonts via `--htmd-font-sans`). External `<img src="https://…">` is rare across the existing templates; the inliner leaves any `<img>` tag intact (mail clients handle their own image policy) and just strips `<script>` and `<link>` wrapper tags. |
+| Determinism | Email mode is deterministic. Same data + same template = byte-identical HTML. Snapshot-tested on `status-report` in `tests/email-mode.test.js`. |
+| Templates marked interactive | In email mode, scripts are stripped — the FAB / kanban-drag / form-submit JS goes away. The HTML is read-only by design. No regression: web mode is unchanged. |
+
+## Known limitations going into v0.10.0-alpha
+
+- `::before` / `::after` decorations do not render in email mode (no DOM target for inline styles). Templates that depend on them for non-decorative content should add the same content as a regular element when possible.
+- `color-mix()` and `linear-gradient()` are passed through as-is after `var()` resolution. Outlook desktop drops them; Gmail and Apple Mail handle them. Templates using gradients (`.sr-hero`) will fall back to the resolved background color in Outlook.
+- The hand-rolled HTML parser handles the subset htmd templates actually emit (well-formed XHTML-ish output from the `html` tagged-template helper). It is not a general-purpose HTML5 parser. Passing arbitrary user HTML into `wrapShell` and then rendering in email mode is out of scope.
+- Layout via CSS Grid / Flexbox is left intact (the inliner doesn't rewrite to tables). Outlook 2016+ ignores grid; Gmail and Apple Mail render correctly. Templates that need pixel-perfect Outlook rendering should add table-based fallbacks at the template level — out of scope for v0.10.0.
+
 ## Open follow-ups (not blockers for beta)
 
 - Add `htmd route --explain` (debug rule trace). Punted from alpha;
