@@ -1,0 +1,109 @@
+.cdf { max-width: 1080px; margin: 0 auto; padding: 1.25rem 1rem 5rem; }
+.cdf-head { margin-bottom: 1rem; }
+.cdf-title { font-size: var(--htmd-text-2xl); font-weight: 700; letter-spacing: -0.02em; }
+.cdf-subtitle { margin-top: 0.4rem; color: var(--htmd-fg-muted); }
+.cdf-hint { margin-top: 0.5rem; color: var(--htmd-fg-muted); font-size: var(--htmd-text-sm); }
+
+.cdf-file {
+  background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); margin-bottom: 1rem; overflow: hidden;
+  box-shadow: var(--htmd-shadow);
+}
+.cdf-file-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.6rem 0.85rem; background: var(--htmd-surface-2);
+  border-bottom: 1px solid var(--htmd-border);
+}
+.cdf-path { font-family: var(--htmd-font-mono); font-size: var(--htmd-text-sm); font-weight: 600; }
+.cdf-meta { display: flex; gap: 0.6rem; font-size: var(--htmd-text-xs); align-items: center; }
+.cdf-lang { padding: 0.1rem 0.45rem; border-radius: 4px; background: var(--htmd-surface); border: 1px solid var(--htmd-border); color: var(--htmd-fg-muted); }
+.cdf-add { color: var(--htmd-success); font-weight: 600; font-variant-numeric: tabular-nums; }
+.cdf-del { color: var(--htmd-danger); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.cdf-body { font-family: var(--htmd-font-mono); font-size: 0.82rem; line-height: 1.45; }
+.cdf-hunk { border-top: 1px dashed var(--htmd-border); }
+.cdf-hunk:first-child { border-top: none; }
+.cdf-hunk-actions {
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: 0.4rem 0.6rem; background: var(--htmd-surface-2);
+  border-bottom: 1px solid var(--htmd-border);
+}
+.cdf-hb {
+  min-height: 28px; padding: 0.25rem 0.7rem;
+  font-size: var(--htmd-text-xs); font-weight: 600;
+  border-radius: 999px; cursor: pointer;
+  background: var(--htmd-surface); color: var(--htmd-fg);
+  border: 1.5px solid var(--htmd-border);
+}
+.cdf-hb:hover { border-color: var(--htmd-accent); }
+.cdf-hb-accept[aria-pressed="true"] { background: var(--htmd-success); color: #fff; border-color: var(--htmd-success); }
+.cdf-hb-reject[aria-pressed="true"] { background: var(--htmd-danger); color: #fff; border-color: var(--htmd-danger); }
+.cdf-hunk-status { font-size: var(--htmd-text-xs); color: var(--htmd-fg-muted); margin-left: auto; }
+
+.cdf-lines { padding: 0.35rem 0; }
+.cdf-row { display: grid; grid-template-columns: 3.2rem 3.2rem 1rem 1fr; gap: 0; padding: 0 0.5rem; }
+.cdf-row.cdf-add { background: var(--htmd-success-soft); }
+.cdf-row.cdf-del { background: var(--htmd-danger-soft); }
+.cdf-gutter { color: var(--htmd-muted); font-variant-numeric: tabular-nums; text-align: right; padding-right: 0.6rem; user-select: none; }
+.cdf-sign { color: var(--htmd-fg-muted); text-align: center; user-select: none; }
+.cdf-add .cdf-sign { color: var(--htmd-success); font-weight: 700; }
+.cdf-del .cdf-sign { color: var(--htmd-danger); font-weight: 700; }
+.cdf-text { white-space: pre; overflow-x: auto; }
+
+.cdf-tok-kw { color: var(--htmd-accent); font-weight: 600; }
+.cdf-tok-str { color: var(--htmd-success); }
+.cdf-tok-num { color: var(--htmd-info); }
+.cdf-tok-cmt { color: var(--htmd-fg-muted); font-style: italic; }
+
+.cdf-fab {
+  position: fixed; bottom: 1.1rem; right: 1.1rem; z-index: 80;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  min-height: 44px; padding: 0.6rem 1.1rem;
+  background: var(--htmd-accent); color: var(--htmd-accent-fg);
+  border: none; border-radius: 999px;
+  font-size: var(--htmd-text-sm); font-weight: 700;
+  box-shadow: var(--htmd-shadow-lg); cursor: pointer;
+}
+.cdf-fab:disabled, .cdf-fab[aria-disabled="true"] { opacity: 0.55; cursor: not-allowed; }
+.cdf-fab-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 1.4rem; height: 1.4rem; padding: 0 0.4rem;
+  background: rgba(255,255,255,0.22); border-radius: 999px;
+  font-size: var(--htmd-text-xs); font-weight: 700;
+}
+.cdf-modal { position: fixed; inset: 0; z-index: 200; display: flex; align-items: center; justify-content: center; padding: 1rem; }
+.cdf-modal[hidden] { display: none; }
+.cdf-backdrop { position: absolute; inset: 0; background: rgba(15,23,42,0.55); }
+.cdf-panel {
+  position: relative; background: var(--htmd-surface); border: 1px solid var(--htmd-border);
+  border-radius: var(--htmd-radius); width: 100%; max-width: 640px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden; box-shadow: var(--htmd-shadow-lg);
+}
+.cdf-panel header { display: flex; justify-content: space-between; align-items: center; padding: 0.85rem 1rem; border-bottom: 1px solid var(--htmd-border); }
+.cdf-panel header h2 { font-size: var(--htmd-text-lg); font-weight: 700; }
+.cdf-x { background: transparent; border: none; font-size: 1.1rem; color: var(--htmd-fg-muted); width: 36px; height: 36px; border-radius: 999px; }
+.cdf-pre { margin: 0; padding: 1rem 1.1rem; flex: 1; overflow-y: auto; background: var(--htmd-surface-2); font-family: var(--htmd-font-mono); font-size: 0.78rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+.cdf-panel footer { padding: 0.75rem 1rem; border-top: 1px solid var(--htmd-border); display: flex; justify-content: flex-end; gap: 0.5rem; }
+.cdf-btn { min-height: 40px; padding: 0.5rem 1rem; border-radius: var(--htmd-radius-sm); font-size: var(--htmd-text-sm); font-weight: 600; cursor: pointer; border: 1px solid transparent; }
+.cdf-btn-ghost { background: transparent; color: var(--htmd-fg-muted); border-color: var(--htmd-border); }
+.cdf-btn-primary { background: var(--htmd-accent); color: var(--htmd-accent-fg); }
+
+.cdf-toast {
+  position: fixed; bottom: 4.5rem; left: 50%; transform: translateX(-50%);
+  background: var(--htmd-fg); color: var(--htmd-bg);
+  padding: 0.55rem 1rem; border-radius: var(--htmd-radius-sm);
+  font-size: var(--htmd-text-sm); font-weight: 600;
+  z-index: 250; opacity: 0; transition: opacity 0.18s; pointer-events: none;
+  box-shadow: var(--htmd-shadow-lg);
+}
+.cdf-toast[hidden] { display: none; }
+.cdf-toast.cdf-toast-show { opacity: 1; }
+
+@media (max-width: 600px) {
+  .cdf-row { grid-template-columns: 2.2rem 2.2rem 0.85rem 1fr; font-size: 0.76rem; }
+  .cdf-gutter { padding-right: 0.4rem; }
+}
+@media print {
+  .cdf-fab, .cdf-modal, .cdf-toast, .cdf-hunk-actions { display: none !important; }
+  .cdf-file { box-shadow: none; break-inside: avoid; }
+}

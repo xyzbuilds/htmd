@@ -28,7 +28,12 @@ const BUILTIN_NAMES = [
   'text-redline',
   'priority-matrix',
   'chart-block',
-  'code-review'
+  'code-review',
+  'code-diff',
+  'pr-review',
+  'form',
+  'timeline',
+  'network-graph'
 ];
 
 const _cache = new Map();

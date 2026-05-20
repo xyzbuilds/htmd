@@ -1,0 +1,53 @@
+title: Refactor token cache
+subtitle: 3 files changed
+prompt_intro: Diff review for token-cache refactor
+allow_accept_reject: true
+files:
+  - path: src/cache.js
+    language: js
+    before: |
+      function get(key) {
+        const item = store.get(key);
+        if (!item) return null;
+        return item.value;
+      }
+
+      function set(key, value) {
+        store.set(key, { value });
+      }
+    after: |
+      function get(key) {
+        const item = store.get(key);
+        if (!item) return null;
+        if (item.expires && item.expires < Date.now()) {
+          store.delete(key);
+          return null;
+        }
+        return item.value;
+      }
+
+      function set(key, value, ttlMs) {
+        const expires = ttlMs ? Date.now() + ttlMs : null;
+        store.set(key, { value, expires });
+      }
+  - path: src/index.js
+    language: js
+    before: |
+      export { get, set } from './cache.js';
+    after: |
+      export { get, set, clear } from './cache.js';
+  - path: README.md
+    before: |
+      # cache
+
+      A small in-memory cache.
+    after: |
+      # cache
+
+      A small in-memory cache with TTL support.
+
+      ## Usage
+
+      ```js
+      set('k', 'v', 60_000);
+      ```
