@@ -1,0 +1,47 @@
+title: Bug report
+subtitle: Help us reproduce the issue
+intro: Fill in what you can — the agent will follow up if more detail is needed.
+submit_label: Send report
+prompt_intro: New bug report from the agent's UI
+fields:
+  - name: summary
+    label: Summary
+    type: text
+    required: true
+    placeholder: "e.g., Cache returns stale value after TTL expiry"
+  - name: severity
+    label: Severity
+    type: select
+    required: true
+    options:
+      - { value: low, label: Low }
+      - { value: medium, label: Medium }
+      - { value: high, label: High }
+      - { value: critical, label: Critical }
+  - name: areas
+    label: Affected areas
+    type: checkbox
+    options:
+      - { value: api, label: API }
+      - { value: cli, label: CLI }
+      - { value: docs, label: Docs }
+      - { value: web, label: Web }
+  - name: env
+    label: Environment
+    type: radio
+    options:
+      - { value: dev, label: Dev }
+      - { value: staging, label: Staging }
+      - { value: prod, label: Production }
+  - name: steps
+    label: Steps to reproduce
+    type: textarea
+    required: true
+    placeholder: "1. …\n2. …\n3. …"
+  - name: email
+    label: Reply email
+    type: email
+    help: We'll only use this to follow up.
+  - name: first_seen
+    label: First observed on
+    type: date

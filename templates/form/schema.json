@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "form",
+  "type": "object",
+  "required": ["title", "fields"],
+  "properties": {
+    "title": { "type": "string" },
+    "subtitle": { "type": "string" },
+    "intro": { "type": "string" },
+    "block_id": { "type": "string" },
+    "prompt_intro": { "type": "string" },
+    "submit_label": { "type": "string" },
+    "fields": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "label"],
+        "properties": {
+          "name": { "type": "string" },
+          "label": { "type": "string" },
+          "type": { "type": "string", "enum": ["text", "textarea", "number", "select", "checkbox", "radio", "date", "email", "url"] },
+          "required": { "type": "boolean" },
+          "help": { "type": "string" },
+          "placeholder": { "type": "string" },
+          "default": {},
+          "options": {
+            "type": "array",
+            "items": {
+              "oneOf": [
+                { "type": "string" },
+                { "type": "number" },
+                { "type": "object", "required": ["value"], "properties": { "value": {}, "label": { "type": "string" } } }
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
