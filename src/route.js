@@ -5,14 +5,20 @@
 // the harness deliver as plain chat) or as an interactive htmd page.
 //
 // Rules (in order, first-match wins):
-//   1. --prefer-inline → inline
-//   2. --needs-approval → page
-//   3. --prefer-page → page
+//   1. --prefer-inline | metadata `inline-only: true` → inline
+//   2. --needs-approval | metadata `needs-approval: true` → page
+//   3. --prefer-page | metadata `prefer-page: true` → page
 //   4. Contains Markdown table OR fenced code block with >= N lines → page
 //   5. chars > lengthThreshold → page
 //   6. Otherwise → inline (reason: below-thresholds)
 //
-// See docs/PHASE3_DESIGN.md §Routing.
+// v0.6 adds metadata-driven flags. Metadata-derived intent is OR-ed
+// with CLI flags — once any source says "inline-only" or
+// "needs-approval", that rule fires. Unknown metadata directives
+// (e.g. `priority: high`) are passed through unchanged on the
+// decision envelope; transports may consult them.
+//
+// See docs/PHASE3_DESIGN.md §Routing and §Agent-side intent metadata.
 
 import { loadConfig } from './config.js';
 import { normalize } from './normalize.js';
@@ -47,6 +53,7 @@ function hasLongFencedBlock(md, minLines) {
  *   needsApproval?: boolean,
  *   preferInline?: boolean,
  *   preferPage?: boolean,
+ *   metadata?: Record<string, any>,
  *   config?: object,
  *   alreadyNormalized?: boolean
  * }} opts
@@ -54,6 +61,7 @@ function hasLongFencedBlock(md, minLines) {
  *   action: 'inline' | 'page',
  *   reason: string,
  *   input: { format: string, chars: number },
+ *   metadata: Record<string, any>,
  *   rendered: null
  * }}
  */
@@ -63,24 +71,43 @@ export function route(input, opts = {}) {
   const fencedMin = opts.fencedBlockMinLines ?? cfg.routing.fencedBlockMinLines;
 
   const norm = opts.alreadyNormalized
-    ? { markdown: String(input ?? ''), format: 'markdown', chars: String(input ?? '').length }
+    ? {
+        markdown: String(input ?? ''),
+        format: 'markdown',
+        chars: String(input ?? '').length,
+        metadata: opts.metadata || {}
+      }
     : normalize(input);
+
+  // Metadata may come from the normalize step or be passed in
+  // explicitly. Explicit `opts.metadata` wins when provided so
+  // pre-extracted metadata can flow through `alreadyNormalized: true`.
+  const metadata = opts.metadata !== undefined ? opts.metadata : (norm.metadata || {});
+
+  // Metadata-derived intent is OR-ed with CLI flags. This matches the
+  // CLI semantics: any source saying "inline-only" forces inline; any
+  // source saying "needs-approval" forces page (subject to the
+  // inline-only override which sits above it in the rule order).
+  const preferInline = !!opts.preferInline || metadata['inline-only'] === true;
+  const needsApproval = !!opts.needsApproval || metadata['needs-approval'] === true;
+  const preferPage = !!opts.preferPage || metadata['prefer-page'] === true;
 
   const meta = {
     input: { format: norm.format, chars: norm.chars },
+    metadata,
     rendered: null
   };
 
   // Rule 1: explicit inline preference wins over everything.
-  if (opts.preferInline) {
+  if (preferInline) {
     return { action: 'inline', reason: 'prefer-inline', ...meta };
   }
   // Rule 2: approval intent → page (transport gets to render a reply control).
-  if (opts.needsApproval) {
+  if (needsApproval) {
     return { action: 'page', reason: 'intent:needs-approval', ...meta };
   }
   // Rule 3: explicit page preference.
-  if (opts.preferPage) {
+  if (preferPage) {
     return { action: 'page', reason: 'prefer-page', ...meta };
   }
   // Rule 4: structural — table or long fenced block.

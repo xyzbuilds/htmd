@@ -66,6 +66,78 @@ describe('route: normalization is applied', () => {
   });
 });
 
+describe('route: intent metadata (v0.6)', () => {
+  it('metadata `needs-approval: true` forces a page', () => {
+    const r = route('short reply', opts({ metadata: { 'needs-approval': true } }));
+    expect(r.action).toBe('page');
+    expect(r.reason).toBe('intent:needs-approval');
+    expect(r.metadata).toEqual({ 'needs-approval': true });
+  });
+
+  it('metadata `inline-only: true` forces inline even for tables', () => {
+    const md = '| a | b |\n|---|---|\n| 1 | 2 |\n';
+    const r = route(md, opts({ metadata: { 'inline-only': true } }));
+    expect(r.action).toBe('inline');
+    expect(r.reason).toBe('prefer-inline');
+  });
+
+  it('metadata `inline-only` wins over metadata `needs-approval`', () => {
+    const r = route('short', opts({
+      metadata: { 'inline-only': true, 'needs-approval': true }
+    }));
+    expect(r.action).toBe('inline');
+    expect(r.reason).toBe('prefer-inline');
+  });
+
+  it('metadata `prefer-page: true` forces a page', () => {
+    const r = route('hi', opts({ metadata: { 'prefer-page': true } }));
+    expect(r.action).toBe('page');
+    expect(r.reason).toBe('prefer-page');
+  });
+
+  it('annotation-only directives (priority) do not force a route', () => {
+    const r = route('short reply', opts({ metadata: { priority: 'high' } }));
+    expect(r.action).toBe('inline');
+    expect(r.reason).toBe('below-thresholds');
+    expect(r.metadata).toEqual({ priority: 'high' });
+  });
+
+  it('unknown directives pass through unchanged', () => {
+    const r = route('hi', opts({ metadata: { 'experimental-mode': 'beta' } }));
+    expect(r.metadata).toEqual({ 'experimental-mode': 'beta' });
+    expect(r.action).toBe('inline');
+  });
+
+  it('CLI flag and metadata agree → same decision', () => {
+    const a = route('hi', opts({ needsApproval: true }));
+    const b = route('hi', opts({ metadata: { 'needs-approval': true } }));
+    expect(a.action).toBe(b.action);
+    expect(a.reason).toBe(b.reason);
+  });
+
+  it('CLI --prefer-inline beats metadata `needs-approval`', () => {
+    const r = route('hi', opts({
+      preferInline: true,
+      metadata: { 'needs-approval': true }
+    }));
+    expect(r.action).toBe('inline');
+    expect(r.reason).toBe('prefer-inline');
+  });
+
+  it('metadata is extracted by route() when not alreadyNormalized', () => {
+    const input = '<!-- htmd: needs-approval -->\n\nShort body.';
+    const r = route(input, opts());
+    expect(r.metadata).toEqual({ 'needs-approval': true });
+    expect(r.action).toBe('page');
+    expect(r.reason).toBe('intent:needs-approval');
+  });
+
+  it('default metadata is an empty object', () => {
+    const r = route('hi', opts());
+    expect(r.metadata).toEqual({});
+  });
+});
+
 describe('applyDecision: transport publish + fallback', () => {
   it('inline decisions pass through unchanged', async () => {
     const dec = route('short', opts());

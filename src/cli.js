@@ -318,6 +318,7 @@ export async function run(argv) {
         const decision = routeMessage(norm.markdown, {
           config,
           alreadyNormalized: true,
+          metadata: norm.metadata,
           lengthThreshold: opts.lengthThreshold ? Number(opts.lengthThreshold) : undefined,
           fencedBlockMinLines: opts.fencedMinLines ? Number(opts.fencedMinLines) : undefined,
           needsApproval: !!opts.needsApproval,
