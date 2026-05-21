@@ -241,6 +241,95 @@ closes → server exits cleanly.
   ~15 other deps — too heavy for htmd's "no frameworks" principle.
   Tradeoff documented in `PHASE3_NOTES.md`.
 
+## Webhook transport (v0.12.0-alpha)
+
+The `webhook` transport is the lowest-friction integration: any agent
+harness that can POST JSON can deliver via htmd, without writing a
+per-harness transport file. The other transports (openclaw-telegram,
+cowork-mcp, cursor) exist because their target surfaces have a specific
+wire format (Telegram inline keyboards, MCP control calls, IDE session
+addressing). When you don't need any of that — when "POST the envelope
+to my server and tell me where you put it" is enough — use `webhook`.
+
+### When to use it
+
+- A custom agent harness with a simple HTTP listener.
+- A Lambda / Cloud Run / Fly Machine that ingests publish + deliver
+  events from htmd.
+- An existing chat bot that already accepts webhook calls and wants to
+  add htmd page delivery without forking the htmd codebase.
+
+Don't use it if a dedicated transport (openclaw-telegram, cowork-mcp,
+cursor) covers your harness — those carry harness-specific addressing
+the generic webhook can't infer (Telegram chat ids, cowork sessions,
+Cursor workspaces).
+
+### Configuration
+
+Layered like the rest of htmd config — explicit opts > env > config
+file > defaults.
+
+| Key                              | Env override                  | Default |
+|----------------------------------|-------------------------------|---------|
+| `transports.webhook.url`         | `HTMD_WEBHOOK_URL`            | (required) |
+| `transports.webhook.headers`     | `HTMD_WEBHOOK_HEADERS` (JSON) | `{}` |
+| `transports.webhook.timeout_ms`  | `HTMD_WEBHOOK_TIMEOUT_MS`     | `10000` |
+| `transports.webhook.retries`     | `HTMD_WEBHOOK_RETRIES`        | `0` |
+
+`headers` is an object; values are forwarded verbatim. Use it for
+`Authorization: Bearer …` or any other token your receiver expects.
+
+### Wire shape
+
+Both `publish` and `deliver` POST a JSON body to the configured URL.
+The body's `op` field discriminates:
+
+```json
+// publish
+{ "op": "publish", "slug": "reply", "renderedHtml": "<…>", "markdown": "…", "meta": {} }
+
+// deliver
+{ "op": "deliver", "id": "r-42", "action": "approve", "payload": { … } }
+```
+
+`publish` expects a JSON response with at least `{ id, url,
+submitEndpoint }`; extra fields are passed through to the adapter. A
+missing field is treated as a transport failure (router falls back to
+inline with `(htmd page failed: webhook-invalid-response …)`).
+
+`deliver` reads only the status code. 2xx → `{ ok: true }`. Anything
+else → `{ ok: false, reason: webhook-4xx | webhook-5xx | webhook-timeout
+| webhook-error }`.
+
+### Retry + timeout semantics
+
+- 4xx → **permanent**. Not retried. The router treats it as transport
+  failure and falls back to inline.
+- 5xx → **retryable**. Retried up to `retries` extra attempts (so
+  `retries=2` = 3 total). Linear 50ms-step backoff between attempts.
+- Network / fetch errors → **retryable**, same budget as 5xx.
+- Timeout → **not retried**. The receiver had its budget and missed it.
+
+### Reference adapter
+
+`examples/adapters/webhook-curl.sh` — a ~70-line bash adapter that
+mirrors the structure of the Node adapters in this directory. Wire it
+in as your harness's outbound message hook. Requires `jq` for parsing
+the decision JSON.
+
+```bash
+export HTMD_WEBHOOK_URL='https://your-server.example/htmd-hook'
+export HTMD_WEBHOOK_HEADERS='{"Authorization":"Bearer …"}'
+~/code/htmd/examples/adapters/webhook-curl.sh < message.md
+```
+
+On `action: "page"` it emits the same control-line shape as the cowork
+/ cursor adapters:
+
+```text
+[[htmd:page transport=webhook id=… url=… submit=…]]
+```
+
 ## Writing a new adapter — the cowork walkthrough
 
 The three reference adapters are nearly identical. Reading them side
@@ -250,6 +339,7 @@ by side is the fastest way to see what a new adapter has to do.
 examples/adapters/openclaw-stop-hook.mjs   ← v0.5.0-alpha
 examples/adapters/cowork-stop-hook.mjs     ← v0.5.0-beta
 examples/adapters/cursor-stop-hook.mjs     ← v0.7.0-alpha
+examples/adapters/webhook-curl.sh          ← v0.12.0-alpha (bash, generic)
 ```
 
 Differences are entirely in two lines:

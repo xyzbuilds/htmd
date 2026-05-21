@@ -173,6 +173,43 @@ limitations, and gotchas as v0.5 ships.
   and will swap in once the harness side speaks MCP back at the
   server.
 
+## Decisions locked for v0.12.0-alpha (2026-05-20)
+
+| Topic | Decision |
+|---|---|
+| New surface | `webhook` transport — generic HTTP-POST delivery for any harness that doesn't warrant a dedicated transport file. Registers under `transports.webhook` in the config tree; opt in by selecting `--transport webhook` on the route call. |
+| Wire shape | Single URL receives both `publish` and `deliver` POSTs. Body is `{ op: 'publish', slug, renderedHtml, markdown, meta }` or `{ op: 'deliver', id, action, payload }`. The `op` discriminator keeps the receiver simple (one route, switch on `op`) and matches the symmetry of the in-process transport contract. |
+| Response shape | **Publish:** 2xx JSON body must include `{ id, url, submitEndpoint }`; extras are spread through to the adapter. Missing required fields → `webhook-invalid-response` (router falls back to inline). **Deliver:** status code is the contract; 2xx → `{ ok: true }`, otherwise `{ ok: false, reason: webhook-<4xx\|5xx\|timeout\|error> }`. Asymmetric on purpose: publish failures need to flow through `applyDecision`'s fallback (catches exceptions), deliver returns its outcome to the caller. |
+| Retries | Implemented as a simple for-loop in `postWithRetries`, no library. **5xx + network errors retry** up to `retries` extra attempts (default `0`). **4xx and timeout do not retry** — 4xx is a contract failure on the receiver side, timeout means the budget was already given. Backoff is linear 50ms × attempt; tests inject a no-op sleep. |
+| Timeout | Implemented via `AbortController` around the `fetch` call. Default 10000ms. Triggers `webhook-timeout`, never retried. |
+| HTTP layer | Node 18+ global `fetch` only. No `axios`, `got`, `node-fetch`. No keep-alive pool, no connection cache — each POST is independent. Matches CLAUDE.md's "no frameworks" rule. |
+| Config | Layered like the rest of htmd: explicit constructor opts > env (`HTMD_WEBHOOK_URL`, `HTMD_WEBHOOK_HEADERS`, `HTMD_WEBHOOK_TIMEOUT_MS`, `HTMD_WEBHOOK_RETRIES`) > `transports.webhook.*` in `htmd.config.json` / `~/.htmd/config.json` > built-in defaults. `HTMD_WEBHOOK_HEADERS` parses as a JSON object; invalid JSON falls through to other layers. |
+| Transport contract | **Unchanged.** Webhook implemented cleanly against the v0.5.0-alpha `HtmdTransport` shape. Four transports now ride the same contract (stdio, openclaw-telegram, cowork-mcp, cursor, webhook = five total). |
+| MCP integration | None. The brief specifically excluded adding a new MCP tool for webhook — `htmd_route` continues to flow through `applyDecision` which dispatches via the transport registry. The webhook transport reuses the existing path. |
+| Reference adapter | `examples/adapters/webhook-curl.sh` — bash + `jq`, ~70 lines. The first non-Node adapter in the directory; proves the adapter pattern doesn't require a Node hook. |
+| Tests | `tests/webhook.test.js` — 20 cases against a local `http.createServer` (no real URLs). Covers: registry shape, publish success path with envelope/header round-trip, 4xx no-retry, 5xx exhausts retries, 5xx-then-2xx within budget, timeout no-retry, missing-URL config error, deliver success, deliver 4xx/5xx/timeout/config-missing, env-vs-explicit precedence, and end-to-end through `applyDecision` for both success and the inline fallback. |
+
+## Known limitations going into v0.12.0-alpha
+
+- Single URL serves both `publish` and `deliver`. The receiver must
+  switch on the `op` field. If a future receiver needs different URLs
+  per op, a `transports.webhook.deliverUrl` override is a v0.13
+  follow-up — the current shape is intentionally minimal.
+- No request signing / HMAC. The `headers` option lets you ship a
+  bearer token, which is sufficient for HTTPS-only receivers. HMAC
+  signing of the body (the v0.4 deferred follow-up) still applies; if
+  added, it slots in at the same layer for all transports, not just
+  webhook.
+- Linear 50ms-step backoff is deliberately small. The brief asked for
+  "simple loop + setTimeout"; exponential backoff with jitter is a
+  v0.13 candidate if real-world receivers fail repeatedly in ways the
+  current scheme can't smooth over.
+- The transport does not currently verify the response `Content-Type`
+  is JSON; it tries `JSON.parse` and falls back to `{}` on a parse
+  error. A non-JSON 2xx response will surface as
+  `webhook-invalid-response` because `id`/`url`/`submitEndpoint` will
+  be missing.
+
 ## Decisions locked for v0.11.0-alpha (2026-05-20)
 
 | Topic | Decision |
