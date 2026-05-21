@@ -17,6 +17,7 @@ import { detectTemplates } from '../detect.js';
 import { extractState } from '../extract.js';
 import { listTemplates, loadTemplate } from '../templates.js';
 import { loadConfig } from '../config.js';
+import { lintMarkdown } from '../lint.js';
 
 // Shell-escape a single argument. Used to build cli_equivalent strings the
 // user can paste into a terminal.
@@ -323,6 +324,35 @@ defineTool('htmd_schema', {
       template: args.template,
       schema: tpl.schema || {},
       _debug: { cli_equivalent: `htmd schema ${shq(args.template)}` }
+    };
+  }
+});
+
+// ---------- htmd_lint ----------
+defineTool('htmd_lint', {
+  description:
+    'Validate htmd fences in a Markdown source before render time. Maps 1:1 to ' +
+    '`htmd lint`. Checks: htmd:<template> fences reference a known template; fence ' +
+    'body parses as YAML/JSON and conforms to the template schema; htmd-meta blocks ' +
+    'have valid keys + value types; every opening ``` has a matching close; no ' +
+    'nested htmd fences. Returns errors + warnings with file:line:col on each issue.',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      markdown: { type: 'string', description: 'The Markdown source to lint.' },
+      filePath: { type: 'string', description: 'Optional file path used in error locations (cosmetic).' }
+    },
+    required: ['markdown']
+  },
+  async handler(args) {
+    const result = await lintMarkdown(args.markdown, { filePath: args.filePath || '<stdin>' });
+    return {
+      ok: result.errors.length === 0,
+      errors: result.errors,
+      warnings: result.warnings,
+      _debug: {
+        cli_equivalent: withStdinHint('htmd lint --format=json', 'markdown')
+      }
     };
   }
 });
