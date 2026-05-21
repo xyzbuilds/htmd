@@ -21,7 +21,7 @@ import { getTransport, listTransports, hasTransport } from './transports/index.j
 import { renderMarkdown as renderMd } from './render.js';
 import { startStdioServer } from './mcp-server/index.js';
 
-const VERSION = '0.11.0-alpha.0';
+const VERSION = '0.13.0-alpha.0';
 
 export async function run(argv) {
   const program = new Command();

@@ -234,3 +234,29 @@ limitations, and gotchas as v0.5 ships.
 - No `htmd cache stats` / `htmd cache clear` subcommand. `rm -rf $HTMD_CACHE_DIR` (or `~/.htmd-cache`, or `os.tmpdir()/htmd-cache`) is the manual workaround.
 - Two-user collisions on the same machine are possible only if `HTMD_CACHE_DIR` is deliberately shared. The default per-user `os.tmpdir()` avoids them.
 - The cache only memoizes the final output of `renderTemplate`. Schema validation still runs on the live data before any hit / miss is consulted? — **no, it does not.** A cache hit short-circuits before validation, which is correct (the cached value was produced by validated inputs). If you change the schema without changing the rest of the template, the `templateHash` invalidates the entry anyway.
+
+## Decisions locked for v0.13.0-alpha (2026-05-21)
+
+`htmd lint <file.md>` — pre-render validation pass for Markdown files
+with embedded htmd fences. Last queued autonomous phase; further
+phases need Xuyang's input.
+
+| Topic | Decision |
+|---|---|
+| Subcommand surface | `htmd lint <file.md>` (or `-` for stdin). New MCP tool `htmd_lint` wraps the same exported `lintMarkdown(md, { filePath })` — 1:1 with the CLI, same constraint stack v0.8.0 locked. |
+| Exit codes | `0` clean, `1` lint errors, `2` unreadable / IO error. Mirrors common linters; `1` is the actionable bucket so CI can gate on it. |
+| Rule set | `unknown-template`, `parse-error`, `schema-error`, `unclosed-fence`, `nested-htmd`, `meta-bad-key`, `meta-bad-value`, `meta-unknown-directive`. Errors and warnings are separately reported but only errors influence the exit code — warnings are reserved for forward-compatible passes (e.g. unknown htmd-meta directives, which the router preserves verbatim per v0.6.0). |
+| Reuses, does not reimplement | The lint engine reuses `listTemplates()`, `loadTemplate()`, and `schema.validate()`. The fence scanner is local (~30 LOC) — neither `marked` nor `compose.parseSegments` exposes the open-fence-but-no-close location info lint needs. The htmd-meta value coercion mirrors `src/normalize.js` `parseValue` exactly so lint reports what the router will actually see. |
+| Schema validation source | Each template's `schema.json`, when present, via the existing `ajv` wrapper. No new dependencies. Templates without a schema are validated only for parseability. |
+| Nested-fence detection | A 4-backtick outer fence with a 3-backtick `htmd:*` inside is the surfaceable case. The scanner only walks top-level fences; nested htmd opens are detected by line-scanning the body for `^\s{0,3}\`{3,}\s*htmd[:\s]`. Lint reports the inner location, not the outer. |
+| Error location surfacing | Every issue carries `{ file, line, col }`. Lines are 1-based; columns 1-based. Body-level errors point to the first body line (where YAML / schema errors first manifest); fence-level errors point to the open fence line. |
+| Output formats | `--format=text` (default, one `file:line:col: severity[rule]: message` line per issue) and `--format=json` (`{ errors: [...], warnings: [...] }`). Snapshot tests pin the JSON shape. |
+| No new dependencies | Same constraint as every phase since v0.5: hand-rolled scanner, reuse ajv + yaml that the rest of htmd already pulls in. |
+| What lint does NOT do | No autofix. No "would render successfully" assertion (validation matches the render path's pre-render checks; runtime template errors that depend on data shape beyond the schema are not caught). No CommonMark validation of prose between fences. |
+
+## Known limitations going into v0.13.0-alpha
+
+- The scanner does not understand list-indented or block-quote-indented fences. Real-world fences in markdown files almost always sit at column 0 or with ≤3 leading spaces (the CommonMark allowance) and that is what the scanner handles. Fences inside list items with deeper indentation are not currently linted.
+- Nested-htmd detection only checks for opens that look like `^\s{0,3}\`{3,}\s*htmd[:\s]`. A pathological `~~~htmd:foo` inside a 3-backtick outer would not be caught (the outer doesn't allow it as a nested open anyway), but a tilde-fenced htmd block is not a documented form and is not flagged elsewhere either.
+- htmd-meta unknown-directive is a warning, not an error, because v0.6.0 locked the forward-compat behaviour: unknown directives are preserved verbatim on `decision.metadata`. Lint surfaces them so the agent author can spot typos; it does not fail the build.
+- No `htmd lint --fix`. Most issues (unknown templates, schema errors) are not mechanically fixable; the few that are (e.g. quoting a string-shaped value) would require parsing → reformatting the fence body, which inflates scope past one phase.

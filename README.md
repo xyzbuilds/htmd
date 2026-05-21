@@ -174,6 +174,12 @@ htmd extract review.html
 htmd templates              # list all templates
 htmd schema decision-matrix # get JSON schema for one
 
+# Validate an htmd-compose markdown before rendering (v0.13.0):
+# catches unknown templates, schema errors, malformed htmd-meta,
+# unclosed / nested fences. Exit 0 clean / 1 lint errors / 2 IO.
+htmd lint review.md
+htmd lint review.md --format=json
+
 # Serve rendered pages over HTTP so they open in mobile browsers, with a
 # "Send to agent" button that POSTs the assembled prompt back without copy-paste
 htmd serve                  # default: 0.0.0.0:8787, dryrun submit mode

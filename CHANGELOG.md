@@ -3,6 +3,86 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.13.0-alpha.0] — 2026-05-21
+
+Pre-render validation pass. `htmd lint <file.md>` checks every embedded
+htmd fence in a Markdown source before render time: known template,
+valid YAML/JSON, conforms to schema, balanced and not nested, and any
+`htmd-meta` block has valid keys + value types. Last queued autonomous
+phase; see PHASE3_NOTES.md §v0.13.0-alpha for locked decisions.
+
+### Added
+- **`htmd lint <file.md>` CLI subcommand** (`-` for stdin). Exit `0`
+  clean, `1` lint errors, `2` unreadable. Default `--format=text` (one
+  `file:line:col: severity[rule]: message` line per issue);
+  `--format=json` emits a stable `{ errors, warnings }` envelope.
+- **`src/lint.js`** — ~310 LOC, no new dependencies. Rules:
+  - `unknown-template` — fence references a template not in the
+    registry (built-ins or auto-discovered plugins).
+  - `parse-error` — fence body is not valid YAML or JSON.
+  - `schema-error` — body fails the template's `schema.json` (via the
+    existing `ajv` wrapper).
+  - `unclosed-fence` — open ` ``` ` with no matching close.
+  - `nested-htmd` — an `htmd:*` fence nested inside another (e.g. a
+    3-backtick `htmd:foo` inside a 4-backtick `htmd:bar`).
+  - `meta-bad-key` — `htmd-meta` key fails `[A-Za-z][A-Za-z0-9_-]*`.
+  - `meta-bad-value` — routing directive (`needs-approval`,
+    `inline-only`, `prefer-page`, `prefer-inline`) gets a non-boolean.
+  - `meta-unknown-directive` (warning) — `htmd-meta` directive not on
+    the known allow-list; preserved verbatim per v0.6.0 forward-compat.
+- **`htmd_lint` MCP tool** wraps the same `lintMarkdown(md, opts)`
+  export — 1:1 with the CLI, same constraint stack v0.8.0 locked
+  (thin wrapper, stateless, `_debug.cli_equivalent` in every response).
+- **`tests/lint.test.js`** — 28 cases against 8 fixtures in
+  `tests/fixtures/lint/` (`clean`, `multi-fence-clean`,
+  `unknown-template`, `bad-yaml`, `schema-error`, `unclosed-fence`,
+  `nested-htmd`, `bad-meta`). Covers every rule, CLI exit codes
+  `0`/`1`/`2`, JSON format snapshots, stdin reading, and the
+  `htmd_lint` MCP tool.
+
+### Changed
+- Version bumped to `0.13.0-alpha.0`. (`src/cli.js` VERSION constant
+  was stale at `0.11.0-alpha.0`; aligned with `package.json`.) MCP
+  tests' "1:1 CLI mapping" set extended with `lint`.
+- `docs/ADAPTERS.md` MCP-tool table extended with `htmd_lint`.
+- README quick-start gains a `htmd lint` example.
+
+### Design decisions (locked)
+
+1. **Lint is a separate pass, not folded into render.** A render call
+   would have to load + run the template to surface a schema error;
+   lint stops at validation, so it's safe to drop into a CI hook or
+   a pre-commit. Errors lint catches are the same errors render
+   would surface — and reported with `file:line:col` location, which
+   render doesn't expose.
+2. **Reuses existing parsers, no new dependencies.** Schema validation
+   goes through the existing `src/schema.js` ajv wrapper; htmd-meta
+   value coercion mirrors `src/normalize.js parseValue` exactly so
+   what lint reports is what the router actually sees. The fence
+   scanner is local (~30 LOC) because neither `marked` nor
+   `compose.parseSegments` exposes the open-fence-but-no-close
+   location info lint needs.
+3. **Unknown htmd-meta directives are warnings, not errors.** Locked
+   in v0.6.0: the router preserves unknown directives verbatim for
+   forward-compat. Lint surfaces them (typo catch) but does not fail.
+4. **`htmd_lint` is a thin wrapper.** No MCP-only behaviour. Same
+   `{ ok, errors, warnings }` shape the CLI's `--format=json` emits.
+5. **No `htmd lint --fix`.** Most issues (unknown templates, schema
+   errors) are not mechanically fixable; the few that are require
+   round-tripping the fence body, which is out of scope for one phase.
+
+### Known limitations
+- The scanner does not handle deeply-indented fences inside lists or
+  block quotes. CommonMark's ≤3-space allowance is handled; deeper
+  indentation is not. Real-world fences sit at column 0 in practice.
+- No CommonMark-validation of prose between fences. Lint cares about
+  htmd fences, not the surrounding Markdown.
+- `htmd lint` does not assert "would render successfully" — runtime
+  template errors that depend on data shape beyond the JSON schema
+  (e.g. a template that requires an option not declared in its
+  schema) are not caught here. The fix is to tighten the template's
+  schema, not the linter.
+
 ## [0.12.0-alpha.0] — 2026-05-20
 
 Generic webhook transport. Any agent harness that can POST JSON can

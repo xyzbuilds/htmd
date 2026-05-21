@@ -178,6 +178,7 @@ CLI subcommand as a tool:
 | `htmd_extract`    | `htmd extract`   |
 | `htmd_templates`  | `htmd templates` |
 | `htmd_schema`     | `htmd schema`    |
+| `htmd_lint`       | `htmd lint`      |
 
 ### Design contract (locked for v0.8.0)
 
