@@ -74,7 +74,7 @@ describe('mcp protocol: tools/list', () => {
 
   it('each tool name maps 1:1 to an existing CLI subcommand (prefix htmd_)', () => {
     const cliSubcommands = new Set([
-      'render', 'compose', 'route', 'normalize', 'detect', 'extract', 'templates', 'schema'
+      'render', 'compose', 'route', 'normalize', 'detect', 'extract', 'templates', 'schema', 'lint'
     ]);
     for (const t of listTools()) {
       expect(t.name).toMatch(/^htmd_/);
