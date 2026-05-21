@@ -15,6 +15,7 @@ import { startServer, defaultRenderDir } from './serve.js';
 import { publishRender, publicHost, cleanupOldRenders } from './serve-helpers.js';
 import { normalize as normalizeInput } from './normalize.js';
 import { route as routeMessage, applyDecision } from './route.js';
+import { lintMarkdown, formatLintResult } from './lint.js';
 import { loadConfig } from './config.js';
 import { getTransport, listTransports, hasTransport } from './transports/index.js';
 import { renderMarkdown as renderMd } from './render.js';
@@ -371,6 +372,35 @@ export async function run(argv) {
         process.stdout.write(JSON.stringify({ action: 'inline', reason: 'transport-failure', error: e.message }));
         process.exit(1);
       }
+    });
+
+  program
+    .command('lint [file]')
+    .description('validate htmd fences in a markdown file (unknown templates, schema errors, malformed htmd-meta, unclosed/nested fences)')
+    .option('--format <fmt>', 'output format: text (default) or json', 'text')
+    .action(async (file, opts) => {
+      let md;
+      const fileLabel = !file || file === '-' ? '<stdin>' : resolve(file);
+      try {
+        md = await readTextOrStdin(file);
+      } catch (e) {
+        if (opts.format === 'json') {
+          process.stdout.write(JSON.stringify({
+            errors: [{ file: fileLabel, line: 0, col: 0, rule: 'read-error', message: e.message }],
+            warnings: []
+          }, null, 2) + '\n');
+        } else {
+          process.stderr.write(`htmd lint: cannot read ${fileLabel}: ${e.message}\n`);
+        }
+        process.exit(2);
+      }
+      const result = await lintMarkdown(md, { filePath: fileLabel });
+      const out = formatLintResult(result, { format: opts.format, file: fileLabel });
+      if (out) process.stdout.write(out);
+      if (result.errors.length === 0 && opts.format !== 'json') {
+        // Clean run: stay quiet, exit 0.
+      }
+      process.exit(result.errors.length === 0 ? 0 : 1);
     });
 
   program

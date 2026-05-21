@@ -64,7 +64,7 @@ export async function lintMarkdown(md, opts = {}) {
     if (HTMD_META_RE.test(info)) {
       if (!f.closed) {
         errors.push(loc(filePath, f.line, f.col, 'unclosed-fence',
-          'Unclosed htmd-meta fence (no matching ``` close)'));
+          'Unclosed htmd-meta fence (no matching \`\`\` close)'));
         continue;
       }
       checkMetaBody(f, errors, warnings, filePath);
@@ -77,7 +77,7 @@ export async function lintMarkdown(md, opts = {}) {
 
     if (!f.closed) {
       errors.push(loc(filePath, f.line, f.col, 'unclosed-fence',
-        `Unclosed htmd:${templateName} fence (no matching ``` close)`));
+        `Unclosed htmd:${templateName} fence (no matching \`\`\` close)`));
       continue;
     }
 
