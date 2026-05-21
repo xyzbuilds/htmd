@@ -3,6 +3,62 @@
 All notable changes to htmd. Follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 this project uses semver with `-alpha.N` / `-beta.N` prerelease tags.
 
+## [0.12.0-alpha.0] — 2026-05-20
+
+Generic webhook transport. Any agent harness that can POST JSON can
+now deliver via htmd without writing a per-harness transport file.
+Lands the fifth Phase 3 transport on the unchanged v0.5.0-alpha
+contract. See PHASE3_NOTES.md §v0.12.0-alpha for locked decisions.
+
+### Added
+- **`webhook` transport** (`src/transports/webhook.js`, ~250 LOC).
+  POSTs the publish / deliver envelope as JSON to a configured URL.
+  Configurable via `transports.webhook.{url,headers,timeout_ms,retries}`
+  in `htmd.config.json` / `~/.htmd/config.json`, or
+  `HTMD_WEBHOOK_{URL,HEADERS,TIMEOUT_MS,RETRIES}` env vars. Uses Node
+  18+ global `fetch` only — no `axios`, no `node-fetch`, no
+  keep-alive pool.
+- **Failure-mode discrimination.** 4xx → permanent failure (no retry,
+  router falls back to inline). 5xx → retried up to `retries` extra
+  attempts (default `0`). Timeout → no retry. Network errors → retried.
+- **`examples/adapters/webhook-curl.sh`** — reference bash + `jq`
+  adapter, ~70 lines. First non-Node adapter; proves the adapter
+  pattern doesn't require a Node hook.
+- **`tests/webhook.test.js`** — 20 cases against a local
+  `http.createServer` (no real URLs hit). Covers success, every
+  failure mode, retry budget, timeout, config layering, and the
+  `applyDecision` end-to-end fallback.
+
+### Changed
+- Version bumped to `0.12.0-alpha.0`.
+- `src/transports/index.js` loads the new transport at module init,
+  same as the four existing built-ins.
+- `docs/ADAPTERS.md` gains a "Webhook transport" section explaining
+  when to choose this over the harness-specific transports.
+
+### Design decisions (locked)
+
+1. **Single URL, both ops, `op` discriminator.** The receiver routes
+   on `op: 'publish' | 'deliver'`. Avoids two-URL config in the
+   common case. Future split URL is a v0.13 follow-up if any
+   receiver demands it.
+2. **Asymmetric error contract.** `publish` throws on failure so the
+   router's `applyDecision` catches it and yields a
+   `transport-failure` inline decision. `deliver` returns its outcome
+   directly. Matches every other transport in the registry.
+3. **No retry library, no exponential backoff.** Per the brief: a
+   simple for-loop + linear 50ms-step setTimeout backoff. Tests
+   inject a no-op sleep to stay fast.
+4. **Transport contract unchanged.** The webhook implementation rides
+   the v0.5.0-alpha `HtmdTransport` shape (`publish` → envelope,
+   `deliver` → `{ ok, detail? }`) without any contract changes. Five
+   transports now share the contract (stdio, openclaw-telegram,
+   cowork-mcp, cursor, webhook).
+5. **No MCP tool for webhook.** Out of scope; `htmd_route` continues
+   to flow through `applyDecision` which dispatches via the transport
+   registry. The webhook surface is the registry; no separate MCP
+   wire is needed.
+
 ## [0.11.0-alpha.0] — 2026-05-20
 
 Opt-in content-hash render cache. `htmd render --cache` (or the
