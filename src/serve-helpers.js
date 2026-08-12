@@ -7,7 +7,10 @@ import { homedir } from 'node:os';
 import { randomUUID } from 'node:crypto';
 import { defaultRenderDir } from './serve.js';
 
-export const DEFAULT_TAILSCALE_IP = '100.64.0.1';
+// No baked-in default: this used to carry a personal Tailscale address, which
+// shipped in a public package and told the world the shape of one private
+// network. The banner is cosmetic, so an unset value simply omits that line.
+export const DEFAULT_TAILSCALE_IP = process.env.HTMD_TAILSCALE_IP || '';
 
 /**
  * Compute the public host the served URL should use. Order:

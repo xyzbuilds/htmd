@@ -244,9 +244,9 @@ export async function run(argv) {
     .option('--token <secret>', 'require X-HTMD-Token header on /submit/* (otherwise open)')
     .option('--mode <mode>', 'submit mode: dryrun|telegram|openclaw-ssh|openclaw|file (overrides HTMD_SUBMIT_MODE)')
     .option('--log <path>', 'log file path (default: ~/.htmd/serve.log)')
-    .option('--tailscale-ip <ip>', 'tailscale IP for banner (default: HTMD_TAILSCALE_IP env or 100.64.0.1)')
+    .option('--tailscale-ip <ip>', 'tailscale IP for the banner (default: HTMD_TAILSCALE_IP env; omitted if unset)')
     .action(async (opts) => {
-      const tailscaleIp = opts.tailscaleIp || process.env.HTMD_TAILSCALE_IP || '100.64.0.1';
+      const tailscaleIp = opts.tailscaleIp || process.env.HTMD_TAILSCALE_IP || '';
       const mode = (opts.mode || process.env.HTMD_SUBMIT_MODE || 'dryrun').toLowerCase();
       startServer({
         port: opts.port,

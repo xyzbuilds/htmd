@@ -149,7 +149,10 @@ Every example is checked in. Browse [`examples/`](./examples/) and open any HTML
 ## Quick start
 
 ```bash
-npm install -g htmd
+# Not on npm — `htmd` there is an unrelated package by someone else.
+git clone https://github.com/xyzbuilds/htmd && cd htmd
+npm install && npm link          # puts `htmd` on your PATH
+# or skip the link and call it directly: node bin/htmd.js …
 
 # The headline command — compose a multi-widget page
 htmd compose review.md --out review.html

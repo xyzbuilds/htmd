@@ -147,7 +147,7 @@ phone POST /submit/<id>           (Mac Studio :8787)
 ```
 
 Requirements:
-- Mac Studio has key-based SSH to the Linux box (`xyz` → `youruser`).
+- Mac Studio has key-based SSH to the Linux box (`youruser` on both hosts).
 - The Linux box has `openclaw` installed at `HTMD_OPENCLAW_BIN`.
 - The user's main session is wired so an agent turn from `openclaw agent
   --deliver` shows up in their Telegram chat.
